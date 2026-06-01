@@ -1,0 +1,679 @@
+/* ═══════════════════════════════════════════ */
+/* MOBILE — Responsive styles for phones       */
+/* ═══════════════════════════════════════════ */
+
+/* ═══ Phones (< 640px) ═══ */
+@media (max-width: 640px) {
+
+  /* Prevent zoom on input focus (iOS) */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* ─── Layout ─── */
+  .view-content {
+    padding: 0 14px 20px;
+  }
+  .view {
+    padding-bottom: 70px;
+  }
+
+  /* ─── Header ─── */
+  .app-header {
+    padding: 10px 14px;
+  }
+  .header-logo {
+    font-size: 1.05rem;
+  }
+
+  /* ─── Bottom Nav ─── */
+  .bottom-nav {
+    padding: 4px 0 max(4px, env(safe-area-inset-bottom));
+  }
+  .nav-item {
+    padding: 6px 8px;
+    font-size: 9px;
+    gap: 2px;
+  }
+  .nav-item i {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ─── FAB ─── */
+  .fab {
+    bottom: 70px;
+    right: 14px;
+    width: 48px;
+    height: 48px;
+  }
+  .fab i {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* ─── Toast ─── */
+  .toast-container {
+    top: auto;
+    bottom: 68px;
+    right: 8px;
+    left: 8px;
+  }
+  .toast {
+    min-width: unset;
+    max-width: 100%;
+    padding: 10px 14px;
+  }
+  .toast-content {
+    font-size: 0.8rem;
+  }
+
+  /* ─── Auth Screen ─── */
+  .auth-container {
+    padding: 28px 16px;
+  }
+  .brand-title {
+    font-size: 1.6rem;
+  }
+  .auth-logo {
+    width: 52px;
+    height: 52px;
+  }
+  .logo-icon {
+    width: 26px;
+    height: 26px;
+  }
+  .auth-brand {
+    margin-bottom: 28px;
+  }
+  .auth-bg-glow {
+    width: 300px;
+    height: 300px;
+  }
+  .auth-heading {
+    font-size: 1.1rem;
+  }
+  .btn {
+    padding: 11px 20px;
+    font-size: 0.85rem;
+  }
+
+  /* ─── Onboarding ─── */
+  .onboarding-container {
+    padding: 20px 14px;
+  }
+  .ob-progress {
+    margin-bottom: 24px;
+  }
+  .ob-step-header {
+    margin-bottom: 20px;
+  }
+  .ob-step-header h2 {
+    font-size: 1.15rem;
+  }
+  .ob-step-header p {
+    font-size: 0.82rem;
+  }
+  .ob-step-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .ob-form-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .ob-form-grid .full-width {
+    grid-column: span 1;
+  }
+  .ob-card-grid {
+    gap: 10px;
+  }
+  .ob-selection-card {
+    padding: 14px;
+  }
+  .ob-selection-card h3 {
+    font-size: 0.9rem;
+  }
+  .ob-selection-card p {
+    font-size: 0.75rem;
+  }
+  .ob-card-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 8px;
+  }
+  .ob-card-icon i {
+    width: 18px;
+    height: 18px;
+  }
+  .ob-toggle-group {
+    gap: 6px;
+  }
+  .ob-toggle {
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+  .ob-nav {
+    padding: 14px 0;
+    gap: 10px;
+  }
+  .ob-result-hero {
+    padding: 24px 16px;
+  }
+  .ob-result-value {
+    font-size: 2.4rem;
+  }
+  .ob-macro-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .ob-macro-card {
+    padding: 12px 6px;
+  }
+  .ob-macro-card .macro-value {
+    font-size: 1.3rem;
+  }
+  .ob-macro-card .macro-label {
+    font-size: 0.65rem;
+  }
+  .ob-dot {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  /* ─── Dashboard ─── */
+  .dash-greeting {
+    padding: 64px 0 4px;
+  }
+  .dash-greeting h2 {
+    font-size: 1.15rem;
+  }
+  .dash-greeting p {
+    font-size: 0.8rem;
+  }
+
+  /* Calorie Ring — MUST size container, not just the SVG */
+  .calorie-ring-container {
+    width: 170px;
+    height: 170px;
+    margin: 16px auto;
+  }
+  .ring-remaining {
+    font-size: 1.9rem;
+  }
+  .ring-label {
+    font-size: 0.72rem;
+  }
+  .ring-detail {
+    font-size: 0.62rem;
+    gap: 4px;
+  }
+
+  /* Macro Rings */
+  .macro-rings-row {
+    gap: 16px;
+    margin: 16px 0;
+    justify-content: center;
+  }
+  .macro-ring {
+    width: 60px;
+    height: 60px;
+  }
+  .macro-ring-value {
+    font-size: 0.85rem;
+  }
+  .macro-ring-label {
+    font-size: 0.65rem;
+  }
+  .macro-ring-target {
+    font-size: 0.6rem;
+  }
+  .macro-ring-info {
+    margin-top: 6px;
+  }
+
+  /* Stats Row */
+  .dash-stats-row {
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .dash-stat-card {
+    padding: 12px 6px;
+  }
+  .dash-stat-card .stat-value {
+    font-size: 1.15rem;
+  }
+  .dash-stat-card .stat-label {
+    font-size: 0.62rem;
+  }
+  .dash-stat-card i {
+    width: 16px;
+    height: 16px;
+    margin-bottom: 4px;
+  }
+
+  /* Meals Preview */
+  .section-header h3 {
+    font-size: 0.9rem;
+  }
+  .meal-preview-item {
+    padding: 8px 12px;
+  }
+  .meal-preview-name {
+    font-size: 0.82rem;
+  }
+  .meal-preview-cals {
+    font-size: 0.8rem;
+  }
+
+  /* ─── Meal Log Modal ─── */
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .modal {
+    max-height: 92vh;
+    padding: 16px;
+    border-radius: 20px 20px 0 0;
+    max-width: 100%;
+  }
+  .modal-header {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+  .modal-header h2 {
+    font-size: 1rem;
+  }
+  .meal-type-selector {
+    gap: 5px;
+    padding-bottom: 12px;
+  }
+  .meal-type-btn {
+    padding: 7px 10px;
+    font-size: 0.72rem;
+    gap: 4px;
+  }
+  .meal-type-btn i {
+    width: 13px;
+    height: 13px;
+  }
+  .tab-bar {
+    margin-bottom: 12px;
+    padding: 3px;
+  }
+  .tab-btn {
+    padding: 8px 8px;
+    font-size: 0.72rem;
+    gap: 4px;
+  }
+  .tab-btn i {
+    width: 13px;
+    height: 13px;
+  }
+  .nlp-input-area .textarea {
+    min-height: 60px;
+    font-size: 0.85rem;
+  }
+  .drop-zone {
+    padding: 24px 14px;
+  }
+  .drop-zone-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 10px;
+  }
+  .drop-zone p {
+    font-size: 0.82rem;
+  }
+  .parsed-item {
+    padding: 10px;
+    gap: 6px;
+  }
+  .parsed-item-name {
+    font-size: 0.82rem;
+  }
+  .parsed-item-detail {
+    font-size: 0.7rem;
+  }
+  .parsed-item-cals {
+    font-size: 0.8rem;
+  }
+  .parsed-item-macro-row {
+    font-size: 0.65rem;
+    gap: 3px;
+  }
+  .qty-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.85rem;
+  }
+  .qty-value {
+    font-size: 0.82rem;
+    min-width: 20px;
+  }
+  .parsed-total {
+    padding: 10px 12px;
+    margin: 10px 0;
+    font-size: 0.8rem;
+  }
+  .manual-form .input-group label {
+    font-size: 0.75rem;
+  }
+  .manual-macros-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .processing-state {
+    padding: 32px 16px;
+  }
+  .processing-spinner {
+    width: 60px;
+    height: 60px;
+  }
+
+  /* ─── Diary ─── */
+  .diary-header {
+    padding: 64px 0 12px;
+    gap: 8px;
+  }
+  .diary-header h2 {
+    font-size: 0.92rem;
+    min-width: 140px;
+  }
+  .diary-totals {
+    gap: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+  .diary-total-item {
+    min-width: 40px;
+  }
+  .dt-value {
+    font-size: 0.95rem;
+  }
+  .dt-label {
+    font-size: 0.6rem;
+  }
+  .diary-meals {
+    gap: 12px;
+  }
+  .meal-group-header {
+    padding: 10px 12px;
+  }
+  .meal-group-title h3 {
+    font-size: 0.88rem;
+  }
+  .meal-group-title i {
+    width: 16px;
+    height: 16px;
+  }
+  .meal-group-title {
+    gap: 8px;
+  }
+  .meal-item {
+    padding: 10px 12px;
+  }
+  .meal-item-name {
+    font-size: 0.82rem;
+  }
+  .meal-item-serving {
+    font-size: 0.68rem;
+  }
+  .meal-item-cals {
+    font-size: 0.8rem;
+    margin-right: 4px;
+  }
+  .meal-item-delete {
+    width: 26px;
+    height: 26px;
+  }
+  .meal-empty {
+    padding: 14px 12px;
+    font-size: 0.78rem;
+  }
+  .frequent-section {
+    margin-top: 20px;
+  }
+  .frequent-foods-grid {
+    gap: 6px;
+  }
+  .frequent-food-card {
+    padding: 10px;
+  }
+  .ff-name {
+    font-size: 0.8rem;
+  }
+  .ff-cal {
+    font-size: 0.68rem;
+  }
+
+  /* ─── Analytics ─── */
+  .analytics-header {
+    padding: 64px 0 4px;
+  }
+  .analytics-header h2 {
+    font-size: 1.15rem;
+  }
+  .analytics-header p {
+    font-size: 0.8rem;
+  }
+  .analytics-summary-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .analytics-stat-card {
+    padding: 12px 6px;
+  }
+  .astat-value {
+    font-size: 1.05rem;
+  }
+  .astat-label {
+    font-size: 0.6rem;
+    margin-bottom: 4px;
+  }
+  .chart-card {
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .chart-card-header h3 {
+    font-size: 0.9rem;
+  }
+  .chart-subtitle {
+    font-size: 0.68rem;
+  }
+  .chart-wrapper {
+    height: 180px;
+  }
+  .chart-period-toggle {
+    gap: 2px;
+    padding: 2px;
+  }
+  .period-btn {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+  .weight-log-form {
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  /* ─── Achievements ─── */
+  .achievements-header {
+    padding: 64px 0 4px;
+  }
+  .achievements-header h2 {
+    font-size: 1.15rem;
+  }
+  .achievements-header p {
+    font-size: 0.8rem;
+  }
+  .streak-hero {
+    padding: 24px 16px;
+    margin: 12px 0;
+  }
+  .streak-flame i {
+    width: 36px;
+    height: 36px;
+  }
+  .streak-count {
+    font-size: 2.2rem;
+  }
+  .streak-label {
+    font-size: 0.8rem;
+  }
+  .streak-message {
+    font-size: 0.78rem;
+  }
+  .badges-section {
+    margin-top: 20px;
+  }
+  .badges-section h3 {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+  }
+  .badges-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .badge-card {
+    padding: 12px 6px;
+  }
+  .badge-icon {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+  .badge-name {
+    font-size: 0.68rem;
+  }
+  .badge-desc {
+    font-size: 0.58rem;
+    margin-top: 2px;
+  }
+  .badge-date {
+    font-size: 0.55rem;
+  }
+
+  /* ─── Cards global ─── */
+  .card {
+    padding: 14px;
+  }
+  .section-header {
+    margin-bottom: 10px;
+  }
+
+  /* ─── Empty States ─── */
+  .empty-state-mini {
+    padding: 28px 14px;
+  }
+  .empty-state-mini i {
+    width: 28px;
+    height: 28px;
+  }
+  .empty-state-mini p {
+    font-size: 0.8rem;
+  }
+
+  /* ─── AI Coach ─── */
+  .coach-chat {
+    max-height: calc(100vh - 200px);
+  }
+  .coach-input-bar {
+    padding: 8px 10px;
+  }
+  .chat-message {
+    max-width: 90%;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+  }
+  .coach-welcome {
+    padding: 40px 16px;
+  }
+  .suggestion-chip {
+    font-size: 0.72rem;
+    padding: 6px 10px;
+  }
+
+  /* ─── Goals Modal ─── */
+  .goals-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .goals-form-grid .full-width {
+    grid-column: span 1;
+  }
+
+  /* ─── Image Preview ─── */
+  .image-preview {
+    max-height: 180px;
+  }
+  .image-description-input {
+    min-height: 44px;
+    font-size: 0.82rem;
+  }
+}
+
+/* ═══ Extra small phones (< 380px) ═══ */
+@media (max-width: 380px) {
+  .view-content {
+    padding: 0 10px 16px;
+  }
+
+  /* Ring even smaller */
+  .calorie-ring-container {
+    width: 150px;
+    height: 150px;
+  }
+  .ring-remaining {
+    font-size: 1.6rem;
+  }
+  .ring-label {
+    font-size: 0.65rem;
+  }
+  .ring-detail {
+    font-size: 0.58rem;
+  }
+
+  .macro-ring {
+    width: 50px;
+    height: 50px;
+  }
+  .macro-rings-row {
+    gap: 12px;
+  }
+
+  .dash-stats-row {
+    gap: 5px;
+  }
+  .dash-stat-card {
+    padding: 8px 4px;
+  }
+  .dash-stat-card .stat-value {
+    font-size: 1rem;
+  }
+
+  .meal-type-btn {
+    padding: 6px 7px;
+    font-size: 0.68rem;
+  }
+
+  .badges-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ob-macro-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-summary-row {
+    grid-template-columns: 1fr;
+  }
+
+  .diary-totals {
+    gap: 6px;
+    padding: 10px;
+  }
+  .dt-value {
+    font-size: 0.85rem;
+  }
+}
