@@ -216,21 +216,22 @@
     margin: 16px 0;
     justify-content: center;
   }
-  .macro-ring {
-    width: 60px;
-    height: 60px;
+  .macro-ring-container {
+    width: 76px;
+    height: 76px;
   }
   .macro-ring-value {
-    font-size: 0.85rem;
+    font-size: 0.76rem;
   }
   .macro-ring-label {
-    font-size: 0.65rem;
+    font-size: 0.54rem;
   }
   .macro-ring-target {
-    font-size: 0.6rem;
+    font-size: 0.52rem;
   }
   .macro-ring-info {
-    margin-top: 6px;
+    margin-top: 0;
+    transform: translate(-50%, -50%);
   }
 
   /* Stats Row */
@@ -634,12 +635,21 @@
     font-size: 0.58rem;
   }
 
-  .macro-ring {
-    width: 50px;
-    height: 50px;
+  .macro-ring-container {
+    width: 62px;
+    height: 62px;
   }
   .macro-rings-row {
-    gap: 12px;
+    gap: 10px;
+  }
+  .macro-ring-value {
+    font-size: 0.65rem;
+  }
+  .macro-ring-label {
+    font-size: 0.45rem;
+  }
+  .macro-ring-target {
+    display: none;
   }
 
   .dash-stats-row {

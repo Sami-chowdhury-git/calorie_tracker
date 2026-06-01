@@ -51,8 +51,26 @@ window.Gemini = {
   },
 
   _parseJSON(text) {
-    const cleaned = text.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
-    return JSON.parse(cleaned);
+    if (!text) return null;
+    const trimmed = text.trim();
+    
+    // First try standard cleaning of code block fences
+    const cleaned = trimmed.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
+    try {
+      return JSON.parse(cleaned);
+    } catch (e) {
+      // If that fails, extract the first matching JSON block {...} or [...]
+      const braceMatch = trimmed.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+      if (braceMatch) {
+        try {
+          return JSON.parse(braceMatch[0]);
+        } catch (e2) {
+          console.error("Failed to parse extracted JSON brace match:", braceMatch[0], e2);
+        }
+      }
+      console.error("JSON parsing completely failed for text:", text, e);
+      throw e;
+    }
   },
 
   async analyzeText(mealDescription) {

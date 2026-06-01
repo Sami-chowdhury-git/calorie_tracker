@@ -240,6 +240,9 @@ window.MealLogger = {
             <span>F:${item.totalFat}g</span>
           </div>
         </div>
+        <button class="parsed-item-remove-btn" onclick="MealLogger.removeItem(${i})" title="Remove item">
+          <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+        </button>
         ${ingHtml}
       </div>
     `}).join('');
@@ -250,6 +253,7 @@ window.MealLogger = {
     const tf = this.parsedItems.reduce((s, i) => s + i.totalFat, 0);
     totalEl.innerHTML = `<span>Total: ${tc} kcal</span><span>P:${Math.round(tp)}g · C:${Math.round(tca)}g · F:${Math.round(tf)}g</span>`;
     resultsEl.classList.remove('hidden');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   },
 
   updateQty(index, delta) {
@@ -261,6 +265,20 @@ window.MealLogger = {
     item.totalFat = Math.round(item.food.fat * item.quantity * 10) / 10;
     const activeTab = document.querySelector('.tab-panel.active');
     this.renderParsedItems(activeTab.id.replace('-tab', ''));
+  },
+
+  removeItem(index) {
+    if (index >= 0 && index < this.parsedItems.length) {
+      this.parsedItems.splice(index, 1);
+      const activeTab = document.querySelector('.tab-panel.active');
+      const source = activeTab.id.replace('-tab', '');
+      if (this.parsedItems.length === 0) {
+        document.getElementById(source + '-results').classList.add('hidden');
+      } else {
+        this.renderParsedItems(source);
+      }
+      Utils.showToast('Item removed', 'info');
+    }
   },
 
   initImageUpload() {

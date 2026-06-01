@@ -350,38 +350,44 @@
         <div class="macro-rings-row">
           <!-- Protein -->
           <div class="macro-ring-card">
-            <svg class="macro-ring" viewBox="0 0 80 80">
-              <circle class="ring-bg" cx="40" cy="40" r="32" />
-              <circle class="ring-fill protein" cx="40" cy="40" r="32" id="protein-ring-fill" />
-            </svg>
-            <div class="macro-ring-info">
-              <span class="macro-ring-value"><span id="protein-consumed">0</span>g</span>
-              <span class="macro-ring-label">Protein</span>
-              <span class="macro-ring-target">/ <span id="protein-target">165</span>g</span>
+            <div class="macro-ring-container">
+              <svg class="macro-ring" viewBox="0 0 80 80">
+                <circle class="ring-bg" cx="40" cy="40" r="32" />
+                <circle class="ring-fill protein" cx="40" cy="40" r="32" id="protein-ring-fill" />
+              </svg>
+              <div class="macro-ring-info">
+                <span class="macro-ring-value"><span id="protein-consumed">0</span>g</span>
+                <span class="macro-ring-label">Protein</span>
+                <span class="macro-ring-target">/ <span id="protein-target">165</span>g</span>
+              </div>
             </div>
           </div>
           <!-- Carbs -->
           <div class="macro-ring-card">
-            <svg class="macro-ring" viewBox="0 0 80 80">
-              <circle class="ring-bg" cx="40" cy="40" r="32" />
-              <circle class="ring-fill carbs" cx="40" cy="40" r="32" id="carbs-ring-fill" />
-            </svg>
-            <div class="macro-ring-info">
-              <span class="macro-ring-value"><span id="carbs-consumed">0</span>g</span>
-              <span class="macro-ring-label">Carbs</span>
-              <span class="macro-ring-target">/ <span id="carbs-target">220</span>g</span>
+            <div class="macro-ring-container">
+              <svg class="macro-ring" viewBox="0 0 80 80">
+                <circle class="ring-bg" cx="40" cy="40" r="32" />
+                <circle class="ring-fill carbs" cx="40" cy="40" r="32" id="carbs-ring-fill" />
+              </svg>
+              <div class="macro-ring-info">
+                <span class="macro-ring-value"><span id="carbs-consumed">0</span>g</span>
+                <span class="macro-ring-label">Carbs</span>
+                <span class="macro-ring-target">/ <span id="carbs-target">220</span>g</span>
+              </div>
             </div>
           </div>
           <!-- Fats -->
           <div class="macro-ring-card">
-            <svg class="macro-ring" viewBox="0 0 80 80">
-              <circle class="ring-bg" cx="40" cy="40" r="32" />
-              <circle class="ring-fill fats" cx="40" cy="40" r="32" id="fat-ring-fill" />
-            </svg>
-            <div class="macro-ring-info">
-              <span class="macro-ring-value"><span id="fat-consumed">0</span>g</span>
-              <span class="macro-ring-label">Fats</span>
-              <span class="macro-ring-target">/ <span id="fat-target">73</span>g</span>
+            <div class="macro-ring-container">
+              <svg class="macro-ring" viewBox="0 0 80 80">
+                <circle class="ring-bg" cx="40" cy="40" r="32" />
+                <circle class="ring-fill fats" cx="40" cy="40" r="32" id="fat-ring-fill" />
+              </svg>
+              <div class="macro-ring-info">
+                <span class="macro-ring-value"><span id="fat-consumed">0</span>g</span>
+                <span class="macro-ring-label">Fats</span>
+                <span class="macro-ring-target">/ <span id="fat-target">73</span>g</span>
+              </div>
             </div>
           </div>
         </div>
@@ -606,28 +612,45 @@
                 <input type="number" id="goal-age" class="input-field" placeholder="25" min="10" max="100" />
               </div>
               <div class="input-group">
+                <label for="goal-gender">Gender</label>
+                <select id="goal-gender" class="input-field">
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div class="input-group">
                 <label for="goal-weight">Weight (kg)</label>
                 <input type="number" id="goal-weight" class="input-field" placeholder="70" min="30" max="300" step="0.1" />
               </div>
               <div class="input-group">
-                <label for="goal-height">Height (cm)</label>
-                <input type="number" id="goal-height" class="input-field" placeholder="175" min="100" max="250" />
+                <label for="goal-height">Height</label>
+                <div class="input-with-unit">
+                  <input type="number" id="goal-height" class="input-field" placeholder="175" min="3" max="250" step="0.1" />
+                  <select id="goal-height-unit" class="unit-select">
+                    <option value="cm">cm</option>
+                    <option value="ft">ft/in</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-group hidden" id="goal-height-inches-group">
+                <label for="goal-height-inches">Inches</label>
+                <input type="number" id="goal-height-inches" class="input-field" placeholder="10" min="0" max="11" />
               </div>
               <div class="input-group">
                 <label for="goal-activity">Activity Level</label>
                 <select id="goal-activity" class="input-field">
-                  <option value="1.2">Sedentary</option>
-                  <option value="1.375">Lightly Active</option>
-                  <option value="1.55" selected>Moderately Active</option>
-                  <option value="1.725">Very Active</option>
-                  <option value="1.9">Extremely Active</option>
+                  <option value="1.2">Sedentary (desk job, no exercise)</option>
+                  <option value="1.375">Lightly Active (light exercise 1-3 days/wk)</option>
+                  <option value="1.55" selected>Moderately Active (mod exercise 3-5 days/wk)</option>
+                  <option value="1.725">Very Active (hard exercise 6-7 days/wk)</option>
+                  <option value="1.9">Extremely Active (highly active job/sports)</option>
                 </select>
               </div>
               <div class="input-group full-width">
                 <label for="goal-type">Goal</label>
                 <select id="goal-type" class="input-field">
                   <option value="cut">Cut (Lose Fat)</option>
-                  <option value="maintain" selected>Maintain</option>
+                  <option value="maintain" selected>Maintain Weight</option>
                   <option value="bulk">Bulk (Build Muscle)</option>
                 </select>
               </div>

@@ -11,20 +11,45 @@ window.Goals = (() => {
     const profile = Store.getProfile();
     if (profile) {
       const age = document.getElementById('goal-age');
+      const gender = document.getElementById('goal-gender');
       const weight = document.getElementById('goal-weight');
       const height = document.getElementById('goal-height');
+      const heightUnit = document.getElementById('goal-height-unit');
+      const heightInchesGroup = document.getElementById('goal-height-inches-group');
+      const heightInches = document.getElementById('goal-height-inches');
       const activity = document.getElementById('goal-activity');
       const goalType = document.getElementById('goal-type');
 
       if (age && profile.age) age.value = profile.age;
+      if (gender && profile.gender) gender.value = profile.gender;
       if (weight && profile.weight) weight.value = profile.weight;
       if (height && profile.height) height.value = profile.height;
+      if (heightUnit && profile.heightUnit) {
+        heightUnit.value = profile.heightUnit;
+        if (heightInchesGroup) {
+          heightInchesGroup.classList.toggle('hidden', profile.heightUnit !== 'ft');
+        }
+      }
+      if (heightInches && profile.heightInches !== undefined) heightInches.value = profile.heightInches;
       if (activity && profile.activityLevel) activity.value = profile.activityLevel;
       if (goalType && profile.goal) goalType.value = profile.goal;
+
+      // Populate local state
+      calculatedTDEE = profile.tdee || 2000;
+      calculatedMacros = {
+        protein: profile.protein || 150,
+        carbs: profile.carbs || 220,
+        fat: profile.fat || 73
+      };
     }
 
     // Recalculate button
     document.getElementById('recalc-btn')?.addEventListener('click', recalculate);
+
+    // Height unit toggle listener
+    document.getElementById('goal-height-unit')?.addEventListener('change', (e) => {
+      document.getElementById('goal-height-inches-group')?.classList.toggle('hidden', e.target.value !== 'ft');
+    });
 
     // Sliders
     ['protein', 'carbs', 'fat'].forEach(macro => {
@@ -45,27 +70,39 @@ window.Goals = (() => {
 
   function recalculate() {
     const age = parseInt(document.getElementById('goal-age').value);
+    const gender = document.getElementById('goal-gender').value;
     const weight = parseFloat(document.getElementById('goal-weight').value);
     const height = parseFloat(document.getElementById('goal-height').value);
+    const heightUnit = document.getElementById('goal-height-unit')?.value || 'cm';
+    const heightInches = parseFloat(document.getElementById('goal-height-inches')?.value || 0);
     const activity = parseFloat(document.getElementById('goal-activity').value);
     const goal = document.getElementById('goal-type').value;
-    const profile = Store.getProfile();
-    const gender = profile?.gender || 'male';
 
     if (!age || !weight || !height) {
       Utils.showToast('Please fill in all fields', 'error');
       return;
     }
 
+    // Convert imperial height to cm
+    let hCm = height;
+    if (heightUnit === 'ft') {
+      hCm = (height * 30.48) + (heightInches * 2.54);
+    }
+
     // Mifflin-St Jeor
-    let bmr = 10 * weight + 6.25 * height - 5 * age;
+    let bmr = 10 * weight + 6.25 * hCm - 5 * age;
     bmr += gender === 'male' ? 5 : -161;
 
     let tdee = Math.round(bmr * activity);
 
-    // Goal adjustment
-    if (goal === 'cut') tdee -= 500;
-    else if (goal === 'bulk') tdee += 300;
+    // Dynamic Goal adjustment based on calculated TDEE
+    let adjustment = 0;
+    if (goal === 'cut') {
+      adjustment = -Math.min(500, Math.round(tdee * 0.20)); // 20% deficit, max 500
+    } else if (goal === 'bulk') {
+      adjustment = Math.max(100, Math.min(300, Math.round(tdee * 0.10))); // 10% surplus, min 100, max 300
+    }
+    tdee = Math.round(tdee + adjustment);
     tdee = Math.max(1200, tdee);
 
     // Macro splits
@@ -125,7 +162,7 @@ window.Goals = (() => {
         goal: document.getElementById('goal-type').value,
         weight: parseFloat(document.getElementById('goal-weight').value),
         age: parseInt(document.getElementById('goal-age').value),
-        gender: profile?.gender || 'male',
+        gender: document.getElementById('goal-gender').value || profile?.gender || 'female',
       });
 
       feedbackEl.textContent = result.feedback;
@@ -158,8 +195,11 @@ window.Goals = (() => {
     profile.carbs = carbs;
     profile.fat = fat;
     profile.age = parseInt(document.getElementById('goal-age').value) || profile.age;
+    profile.gender = document.getElementById('goal-gender').value || profile.gender;
     profile.weight = parseFloat(document.getElementById('goal-weight').value) || profile.weight;
     profile.height = parseFloat(document.getElementById('goal-height').value) || profile.height;
+    profile.heightUnit = document.getElementById('goal-height-unit')?.value || 'cm';
+    profile.heightInches = parseFloat(document.getElementById('goal-height-inches')?.value || 0);
     profile.activityLevel = parseFloat(document.getElementById('goal-activity').value) || profile.activityLevel;
     profile.goal = document.getElementById('goal-type').value || profile.goal;
 
@@ -167,8 +207,8 @@ window.Goals = (() => {
     Utils.showToast(`Goals updated! New target: ${totalCals} kcal`, 'success');
 
     // Refresh dashboard if visible
-    if (Dashboard && typeof Dashboard.refresh === 'function') {
-      Dashboard.refresh();
+    if (window.Dashboard && typeof window.Dashboard.refresh === 'function') {
+      window.Dashboard.refresh();
     }
   }
 
