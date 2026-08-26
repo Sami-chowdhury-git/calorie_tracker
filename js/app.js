@@ -9,6 +9,7 @@
     currentView: 'dashboard',
 
     init() {
+      Landing.init();
       Onboarding.init();
       Dashboard.init();
       MealLogger.init();
@@ -37,7 +38,8 @@
         if (ni && user.name) ni.value = user.name;
       } else {
         this.showScreen('app');
-        this.navigateTo('dashboard');
+        const savedView = localStorage.getItem('caltrack_current_view') || 'dashboard';
+        this.navigateTo(savedView);
       }
     },
 
@@ -80,12 +82,26 @@
         if (pw.length < 6) { Utils.showToast('Password must be at least 6 characters', 'warning'); return; }
         const r = Auth.signUp(name, email, pw);
         if (!r.success) { Utils.showToast(r.error, 'error'); return; }
-        Utils.showToast('Account created!', 'success');
+        Utils.showToast('Welcome! 🎉', 'success');
       });
 
       document.getElementById('logout-btn').addEventListener('click', () => {
-        Auth.signOut();
-        Utils.showToast('Signed out', 'info');
+        App._showConfirm('Sign Out', 'Are you sure you want to sign out?', () => {
+          Auth.signOut();
+          Utils.showToast('Signed out', 'info');
+        });
+      });
+
+      document.getElementById('reset-data-btn')?.addEventListener('click', () => {
+        App._showConfirm('⚠️ Reset ALL Data',
+          'This will delete all your meals, macros, weight logs, achievements, and settings. You will need to set up your profile again.\n\nThis cannot be undone!',
+          () => {
+            Store.resetAllData();
+            Utils.showToast('All data has been reset', 'info');
+            setTimeout(() => window.location.reload(), 500);
+          },
+          'Delete Everything'
+        );
       });
     },
 
@@ -97,6 +113,7 @@
 
     navigateTo(view) {
       this.currentView = view;
+      localStorage.setItem('caltrack_current_view', view);
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       const nav = document.querySelector(`.nav-item[data-view="${view}"]`);
       if (nav) nav.classList.add('active');
@@ -126,6 +143,22 @@
       document.addEventListener('meal-logged', () => {
         if (this.currentView === 'dashboard') Dashboard.refresh();
       });
+
+      // Prevent typing minus sign or exponent in numeric inputs
+      document.addEventListener('keydown', (e) => {
+        if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'number') {
+          if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
+            e.preventDefault();
+          }
+        }
+      });
+      document.addEventListener('input', (e) => {
+        if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'number') {
+          if (e.target.value.includes('-')) {
+            e.target.value = e.target.value.replace(/-/g, '');
+          }
+        }
+      });
     },
 
     initTheme() {
@@ -153,6 +186,32 @@
         ? '<i data-lucide="moon"></i>'
         : '<i data-lucide="sun"></i>';
       if (typeof lucide !== 'undefined') lucide.createIcons();
+    },
+
+    _showConfirm(title, message, onConfirm, confirmText) {
+      const modal = document.getElementById('confirm-modal');
+      document.getElementById('confirm-modal-title').textContent = title;
+      document.getElementById('confirm-modal-msg').textContent = message;
+      const okBtn = document.getElementById('confirm-modal-ok');
+      okBtn.textContent = confirmText || 'Confirm';
+      // Style destructive actions
+      if (confirmText === 'Delete Everything') {
+        okBtn.style.background = 'var(--danger)';
+      } else {
+        okBtn.style.background = '';
+      }
+      modal.classList.remove('hidden');
+
+      const cleanup = () => {
+        modal.classList.add('hidden');
+        okBtn.onclick = null;
+        document.getElementById('confirm-modal-cancel').onclick = null;
+        modal.onclick = null;
+      };
+
+      okBtn.onclick = () => { cleanup(); onConfirm(); };
+      document.getElementById('confirm-modal-cancel').onclick = cleanup;
+      modal.onclick = (e) => { if (e.target === modal) cleanup(); };
     },
   };
 

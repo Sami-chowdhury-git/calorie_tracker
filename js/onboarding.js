@@ -20,8 +20,13 @@ window.Onboarding = {
 
     // Unit selects
     document.getElementById('ob-height-unit').addEventListener('change', (e) => {
+      const isFt = e.target.value === 'ft';
       this.data.heightUnit = e.target.value;
-      document.getElementById('ob-height-inches-group').classList.toggle('hidden', e.target.value !== 'ft');
+      document.getElementById('ob-height-inches-group').classList.toggle('hidden', !isFt);
+      const hInput = document.getElementById('ob-height');
+      hInput.min = isFt ? 1 : 100;
+      hInput.max = isFt ? 7 : 250;
+      hInput.placeholder = isFt ? '5' : '175';
     });
     document.getElementById('ob-weight-unit').addEventListener('change', (e) => {
       this.data.weightUnit = e.target.value;
@@ -96,11 +101,15 @@ window.Onboarding = {
   collectData(step) {
     if (step === 1) {
       this.data.name = document.getElementById('ob-name').value.trim();
-      this.data.age = parseInt(document.getElementById('ob-age').value) || 25;
+      const ageVal = parseInt(document.getElementById('ob-age').value);
+      this.data.age = (!isNaN(ageVal) && ageVal >= 13 && ageVal <= 100) ? ageVal : 25;
     } else if (step === 2) {
-      this.data.weight = parseFloat(document.getElementById('ob-weight').value) || 70;
-      this.data.height = parseFloat(document.getElementById('ob-height').value) || 175;
-      this.data.heightInches = parseFloat(document.getElementById('ob-height-inches').value) || 0;
+      const wVal = parseFloat(document.getElementById('ob-weight').value);
+      this.data.weight = (!isNaN(wVal) && wVal > 0) ? wVal : 70;
+      const hVal = parseFloat(document.getElementById('ob-height').value);
+      this.data.height = (!isNaN(hVal) && hVal > 0) ? hVal : 175;
+      const inVal = parseFloat(document.getElementById('ob-height-inches').value);
+      this.data.heightInches = (!isNaN(inVal) && inVal >= 0 && inVal <= 11) ? inVal : 0;
     }
   },
 
@@ -109,16 +118,34 @@ window.Onboarding = {
       if (!document.getElementById('ob-name').value.trim()) {
         Utils.showToast('Please enter your name', 'warning'); return false;
       }
-      if (!document.getElementById('ob-age').value || parseInt(document.getElementById('ob-age').value) < 13) {
-        Utils.showToast('Please enter a valid age (13+)', 'warning'); return false;
+      const ageVal = parseInt(document.getElementById('ob-age').value);
+      if (isNaN(ageVal) || ageVal < 13 || ageVal > 100) {
+        Utils.showToast('Please enter a valid age (13–100 years)', 'warning'); return false;
       }
     }
     if (step === 2) {
-      if (!document.getElementById('ob-weight').value || parseFloat(document.getElementById('ob-weight').value) <= 0) {
-        Utils.showToast('Please enter your weight', 'warning'); return false;
+      const w = parseFloat(document.getElementById('ob-weight').value);
+      const isLbs = this.data.weightUnit === 'lbs';
+      const minW = isLbs ? 44 : 20;
+      const maxW = isLbs ? 660 : 300;
+      if (isNaN(w) || w < minW || w > maxW) {
+        Utils.showToast(`Please enter a valid weight (${minW}–${maxW} ${this.data.weightUnit})`, 'warning'); return false;
       }
-      if (!document.getElementById('ob-height').value || parseFloat(document.getElementById('ob-height').value) <= 0) {
-        Utils.showToast('Please enter your height', 'warning'); return false;
+
+      const h = parseFloat(document.getElementById('ob-height').value);
+      if (this.data.heightUnit === 'ft') {
+        const ft = h;
+        const inches = parseFloat(document.getElementById('ob-height-inches').value) || 0;
+        if (isNaN(ft) || ft < 1 || ft > 7) {
+          Utils.showToast('Feet must be between 1 and 7 ft', 'warning'); return false;
+        }
+        if (isNaN(inches) || inches < 0 || inches > 11) {
+          Utils.showToast('Inches must be between 0 and 11 in', 'warning'); return false;
+        }
+      } else {
+        if (isNaN(h) || h < 50 || h > 250) {
+          Utils.showToast('Please enter a valid height (50–250 cm)', 'warning'); return false;
+        }
       }
     }
     if (step === 3 && !document.querySelector('.ob-selection-card[data-level].active')) {

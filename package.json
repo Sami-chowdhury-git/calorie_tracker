@@ -2,5 +2,10 @@
   "name": "caltrack",
   "version": "1.0.0",
   "private": true,
-  "description": "CalTrack — Smart Calorie & Macro Tracker with Gemini AI"
+  "description": "CalTrack — Smart Calorie & Macro Tracker with Gemini AI",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "mysql2": "^3.24.2"
+  }
 }

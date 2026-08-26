@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="description" content="Track your calories, macros, and fitness goals with an intelligent AI-powered food diary." />
-  <title>CalTrack — Smart Calorie & Macro Tracker</title>
+  <title>MacroLens — Smart Calorie & Macro Tracker</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="css/analytics.css" />
   <link rel="stylesheet" href="css/achievements.css" />
   <link rel="stylesheet" href="css/ai-coach.css" />
+  <link rel="stylesheet" href="css/landing.css" />
   <link rel="stylesheet" href="css/theme-light.css" />
   <link rel="stylesheet" href="css/mobile.css" />
 
@@ -41,60 +42,157 @@
   <!-- AUTH SCREEN                                  -->
   <!-- ═══════════════════════════════════════════ -->
   <section id="auth-screen" class="screen active">
-    <div class="auth-container">
-      <div class="auth-brand">
-        <div class="auth-logo">
-          <i data-lucide="flame" class="logo-icon"></i>
+    <!-- Background orbs -->
+    <div class="landing-bg">
+      <div class="landing-bg-orb"></div>
+      <div class="landing-bg-orb"></div>
+      <div class="landing-bg-orb"></div>
+    </div>
+
+    <!-- All slides -->
+    <div class="landing-slides">
+
+      <!-- Slide 0: Hero -->
+      <div class="landing-slide active" data-slide="0">
+        <div class="landing-hero-logo">
+          <i data-lucide="flame"></i>
         </div>
-        <h1 class="brand-title">Cal<span class="accent">Track</span></h1>
-        <p class="brand-subtitle">Your intelligent nutrition companion</p>
+        <h1>Macro<span class="accent">Lens</span></h1>
+        <p class="landing-hero-tagline">Your intelligent AI-powered nutrition companion. Track calories, scan food with your camera, and crush your fitness goals.</p>
+        <div class="landing-scroll-cue">
+          <span>Scroll to explore</span>
+          <i data-lucide="chevrons-down"></i>
+        </div>
       </div>
 
-      <!-- Login Form -->
-      <form id="auth-login-form" class="auth-form">
-        <h2 class="auth-heading">Welcome back</h2>
-        <div class="input-group">
-          <i data-lucide="mail" class="input-icon"></i>
-          <input type="email" id="login-email" class="input-field" placeholder="Email address" required autocomplete="email" />
+      <!-- Slide 1: AI Food Scanner -->
+      <div class="landing-slide" data-slide="1">
+        <div class="feature-icon-wrapper feature-icon-1">
+          <i data-lucide="camera"></i>
         </div>
-        <div class="input-group">
-          <i data-lucide="lock" class="input-icon"></i>
-          <input type="password" id="login-password" class="input-field" placeholder="Password" required autocomplete="current-password" />
+        <h2>AI Food Scanner</h2>
+        <p class="feature-desc">Snap a photo of your meal and our AI instantly identifies every ingredient, calculates calories, protein, carbs, and fats — no manual entry needed.</p>
+        <div class="feature-highlights">
+          <span class="feature-pill">📸 Photo Analysis</span>
+          <span class="feature-pill">🧠 Gemini AI</span>
+          <span class="feature-pill">⚡ Instant Results</span>
         </div>
-        <button type="submit" id="login-submit-btn" class="btn btn-primary btn-full">
-          <span>Sign In</span>
-          <i data-lucide="arrow-right"></i>
-        </button>
-        <p class="auth-switch">
-          Don't have an account? <a href="#" id="show-signup">Create one</a>
-        </p>
-      </form>
+      </div>
 
-      <!-- Signup Form -->
-      <form id="auth-signup-form" class="auth-form hidden">
-        <h2 class="auth-heading">Create account</h2>
-        <div class="input-group">
-          <i data-lucide="user" class="input-icon"></i>
-          <input type="text" id="signup-name" class="input-field" placeholder="Full name" required autocomplete="name" />
+      <!-- Slide 2: Smart Macro Tracking -->
+      <div class="landing-slide" data-slide="2">
+        <div class="feature-icon-wrapper feature-icon-2">
+          <i data-lucide="pie-chart"></i>
         </div>
-        <div class="input-group">
-          <i data-lucide="mail" class="input-icon"></i>
-          <input type="email" id="signup-email" class="input-field" placeholder="Email address" required autocomplete="email" />
+        <h2>Smart Macro Tracking</h2>
+        <p class="feature-desc">Beautiful visual rings show your daily progress. Track protein, carbs, and fats with precision. Set custom goals for cutting, bulking, or maintenance.</p>
+        <div class="feature-highlights">
+          <span class="feature-pill">🎯 Custom Goals</span>
+          <span class="feature-pill">📊 Visual Rings</span>
+          <span class="feature-pill">🔄 TDEE Calculator</span>
         </div>
-        <div class="input-group">
-          <i data-lucide="lock" class="input-icon"></i>
-          <input type="password" id="signup-password" class="input-field" placeholder="Password (min 6 chars)" required minlength="6" autocomplete="new-password" />
+      </div>
+
+      <!-- Slide 3: Food Diary -->
+      <div class="landing-slide" data-slide="3">
+        <div class="feature-icon-wrapper feature-icon-3">
+          <i data-lucide="book-open"></i>
         </div>
-        <button type="submit" id="signup-submit-btn" class="btn btn-primary btn-full">
-          <span>Get Started</span>
-          <i data-lucide="sparkles"></i>
-        </button>
-        <p class="auth-switch">
-          Already have an account? <a href="#" id="show-login">Sign in</a>
-        </p>
-      </form>
+        <h2>Complete Food Diary</h2>
+        <p class="feature-desc">Log breakfast, lunch, dinner, and snacks. Browse past days, see exactly what you ate, and track your nutrition history over time.</p>
+        <div class="feature-highlights">
+          <span class="feature-pill">📅 Daily Logs</span>
+          <span class="feature-pill">🍽️ Meal Categories</span>
+          <span class="feature-pill">📜 History</span>
+        </div>
+      </div>
+
+      <!-- Slide 4: AI Coach -->
+      <div class="landing-slide" data-slide="4">
+        <div class="feature-icon-wrapper feature-icon-4">
+          <i data-lucide="bot"></i>
+        </div>
+        <h2>Personal AI Coach</h2>
+        <p class="feature-desc">Chat with your AI fitness coach anytime. Get personalized advice on nutrition, workout routines, and diet plans based on your actual data.</p>
+        <div class="feature-highlights">
+          <span class="feature-pill">💬 Chat Interface</span>
+          <span class="feature-pill">🤖 Personalized</span>
+          <span class="feature-pill">📈 Data-Aware</span>
+        </div>
+      </div>
+
+      <!-- Slide 5: Analytics & Badges -->
+      <div class="landing-slide" data-slide="5">
+        <div class="feature-icon-wrapper feature-icon-5">
+          <i data-lucide="trophy"></i>
+        </div>
+        <h2>Analytics & Achievements</h2>
+        <p class="feature-desc">Track your progress with beautiful charts. Earn badges for consistency. Build streaks and stay motivated on your fitness journey.</p>
+        <div class="feature-highlights">
+          <span class="feature-pill">📉 Weekly Charts</span>
+          <span class="feature-pill">🏆 Badges</span>
+          <span class="feature-pill">🔥 Streaks</span>
+        </div>
+      </div>
+
+      <!-- Slide 6: Auth Forms (final) -->
+      <div class="landing-slide" data-slide="6">
+        <div class="landing-auth-card">
+          <div class="auth-brand">
+            <div class="auth-logo">
+              <i data-lucide="flame" class="logo-icon"></i>
+            </div>
+            <h1 class="brand-title">Macro<span class="accent">Lens</span></h1>
+            <p class="brand-subtitle">Ready to transform your nutrition?</p>
+          </div>
+
+          <!-- Login Form -->
+          <form id="auth-login-form" class="auth-form">
+            <h2 class="auth-heading">Welcome</h2>
+            <div class="input-group">
+              <i data-lucide="mail" class="input-icon"></i>
+              <input type="email" id="login-email" class="input-field" placeholder="Email address" required autocomplete="email" />
+            </div>
+            <div class="input-group">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="login-password" class="input-field" placeholder="Password" required autocomplete="current-password" />
+            </div>
+            <button type="submit" id="login-submit-btn" class="btn btn-primary btn-full">
+              <span>Sign In</span>
+              <i data-lucide="arrow-right"></i>
+            </button>
+            <p class="auth-switch">
+              Don't have an account? <a href="#" id="show-signup">Create one</a>
+            </p>
+          </form>
+
+          <!-- Signup Form -->
+          <form id="auth-signup-form" class="auth-form hidden">
+            <h2 class="auth-heading">Create account</h2>
+            <div class="input-group">
+              <i data-lucide="user" class="input-icon"></i>
+              <input type="text" id="signup-name" class="input-field" placeholder="Full name" required autocomplete="name" />
+            </div>
+            <div class="input-group">
+              <i data-lucide="mail" class="input-icon"></i>
+              <input type="email" id="signup-email" class="input-field" placeholder="Email address" required autocomplete="email" />
+            </div>
+            <div class="input-group">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="signup-password" class="input-field" placeholder="Password (min 6 chars)" required minlength="6" autocomplete="new-password" />
+            </div>
+            <button type="submit" id="signup-submit-btn" class="btn btn-primary btn-full">
+              <span>Get Started</span>
+              <i data-lucide="sparkles"></i>
+            </button>
+            <p class="auth-switch">
+              Already have an account? <a href="#" id="show-login">Sign in</a>
+            </p>
+          </form>
+        </div>
+      </div>
+
     </div>
-    <div class="auth-bg-glow"></div>
   </section>
 
   <!-- ═══════════════════════════════════════════ -->
@@ -305,20 +403,33 @@
     <!-- Top Bar -->
     <header id="app-header" class="app-header">
       <div class="header-left">
-        <h1 class="header-logo">Cal<span class="accent">Track</span></h1>
+        <h1 class="header-logo">Macro<span class="accent">Lens</span></h1>
       </div>
       <div class="header-right">
         <button id="theme-toggle-btn" class="theme-toggle" title="Toggle theme">
           <i data-lucide="moon"></i>
         </button>
-        <button id="profile-btn" class="icon-btn" title="Profile">
-          <i data-lucide="user-circle"></i>
+
+        <button id="reset-data-btn" class="icon-btn" title="Reset all data" style="color: var(--danger);">
+          <i data-lucide="trash-2"></i>
         </button>
         <button id="logout-btn" class="icon-btn" title="Sign out">
           <i data-lucide="log-out"></i>
         </button>
       </div>
     </header>
+
+    <!-- Custom Confirm Modal (replaces native confirm() for iPad compatibility) -->
+    <div id="confirm-modal" class="hidden" style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); padding:20px;">
+      <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:16px; max-width:380px; width:100%; text-align:center; padding:28px 24px; box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+        <h3 id="confirm-modal-title" style="margin-bottom:10px; font-size:1.1rem; color:var(--text-primary);"></h3>
+        <p id="confirm-modal-msg" style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:22px; white-space:pre-line;"></p>
+        <div style="display:flex; gap:10px; justify-content:center;">
+          <button id="confirm-modal-cancel" class="btn btn-ghost" style="flex:1; touch-action:manipulation; min-height:44px;">Cancel</button>
+          <button id="confirm-modal-ok" class="btn btn-primary" style="flex:1; touch-action:manipulation; min-height:44px;">Confirm</button>
+        </div>
+      </div>
+    </div>
 
     <!-- ═══════ DASHBOARD VIEW ═══════ -->
     <div id="dashboard-view" class="view active">
@@ -424,6 +535,37 @@
             </div>
           </div>
         </div>
+
+        <!-- Custom Macros -->
+        <div class="dash-custom-macros-section">
+          <div class="section-header">
+            <h3>Custom Macros</h3>
+            <button class="btn btn-ghost btn-sm" id="dash-edit-macros-btn"><i data-lucide="edit-3"></i> Edit</button>
+          </div>
+          <div id="custom-macros-form" class="custom-macros-form hidden">
+            <div class="custom-macros-grid">
+              <div class="input-group">
+                <label for="custom-calories">Calories (kcal)</label>
+                <input type="number" id="custom-calories" class="input-field" placeholder="2000" min="800" max="8000" />
+              </div>
+              <div class="input-group">
+                <label for="custom-protein">Protein (g)</label>
+                <input type="number" id="custom-protein" class="input-field" placeholder="150" min="0" max="500" />
+              </div>
+              <div class="input-group">
+                <label for="custom-carbs">Carbs (g)</label>
+                <input type="number" id="custom-carbs" class="input-field" placeholder="200" min="0" max="800" />
+              </div>
+              <div class="input-group">
+                <label for="custom-fat">Fat (g)</label>
+                <input type="number" id="custom-fat" class="input-field" placeholder="65" min="0" max="300" />
+              </div>
+            </div>
+            <button id="custom-macros-save-btn" class="btn btn-primary btn-full">
+              <i data-lucide="check"></i> Save Custom Macros
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Floating Action Button -->
@@ -517,20 +659,33 @@
           </div>
         </div>
 
-        <!-- Frequently Logged -->
+        <!-- Recently Logged -->
         <div class="frequent-section">
           <div class="section-header">
-            <h3><i data-lucide="clock"></i> Frequently Logged</h3>
+            <h3><i data-lucide="clock"></i> Recently Logged</h3>
           </div>
-          <div id="frequent-foods" class="frequent-foods-grid">
-            <p class="empty-hint">Your most-logged foods will appear here.</p>
+          <div id="recent-foods" class="frequent-foods-grid">
+            <p class="empty-hint">Your recently logged foods will appear here.</p>
+          </div>
+        </div>
+
+        <!-- Recent Item Detail Modal -->
+        <div id="recent-detail-modal" class="modal hidden">
+          <div class="modal-content" style="max-width:500px; max-height:85vh; overflow-y:auto;">
+            <div class="modal-header">
+              <h3 id="recent-detail-title">Food Details</h3>
+              <button id="recent-detail-close" class="modal-close-btn"><i data-lucide="x"></i></button>
+            </div>
+            <div id="recent-detail-image" class="hidden" style="margin-bottom:12px; border-radius:12px; overflow:hidden;">
+              <img id="recent-detail-img" src="" alt="Food" style="width:100%; display:block; border-radius:12px;" />
+            </div>
+            <div id="recent-detail-macros" style="margin-bottom:12px;"></div>
+            <div id="recent-detail-ingredients"></div>
           </div>
         </div>
       </div>
 
-      <button class="fab" id="diary-add-btn" title="Log a meal">
-        <i data-lucide="plus"></i>
-      </button>
+
     </div>
 
     <!-- ═══════ ANALYTICS VIEW ═══════ -->
@@ -609,7 +764,7 @@
             <div class="goals-form-grid">
               <div class="input-group">
                 <label for="goal-age">Age</label>
-                <input type="number" id="goal-age" class="input-field" placeholder="25" min="10" max="100" />
+                <input type="number" id="goal-age" class="input-field" placeholder="25" min="13" max="100" />
               </div>
               <div class="input-group">
                 <label for="goal-gender">Gender</label>
@@ -620,21 +775,30 @@
               </div>
               <div class="input-group">
                 <label for="goal-weight">Weight (kg)</label>
-                <input type="number" id="goal-weight" class="input-field" placeholder="70" min="30" max="300" step="0.1" />
+                <input type="number" id="goal-weight" class="input-field" placeholder="70" min="20" max="300" step="0.1" />
               </div>
-              <div class="input-group">
+              <div class="input-group" id="goal-height-cm-group">
                 <label for="goal-height">Height</label>
                 <div class="input-with-unit">
-                  <input type="number" id="goal-height" class="input-field" placeholder="175" min="3" max="250" step="0.1" />
+                  <input type="number" id="goal-height" class="input-field" placeholder="175" min="50" max="250" step="0.1" />
                   <select id="goal-height-unit" class="unit-select">
                     <option value="cm">cm</option>
                     <option value="ft">ft/in</option>
                   </select>
                 </div>
               </div>
-              <div class="input-group hidden" id="goal-height-inches-group">
-                <label for="goal-height-inches">Inches</label>
-                <input type="number" id="goal-height-inches" class="input-field" placeholder="10" min="0" max="11" />
+              <div class="input-group hidden" id="goal-height-ft-group">
+                <label>Height (ft / in)</label>
+                <div style="display:flex;gap:8px;">
+                  <div class="input-with-unit" style="flex:1;">
+                    <input type="number" id="goal-height-ft" class="input-field" placeholder="5" min="1" max="7" />
+                    <span class="unit-label">ft</span>
+                  </div>
+                  <div class="input-with-unit" style="flex:1;">
+                    <input type="number" id="goal-height-in" class="input-field" placeholder="6" min="0" max="11" />
+                    <span class="unit-label">in</span>
+                  </div>
+                </div>
               </div>
               <div class="input-group">
                 <label for="goal-activity">Activity Level</label>
@@ -660,24 +824,14 @@
             </button>
             <div id="recalc-result" class="hidden">
               <div class="parsed-total" style="margin:8px 0;"><span>New Daily Target</span><span id="recalc-tdee">—</span></div>
-              <h4 style="font-size:0.85rem;color:var(--text-secondary);margin:12px 0 8px;">Adjust Macros</h4>
-              <div class="macro-slider-group">
-                <div class="macro-slider-label"><span>Protein</span><span id="slider-protein-val">0g</span></div>
-                <input type="range" id="slider-protein" class="macro-slider" min="50" max="300" step="5" />
+              <div class="recalc-macros-display">
+                <div class="recalc-macro-item protein"><span class="recalc-macro-val" id="recalc-protein">0</span><span class="recalc-macro-label">Protein (g)</span></div>
+                <div class="recalc-macro-item carbs"><span class="recalc-macro-val" id="recalc-carbs">0</span><span class="recalc-macro-label">Carbs (g)</span></div>
+                <div class="recalc-macro-item fats"><span class="recalc-macro-val" id="recalc-fat">0</span><span class="recalc-macro-label">Fat (g)</span></div>
               </div>
-              <div class="macro-slider-group">
-                <div class="macro-slider-label"><span>Carbs</span><span id="slider-carbs-val">0g</span></div>
-                <input type="range" id="slider-carbs" class="macro-slider" min="50" max="500" step="5" />
-              </div>
-              <div class="macro-slider-group">
-                <div class="macro-slider-label"><span>Fat</span><span id="slider-fat-val">0g</span></div>
-                <input type="range" id="slider-fat" class="macro-slider" min="20" max="200" step="5" />
-              </div>
-              <div id="ai-macro-feedback" class="ai-feedback hidden"></div>
-              <div style="display:flex;gap:8px;margin-top:12px;">
-                <button id="validate-macros-btn" class="btn btn-secondary" style="flex:1;"><i data-lucide="sparkles"></i> AI Check</button>
-                <button id="apply-goals-btn" class="btn btn-primary" style="flex:1;"><i data-lucide="check"></i> Apply Goals</button>
-              </div>
+              <button id="apply-goals-btn" class="btn btn-primary btn-full" style="margin-top:12px;">
+                <i data-lucide="check"></i> Apply These Goals
+              </button>
             </div>
           </div>
         </div>
@@ -718,25 +872,33 @@
     <div id="coach-view" class="view">
       <div class="view-content" style="padding-bottom:120px;">
         <div class="coach-header">
-          <h2>AI Coach</h2>
-          <p>Ask anything about fitness & nutrition</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <h2>AI Coach</h2>
+              <p>Your personal fitness assistant with app data access</p>
+            </div>
+            <button id="coach-new-chat-btn" class="btn btn-secondary btn-sm" title="New conversation">
+              <i data-lucide="plus"></i> New Chat
+            </button>
+          </div>
         </div>
+        <div id="coach-tabs-bar" class="coach-tabs-bar"></div>
         <div id="coach-chat" class="coach-chat">
           <div class="coach-welcome">
             <i data-lucide="bot"></i>
             <h3>Hey! I'm your AI fitness coach 💪</h3>
-            <p>Ask me about nutrition, workouts, supplements, or any fitness topic.</p>
+            <p>I can see your MacroLens data — ask about your meals, macros, progress, or any fitness topic.</p>
             <div class="coach-suggestion-chips">
-              <button class="suggestion-chip" data-q="How much protein do I need daily?">Protein needs</button>
-              <button class="suggestion-chip" data-q="What should I eat before a workout?">Pre-workout meal</button>
+              <button class="suggestion-chip" data-q="Based on my data, how am I doing with my protein intake?">My protein intake</button>
+              <button class="suggestion-chip" data-q="What should I eat to meet my remaining macros for today?">Meet my macros</button>
               <button class="suggestion-chip" data-q="How can I lose fat without losing muscle?">Fat loss tips</button>
-              <button class="suggestion-chip" data-q="Is creatine safe to take?">Creatine safety</button>
+              <button class="suggestion-chip" data-q="Analyze my eating patterns from my logged meals">Analyze my meals</button>
             </div>
           </div>
         </div>
       </div>
       <div class="coach-input-bar">
-        <input type="text" id="coach-input" class="coach-input" placeholder="Ask a fitness question..." />
+        <input type="text" id="coach-input" class="coach-input" placeholder="Ask about your data, nutrition, fitness..." />
         <button id="coach-send-btn" class="coach-send-btn" disabled>
           <i data-lucide="send"></i>
         </button>
@@ -783,7 +945,7 @@
         <!-- NLP Tab -->
         <div id="nlp-tab" class="tab-panel active">
           <div class="nlp-input-area">
-            <textarea id="nlp-input" class="input-field textarea" placeholder="Describe your meal...&#10;e.g. &quot;3 scrambled eggs, a slice of sourdough toast, and an avocado&quot;" rows="3"></textarea>
+            <textarea id="nlp-input" class="input-field textarea" placeholder="" rows="3"></textarea>
             <button id="nlp-parse-btn" class="btn btn-primary btn-full">
               <i data-lucide="sparkles"></i> Analyze Food
             </button>
@@ -821,7 +983,7 @@
             </div>
             <div class="image-description-area">
               <label for="image-description">📝 Describe anything the AI can't see (optional)</label>
-              <textarea id="image-description" class="image-description-input" placeholder="e.g. Added 1 scoop of whey protein, used olive oil for cooking..." rows="2"></textarea>
+              <textarea id="image-description" class="image-description-input" placeholder="" rows="2"></textarea>
               <button id="image-analyze-btn" class="btn btn-primary btn-full image-analyze-btn">
                 <i data-lucide="sparkles"></i> Analyze with AI
               </button>
@@ -888,8 +1050,8 @@
     <!-- ═══════ BOTTOM NAVIGATION ═══════ -->
     <nav id="bottom-nav" class="bottom-nav">
       <button class="nav-item active" id="nav-dashboard" data-view="dashboard">
-        <i data-lucide="layout-dashboard"></i>
-        <span>Dashboard</span>
+        <i data-lucide="home"></i>
+        <span>Home</span>
       </button>
       <button class="nav-item" id="nav-diary" data-view="diary">
         <i data-lucide="book-open"></i>
@@ -927,6 +1089,7 @@
   <script src="js/achievements.js"></script>
   <script src="js/goals.js"></script>
   <script src="js/ai-coach.js"></script>
+  <script src="js/landing.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

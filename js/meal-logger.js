@@ -4,13 +4,15 @@
 
 window.MealLogger = {
   selectedMealType: 'breakfast',
+  targetDate: null,
   parsedItems: [],
   _selectedImageFile: null,
   _selectedImageDataUrl: null,
 
   init() {
     document.addEventListener('open-meal-log', (e) => {
-      if (e.detail?.mealType) this.selectedMealType = e.detail.mealType;
+      this._explicitMealType = e.detail?.mealType || null;
+      this.targetDate = e.detail?.date || null;
       this.open();
     });
 
@@ -53,7 +55,20 @@ window.MealLogger = {
   open() {
     document.getElementById('meal-log-modal').classList.remove('hidden');
     this.resetTabs();
-    this.autoSelectMealType();
+    const selectorEl = document.querySelector('.meal-type-selector');
+    if (this._explicitMealType) {
+      // Use the explicitly passed meal type (from diary + buttons)
+      this.selectedMealType = this._explicitMealType;
+      document.querySelectorAll('.meal-type-btn').forEach(b => b.classList.remove('active'));
+      const btn = document.querySelector(`.meal-type-btn[data-meal="${this._explicitMealType}"]`);
+      if (btn) btn.classList.add('active');
+      // Hide selector — user already chose via diary
+      if (selectorEl) selectorEl.style.display = 'none';
+      this._explicitMealType = null;
+    } else {
+      this.autoSelectMealType();
+      if (selectorEl) selectorEl.style.display = '';
+    }
     if (typeof lucide !== 'undefined') lucide.createIcons();
   },
 
@@ -98,6 +113,11 @@ window.MealLogger = {
     this.parsedItems = [];
     this._selectedImageFile = null;
     this._selectedImageDataUrl = null;
+    // Clear file inputs so same file can be re-selected
+    const fi = document.getElementById('image-file-input');
+    const ci = document.getElementById('camera-file-input');
+    if (fi) fi.value = '';
+    if (ci) ci.value = '';
   },
 
   async parseNLP() {
@@ -137,7 +157,7 @@ window.MealLogger = {
     const newVal = window.prompt('Edit weight (grams):', current);
     if (newVal !== null && newVal.trim() !== '') {
       const grams = parseFloat(newVal);
-      if (!isNaN(grams) && grams > 0 && item.food.weight_grams) {
+      if (!isNaN(grams) && grams >= 0 && item.food.weight_grams) {
         // Proportionally recalculate macros based on new weight
         const ratio = grams / item.food.weight_grams;
         item.food.calories = Math.round(item.food.calories * ratio);
@@ -166,7 +186,7 @@ window.MealLogger = {
     const newVal = window.prompt(`Edit weight for ${ing.name} (grams):`, current);
     if (newVal !== null && newVal.trim() !== '') {
       const grams = parseFloat(newVal);
-      if (!isNaN(grams) && grams > 0 && ing.weight_grams) {
+      if (!isNaN(grams) && grams >= 0 && ing.weight_grams) {
         const ratio = grams / ing.weight_grams;
         const oldCals = ing.calories;
         ing.calories = Math.round(ing.calories * ratio);
@@ -179,14 +199,109 @@ window.MealLogger = {
         const calDiff = ing.calories - oldCals;
         item.food.calories += Math.round(calDiff / item.quantity);
         item.totalCalories = Math.round(item.food.calories * item.quantity);
-        item.totalProtein = parseFloat((item.ingredients.reduce((s, i) => s + i.protein, 0) * item.quantity).toFixed(1));
-        item.totalCarbs = parseFloat((item.ingredients.reduce((s, i) => s + i.carbs, 0) * item.quantity).toFixed(1));
-        item.totalFat = parseFloat((item.ingredients.reduce((s, i) => s + i.fat, 0) * item.quantity).toFixed(1));
+        item.food.protein = parseFloat(item.ingredients.reduce((s, i) => s + i.protein, 0).toFixed(1));
+        item.food.carbs = parseFloat(item.ingredients.reduce((s, i) => s + i.carbs, 0).toFixed(1));
+        item.food.fat = parseFloat(item.ingredients.reduce((s, i) => s + i.fat, 0).toFixed(1));
+        item.totalProtein = parseFloat((item.food.protein * item.quantity).toFixed(1));
+        item.totalCarbs = parseFloat((item.food.carbs * item.quantity).toFixed(1));
+        item.totalFat = parseFloat((item.food.fat * item.quantity).toFixed(1));
       } else {
         ing.serving = newVal.trim();
       }
       const activeTab = document.querySelector('.tab-panel.active');
       this.renderParsedItems(activeTab.id.replace('-tab', ''));
+    }
+  },
+
+  removeIngredient(itemIndex, ingIndex) {
+    const item = this.parsedItems[itemIndex];
+    if (!item.ingredients || item.ingredients.length === 0) return;
+    
+    const ing = item.ingredients[ingIndex];
+    const oldCals = ing.calories;
+    
+    // Remove it
+    item.ingredients.splice(ingIndex, 1);
+    
+    // Update parent totals
+    const calDiff = 0 - oldCals;
+    item.food.calories += Math.round(calDiff / item.quantity);
+    item.totalCalories = Math.round(item.food.calories * item.quantity);
+    item.food.protein = parseFloat(item.ingredients.reduce((s, i) => s + i.protein, 0).toFixed(1));
+    item.food.carbs = parseFloat(item.ingredients.reduce((s, i) => s + i.carbs, 0).toFixed(1));
+    item.food.fat = parseFloat(item.ingredients.reduce((s, i) => s + i.fat, 0).toFixed(1));
+    item.totalProtein = parseFloat((item.food.protein * item.quantity).toFixed(1));
+    item.totalCarbs = parseFloat((item.food.carbs * item.quantity).toFixed(1));
+    item.totalFat = parseFloat((item.food.fat * item.quantity).toFixed(1));
+    
+    const activeTab = document.querySelector('.tab-panel.active');
+    this.renderParsedItems(activeTab.id.replace('-tab', ''));
+    Utils.showToast('Ingredient removed', 'info');
+  },
+
+  async submitNewIngredient(itemIndex) {
+    const item = this.parsedItems[itemIndex];
+    if (!item) return;
+    
+    const nameEl = document.getElementById(`add-ing-name-${itemIndex}`);
+    const weightEl = document.getElementById(`add-ing-weight-${itemIndex}`);
+    const btnEl = document.getElementById(`add-ing-btn-${itemIndex}`);
+    
+    const name = nameEl.value.trim();
+    const weight = parseFloat(weightEl.value);
+    
+    if (!name) { Utils.showToast('Please enter an ingredient name', 'warning'); return; }
+    if (!weight || weight <= 0) { Utils.showToast('Please enter a valid weight in grams', 'warning'); return; }
+    
+    btnEl.disabled = true;
+    btnEl.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width:14px;height:14px;"></i>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    
+    try {
+      const prompt = `Calculate exact nutritional values for ${weight}g of ${name}. Ensure name is "${name}" and weight is ${weight}g.`;
+      const result = await Gemini.analyzeText(prompt);
+      
+      if (result && result.length > 0 && !result[0].error) {
+        const analyzedFood = result[0].food;
+        
+        const newIng = {
+          name: analyzedFood.name || name,
+          quantity: 1,
+          calories: analyzedFood.calories || 0,
+          protein: parseFloat((analyzedFood.protein || 0).toFixed(1)),
+          carbs: parseFloat((analyzedFood.carbs || 0).toFixed(1)),
+          fat: parseFloat((analyzedFood.fat || 0).toFixed(1)),
+          weight_grams: weight,
+          serving: `${weight}g`,
+        };
+        
+        if (!item.ingredients) item.ingredients = [];
+        item.ingredients.push(newIng);
+        
+        // Update parent totals
+        item.food.calories += Math.round(newIng.calories / item.quantity);
+        item.totalCalories = Math.round(item.food.calories * item.quantity);
+        item.food.protein = parseFloat(item.ingredients.reduce((s, i) => s + i.protein, 0).toFixed(1));
+        item.food.carbs = parseFloat(item.ingredients.reduce((s, i) => s + i.carbs, 0).toFixed(1));
+        item.food.fat = parseFloat(item.ingredients.reduce((s, i) => s + i.fat, 0).toFixed(1));
+        item.totalProtein = parseFloat((item.food.protein * item.quantity).toFixed(1));
+        item.totalCarbs = parseFloat((item.food.carbs * item.quantity).toFixed(1));
+        item.totalFat = parseFloat((item.food.fat * item.quantity).toFixed(1));
+        
+        const activeTab = document.querySelector('.tab-panel.active');
+        this.renderParsedItems(activeTab.id.replace('-tab', ''));
+        Utils.showToast(`${newIng.name} added`, 'success');
+      } else {
+        Utils.showToast('Could not analyze ingredient', 'warning');
+      }
+    } catch (err) {
+      console.error('Failed to add ingredient:', err);
+      Utils.showToast('Analysis failed. Try again.', 'error');
+    }
+    
+    if (btnEl) {
+      btnEl.disabled = false;
+      btnEl.textContent = 'Add';
     }
   },
 
@@ -197,10 +312,10 @@ window.MealLogger = {
 
     listEl.innerHTML = this.parsedItems.map((item, i) => {
       let ingHtml = '';
-      if (item.ingredients && item.ingredients.length > 0) {
-        ingHtml = `<div class="parsed-item-ingredients" style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-color); grid-column: 1 / -1;">
-          <div style="margin-bottom: 8px; font-weight: 500; color: var(--text-primary); font-size: 0.82rem;">Ingredients:</div>
-          ${item.ingredients.map((ing, j) => `
+      const hasIngredients = item.ingredients && item.ingredients.length > 0;
+      ingHtml = `<div class="parsed-item-ingredients" style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-color); grid-column: 1 / -1;">
+          ${hasIngredients ? `<div style="margin-bottom: 8px; font-weight: 500; color: var(--text-primary); font-size: 0.82rem;">Ingredients:</div>` : ''}
+          ${hasIngredients ? item.ingredients.map((ing, j) => `
             <div class="ingredient-row">
               <span class="ingredient-name">• ${ing.name}</span>
               <span class="ingredient-weight">
@@ -212,11 +327,22 @@ window.MealLogger = {
                 <span>P:${ing.protein}g</span>
                 <span>C:${ing.carbs}g</span>
                 <span>F:${ing.fat}g</span>
+                <button class="parsed-item-remove-btn" style="position:static; margin-left:8px; padding:2px; color:var(--danger);" onclick="MealLogger.removeIngredient(${i}, ${j})" title="Remove ingredient">
+                  <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
+                </button>
               </span>
             </div>
-          `).join('')}
+          `).join('') : ''}
+          <button id="add-ing-show-btn-${i}" class="btn btn-ghost btn-sm" onclick="document.getElementById('add-ing-form-${i}').style.display='flex'; this.style.display='none';" style="margin-top:8px; font-size:0.78rem; color: var(--primary); padding: 4px 10px;">
+            <i data-lucide="plus-circle" style="width:14px;height:14px;"></i> Add Ingredient
+          </button>
+          <div id="add-ing-form-${i}" style="display:none; margin-top:8px; gap:8px; align-items:center; width:100%;">
+            <input type="text" id="add-ing-name-${i}" placeholder="Name (e.g. Cheese)" class="input-field" style="flex:1; padding:6px 8px; font-size:0.8rem; background: var(--bg-tertiary);">
+            <input type="number" id="add-ing-weight-${i}" placeholder="Weight (g)" class="input-field" style="width:80px; padding:6px 8px; font-size:0.8rem; background: var(--bg-tertiary);">
+            <button class="btn btn-primary btn-sm" id="add-ing-btn-${i}" onclick="MealLogger.submitNewIngredient(${i})" style="padding:6px 12px; font-size:0.8rem;">Add</button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-ing-form-${i}').style.display='none'; document.getElementById('add-ing-show-btn-${i}').style.display='flex';" style="padding:6px; font-size:0.8rem;"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
+          </div>
         </div>`;
-      }
 
       return `
       <div class="parsed-item ${item.unknown ? 'unknown' : ''}" style="flex-wrap: wrap; animation: staggerFadeIn 0.3s ease both; animation-delay: ${i * 0.08}s;">
@@ -251,7 +377,7 @@ window.MealLogger = {
     const tp = this.parsedItems.reduce((s, i) => s + i.totalProtein, 0);
     const tca = this.parsedItems.reduce((s, i) => s + i.totalCarbs, 0);
     const tf = this.parsedItems.reduce((s, i) => s + i.totalFat, 0);
-    totalEl.innerHTML = `<span>Total: ${tc} kcal</span><span>P:${Math.round(tp)}g · C:${Math.round(tca)}g · F:${Math.round(tf)}g</span>`;
+    totalEl.innerHTML = `<span>Total: ${tc} kcal</span><span>P:${parseFloat(tp.toFixed(1))}g · C:${parseFloat(tca.toFixed(1))}g · F:${parseFloat(tf.toFixed(1))}g</span>`;
     resultsEl.classList.remove('hidden');
     if (typeof lucide !== 'undefined') lucide.createIcons();
   },
@@ -295,7 +421,11 @@ window.MealLogger = {
     });
     
     const fileChangeHandler = (e) => {
-      if (e.target.files && e.target.files.length > 0) this.showImagePreview(e.target.files[0]);
+      if (e.target.files && e.target.files.length > 0) {
+        this.showImagePreview(e.target.files[0]);
+        // Reset so same file can be re-selected
+        e.target.value = '';
+      }
     };
     
     if (fi) fi.addEventListener('change', fileChangeHandler);
@@ -349,21 +479,47 @@ window.MealLogger = {
       } else if (geminiResult && geminiResult[0].error) {
         Utils.showToast(geminiResult[0].error, 'warning', 4000);
         document.getElementById('image-drop-zone').style.display = '';
+        this._selectedImageFile = null;
+        this._selectedImageDataUrl = null;
+        document.getElementById('image-file-input').value = '';
+        document.getElementById('camera-file-input').value = '';
       } else {
-        Utils.showToast('Could not identify food in this image', 'warning', 3000);
-        document.getElementById('image-drop-zone').style.display = '';
+        // If we have a description, try text-based analysis as fallback
+        if (description && description.trim()) {
+          Utils.showToast('Image unclear — analyzing from your description...', 'info', 3000);
+          const textResult = await Gemini.analyzeText(description.trim());
+          if (textResult && textResult.length > 0) {
+            this.parsedItems = textResult;
+            if (this._selectedImageDataUrl) {
+              const resultPreview = document.getElementById('image-result-preview');
+              document.getElementById('image-result-img').src = this._selectedImageDataUrl;
+              resultPreview.classList.remove('hidden');
+            }
+            Utils.showToast('✨ Analyzed from description', 'success', 2000);
+            this.renderParsedItems('image');
+            return;
+          }
+        }
+        Utils.showToast('Could not identify food. Try adding a description and retry.', 'warning', 4000);
+        // Show preview section again so user can add description and retry
+        document.getElementById('image-preview-section').classList.remove('hidden');
+        document.getElementById('image-drop-zone').style.display = 'none';
       }
     } catch (err) {
       console.error('Image analysis failed:', err);
       proc.classList.add('hidden');
       Utils.showToast('Image analysis failed. Please try again.', 'error', 4000);
       document.getElementById('image-drop-zone').style.display = '';
+      this._selectedImageFile = null;
+      this._selectedImageDataUrl = null;
+      document.getElementById('image-file-input').value = '';
+      document.getElementById('camera-file-input').value = '';
     }
   },
 
   confirmParsed(source) {
     if (this.parsedItems.length === 0) return;
-    const dateStr = Utils.todayStr();
+    const dateStr = this.targetDate || (Diary.currentDate ? Diary.currentDate : Utils.todayStr());
     const diary = Store.getDiary(dateStr);
 
     this.parsedItems.forEach(item => {
@@ -373,6 +529,8 @@ window.MealLogger = {
         carbs: item.totalCarbs, fat: item.totalFat,
         serving: `${item.quantity} × ${item.food.serving}`,
         timestamp: new Date().toISOString(),
+        ingredients: item.ingredients || [],
+        imageDataUrl: this._selectedImageDataUrl || null,
       });
       Store.incrementFoodFreq(item.food.name);
     });
@@ -388,16 +546,19 @@ window.MealLogger = {
 
   addManual() {
     const name = document.getElementById('manual-food-name').value.trim();
-    const calories = parseInt(document.getElementById('manual-calories').value) || 0;
+    const calories = parseInt(document.getElementById('manual-calories').value);
     const protein = parseFloat(document.getElementById('manual-protein').value) || 0;
     const carbs = parseFloat(document.getElementById('manual-carbs').value) || 0;
     const fat = parseFloat(document.getElementById('manual-fat').value) || 0;
     const serving = document.getElementById('manual-serving').value.trim() || '1 serving';
 
     if (!name) { Utils.showToast('Please enter a food name', 'warning'); return; }
-    if (calories <= 0) { Utils.showToast('Please enter calories', 'warning'); return; }
+    if (isNaN(calories) || calories <= 0 || calories > 10000) { Utils.showToast('Please enter valid calories (1–10,000 kcal)', 'warning'); return; }
+    if (isNaN(protein) || protein < 0 || protein > 1000) { Utils.showToast('Protein cannot be negative or exceed 1000g', 'warning'); return; }
+    if (isNaN(carbs) || carbs < 0 || carbs > 1000) { Utils.showToast('Carbs cannot be negative or exceed 1000g', 'warning'); return; }
+    if (isNaN(fat) || fat < 0 || fat > 1000) { Utils.showToast('Fat cannot be negative or exceed 1000g', 'warning'); return; }
 
-    const dateStr = Utils.todayStr();
+    const dateStr = this.targetDate || (Diary.currentDate ? Diary.currentDate : Utils.todayStr());
     const diary = Store.getDiary(dateStr);
     diary[this.selectedMealType].push({
       id: Utils.uuid(), name, calories, protein, carbs, fat, serving,

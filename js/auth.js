@@ -1,33 +1,52 @@
 /* ═══════════════════════════════════════════ */
-/* AUTH — Simulated authentication             */
+/* AUTH — Authentication via API               */
 /* ═══════════════════════════════════════════ */
 
 window.Auth = {
   _listeners: [],
 
-  signUp(name, email, password) {
-    const users = Store.getUsers();
-    if (users[email]) return { success: false, error: 'Email already registered' };
-    const user = { id: Utils.uuid(), name, email, password, createdAt: new Date().toISOString() };
-    Store.saveUser(email, user);
-    const session = { id: user.id, name: user.name, email: user.email };
-    Store.setSession(session);
-    this._notify(session);
-    return { success: true, user: session };
+  async signUp(name, email, password) {
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (!data.success) return { success: false, error: data.error };
+      
+      Store.setSession(data.user);
+      await Store.syncFromServer(); // Fetch any existing data just in case
+      this._notify(data.user);
+      return { success: true, user: data.user };
+    } catch (e) {
+      return { success: false, error: 'Network error connecting to server.' };
+    }
   },
 
-  signIn(email, password) {
-    const users = Store.getUsers();
-    const user = users[email];
-    if (!user) return { success: false, error: 'No account found with this email' };
-    if (user.password !== password) return { success: false, error: 'Incorrect password' };
-    const session = { id: user.id, name: user.name, email: user.email };
-    Store.setSession(session);
-    this._notify(session);
-    return { success: true, user: session };
+  async signIn(email, password) {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!data.success) return { success: false, error: data.error };
+      
+      Store.setSession(data.user);
+      await Store.syncFromServer(); // Download all data from MySQL
+      this._notify(data.user);
+      return { success: true, user: data.user };
+    } catch (e) {
+      return { success: false, error: 'Network error connecting to server.' };
+    }
   },
 
-  signOut() { Store.clearSession(); this._notify(null); },
+  signOut() { 
+    Store.clearSession(); 
+    this._notify(null); 
+  },
 
   getCurrentUser() { return Store.getSession(); },
 

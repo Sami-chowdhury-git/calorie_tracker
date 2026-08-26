@@ -103,7 +103,7 @@ Rules:
     try {
       const res = await this._fetch({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 2048 },
+        generationConfig: { temperature: 0.1, maxOutputTokens: 2048, responseMimeType: "application/json" },
       });
 
       if (!res.ok) {
@@ -116,7 +116,13 @@ Rules:
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) return null;
 
-      const items = this._parseJSON(text);
+      let items = this._parseJSON(text);
+      if (items && !Array.isArray(items)) {
+        if (Array.isArray(items.items)) items = items.items;
+        else if (Array.isArray(items.food)) items = items.food;
+        else if (Array.isArray(items.data)) items = items.data;
+        else if (items.name || items.error) items = [items];
+      }
       if (!Array.isArray(items) || items.length === 0) return null;
       return items.map(i => this._normalize(i));
     } catch (err) {
@@ -137,12 +143,28 @@ IMPORTANT: Factor these described ingredients into your analysis. They ARE part 
 
       const prompt = `You are a certified nutrition expert with computer vision. Analyze this food image.${descPart}
 
-IMPORTANT: Calculate ALL nutritional values yourself. Always provide your best expert estimate.
+IMPORTANT RULES:
+1. Calculate ALL nutritional values yourself using USDA-standard reference data. Always provide your best expert estimate.
+2. Even if the image is blurry, dark, or unclear, try your BEST to identify the food. Use visual cues like color, shape, texture, plate type, and context.
+3. If a USER DESCRIPTION is provided above, use it as strong guidance. The description tells you what the food IS — trust it even if the image is ambiguous. Combine visual analysis with the description.
+4. ONLY return the error response if there is genuinely NO food at all in the image (e.g. a photo of a car, a blank wall, etc.).
+5. FOR PACKAGED/BRANDED PRODUCTS: Read the brand name, product name, and volume/weight from the packaging. Use standard published nutritional data for that specific product and size. Do NOT guess — use real data.
+6. CRITICAL SANITY CHECK — Use these reference calorie densities to verify your estimates:
+   - Water/zero-cal drinks: 0 kcal
+   - Sodas/colas/juice drinks: 40-50 kcal per 100ml (so 300ml = 120-150 kcal)
+   - Fruits & vegetables: 20-60 kcal per 100g
+   - Rice, bread, grains: 100-150 kcal per 100g (cooked)
+   - Chicken, fish, lean meat: 150-200 kcal per 100g
+   - Red meat: 200-280 kcal per 100g
+   - Cheese: 300-400 kcal per 100g
+   - Nuts: 550-650 kcal per 100g
+   - Oils, butter, ghee: 800-900 kcal per 100g
+   If your calculated calories are drastically outside these ranges, RECHECK your estimate.
 
-Step 1 — Identify what you see. If there is NO food, return:
+If there is absolutely NO food and NO description, return:
 [{"error": "No food detected in this image. Please try a food photo."}]
 
-Step 2 — Return a JSON array:
+Otherwise return a JSON array:
 [
   {
     "name": "Dish name (e.g. Chicken Biryani)",
@@ -184,7 +206,7 @@ Rules:
             { inlineData: { mimeType, data: base64 } },
           ],
         }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 4096 },
+        generationConfig: { temperature: 0.2, maxOutputTokens: 4096, responseMimeType: "application/json" },
       });
 
       if (!res.ok) {
@@ -197,7 +219,13 @@ Rules:
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) return null;
 
-      const items = this._parseJSON(text);
+      let items = this._parseJSON(text);
+      if (items && !Array.isArray(items)) {
+        if (Array.isArray(items.items)) items = items.items;
+        else if (Array.isArray(items.food)) items = items.food;
+        else if (Array.isArray(items.data)) items = items.data;
+        else if (items.name || items.error) items = [items];
+      }
       if (!Array.isArray(items) || items.length === 0) return null;
       if (items[0]?.error) return items;
 
@@ -228,7 +256,7 @@ Return ONLY valid JSON (no markdown):
     try {
       const res = await this._fetch({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 500 },
+        generationConfig: { temperature: 0.3, maxOutputTokens: 500, responseMimeType: "application/json" },
       });
       if (!res.ok) throw new Error(`API error ${res.status}`);
       const data = await res.json();
@@ -240,13 +268,13 @@ Return ONLY valid JSON (no markdown):
     }
   },
 
-  async askCoach(question, history) {
+  async askCoach(question, history, userContext) {
     const contextMsgs = (history || []).slice(-16).map(m => ({
       role: m.role === 'user' ? 'user' : 'model',
       parts: [{ text: m.text }],
     }));
 
-    const systemPrompt = `You are a friendly, knowledgeable AI fitness and nutrition coach inside a calorie tracking app called CalTrack. 
+    const systemPrompt = `You are a friendly, knowledgeable AI fitness and nutrition coach inside a calorie tracking app called MacroLens. 
 
 Rules:
 1. ONLY answer questions about fitness, nutrition, exercise, supplements, body composition, workout routines, meal planning, and health.
@@ -254,15 +282,17 @@ Rules:
 3. Keep answers concise (2-4 paragraphs max), practical, and evidence-based.
 4. Use a friendly, encouraging tone.
 5. When giving nutritional advice, mention specific numbers where helpful (grams, calories, etc.).
-6. Never provide medical diagnoses. Suggest consulting a doctor for medical concerns.`;
+6. Never provide medical diagnoses. Suggest consulting a doctor for medical concerns.
+7. CRITICAL: You have access to the user's MacroLens data below. ONLY refer to or analyze this data if the user explicitly asks about their personal data, eating patterns, or progress. If they ask a general question (e.g. "how much protein in soya chunks"), answer the question directly WITHOUT mentioning their personal data.
+8. Use **bold** for emphasis and structure your responses with line breaks for readability.
+${userContext || ''}`;
 
     const contents = [
       { role: 'user', parts: [{ text: systemPrompt }] },
-      { role: 'model', parts: [{ text: 'Got it! I\'m your CalTrack AI fitness coach. I\'ll only answer fitness and nutrition questions. How can I help? 💪' }] },
+      { role: 'model', parts: [{ text: 'Got it! I\'m your MacroLens AI fitness coach with access to your tracking data. I\'ll give you personalized advice based on your meals, macros, and progress. How can I help? 💪' }] },
       ...contextMsgs,
     ];
 
-    // Add current question if not already in context
     if (!contextMsgs.length || contextMsgs[contextMsgs.length - 1]?.parts?.[0]?.text !== question) {
       contents.push({ role: 'user', parts: [{ text: question }] });
     }

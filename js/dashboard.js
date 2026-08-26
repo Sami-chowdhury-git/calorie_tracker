@@ -10,6 +10,50 @@ window.Dashboard = {
     document.getElementById('dash-view-diary-btn').addEventListener('click', () => {
       document.dispatchEvent(new CustomEvent('navigate', { detail: { view: 'diary' } }));
     });
+
+    // Custom macros toggle
+    document.getElementById('dash-edit-macros-btn')?.addEventListener('click', () => {
+      const form = document.getElementById('custom-macros-form');
+      const isHidden = form.classList.contains('hidden');
+      form.classList.toggle('hidden');
+      if (isHidden) {
+        // Pre-fill with current profile values
+        const profile = Store.getProfile();
+        if (profile) {
+          document.getElementById('custom-calories').value = profile.tdee || '';
+          document.getElementById('custom-protein').value = profile.protein || '';
+          document.getElementById('custom-carbs').value = profile.carbs || '';
+          document.getElementById('custom-fat').value = profile.fat || '';
+        }
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    });
+
+    // Save custom macros
+    document.getElementById('custom-macros-save-btn')?.addEventListener('click', () => {
+      const calories = parseInt(document.getElementById('custom-calories').value);
+      const protein = parseInt(document.getElementById('custom-protein').value);
+      const carbs = parseInt(document.getElementById('custom-carbs').value);
+      const fat = parseInt(document.getElementById('custom-fat').value);
+
+      if (!calories || calories < 800) {
+        Utils.showToast('Please enter valid calories (min 800)', 'warning');
+        return;
+      }
+
+      const profile = Store.getProfile();
+      if (!profile) return;
+
+      profile.tdee = calories;
+      if (protein > 0) profile.protein = protein;
+      if (carbs > 0) profile.carbs = carbs;
+      if (fat > 0) profile.fat = fat;
+
+      Store.saveProfile(profile);
+      document.getElementById('custom-macros-form').classList.add('hidden');
+      Utils.showToast(`Custom macros saved! Target: ${calories} kcal`, 'success');
+      this.refresh();
+    });
   },
 
   refresh() {

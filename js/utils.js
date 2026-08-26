@@ -32,6 +32,13 @@ window.Utils = {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   },
 
+  formatShortDate(dateStr) {
+    if (this.isToday(dateStr)) return 'Today';
+    if (this.isYesterday(dateStr)) return 'Yesterday';
+    const d = new Date(dateStr + 'T12:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  },
+
   getGreeting() {
     const h = new Date().getHours();
     if (h < 12) return 'Good morning';

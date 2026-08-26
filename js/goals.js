@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════ */
-/* GOALS — Recalculate TDEE & Macro Adjustment */
+/* GOALS — Recalculate TDEE & Apply Goals     */
 /* ═══════════════════════════════════════════ */
 
 window.Goals = (() => {
@@ -7,7 +7,6 @@ window.Goals = (() => {
   let calculatedMacros = { protein: 0, carbs: 0, fat: 0 };
 
   function init() {
-    // Pre-fill from existing profile
     const profile = Store.getProfile();
     if (profile) {
       const age = document.getElementById('goal-age');
@@ -15,26 +14,27 @@ window.Goals = (() => {
       const weight = document.getElementById('goal-weight');
       const height = document.getElementById('goal-height');
       const heightUnit = document.getElementById('goal-height-unit');
-      const heightInchesGroup = document.getElementById('goal-height-inches-group');
-      const heightInches = document.getElementById('goal-height-inches');
       const activity = document.getElementById('goal-activity');
       const goalType = document.getElementById('goal-type');
 
       if (age && profile.age) age.value = profile.age;
       if (gender && profile.gender) gender.value = profile.gender;
       if (weight && profile.weight) weight.value = profile.weight;
-      if (height && profile.height) height.value = profile.height;
       if (heightUnit && profile.heightUnit) {
         heightUnit.value = profile.heightUnit;
-        if (heightInchesGroup) {
-          heightInchesGroup.classList.toggle('hidden', profile.heightUnit !== 'ft');
-        }
+        toggleHeightInputs(profile.heightUnit);
       }
-      if (heightInches && profile.heightInches !== undefined) heightInches.value = profile.heightInches;
+      if (profile.heightUnit === 'ft') {
+        const ftEl = document.getElementById('goal-height-ft');
+        const inEl = document.getElementById('goal-height-in');
+        if (ftEl && profile.heightFt !== undefined) ftEl.value = profile.heightFt;
+        if (inEl && profile.heightIn !== undefined) inEl.value = profile.heightIn;
+      } else {
+        if (height && profile.height) height.value = profile.height;
+      }
       if (activity && profile.activityLevel) activity.value = profile.activityLevel;
       if (goalType && profile.goal) goalType.value = profile.goal;
 
-      // Populate local state
       calculatedTDEE = profile.tdee || 2000;
       calculatedMacros = {
         protein: profile.protein || 150,
@@ -46,47 +46,62 @@ window.Goals = (() => {
     // Recalculate button
     document.getElementById('recalc-btn')?.addEventListener('click', recalculate);
 
-    // Height unit toggle listener
+    // Height unit toggle
     document.getElementById('goal-height-unit')?.addEventListener('change', (e) => {
-      document.getElementById('goal-height-inches-group')?.classList.toggle('hidden', e.target.value !== 'ft');
+      toggleHeightInputs(e.target.value);
     });
-
-    // Sliders
-    ['protein', 'carbs', 'fat'].forEach(macro => {
-      const slider = document.getElementById(`slider-${macro}`);
-      if (slider) {
-        slider.addEventListener('input', () => {
-          document.getElementById(`slider-${macro}-val`).textContent = `${slider.value}g`;
-        });
-      }
-    });
-
-    // AI validate
-    document.getElementById('validate-macros-btn')?.addEventListener('click', validateWithAI);
 
     // Apply goals
     document.getElementById('apply-goals-btn')?.addEventListener('click', applyGoals);
+  }
+
+  function toggleHeightInputs(unit) {
+    const cmGroup = document.getElementById('goal-height-cm-group');
+    const ftGroup = document.getElementById('goal-height-ft-group');
+    if (unit === 'ft') {
+      // Hide the cm input but keep the unit select visible
+      if (cmGroup) {
+        const mainInput = cmGroup.querySelector('#goal-height');
+        if (mainInput) mainInput.style.display = 'none';
+      }
+      if (ftGroup) ftGroup.classList.remove('hidden');
+    } else {
+      if (cmGroup) {
+        const mainInput = cmGroup.querySelector('#goal-height');
+        if (mainInput) mainInput.style.display = '';
+      }
+      if (ftGroup) ftGroup.classList.add('hidden');
+    }
   }
 
   function recalculate() {
     const age = parseInt(document.getElementById('goal-age').value);
     const gender = document.getElementById('goal-gender').value;
     const weight = parseFloat(document.getElementById('goal-weight').value);
-    const height = parseFloat(document.getElementById('goal-height').value);
     const heightUnit = document.getElementById('goal-height-unit')?.value || 'cm';
-    const heightInches = parseFloat(document.getElementById('goal-height-inches')?.value || 0);
     const activity = parseFloat(document.getElementById('goal-activity').value);
     const goal = document.getElementById('goal-type').value;
 
-    if (!age || !weight || !height) {
-      Utils.showToast('Please fill in all fields', 'error');
+    if (isNaN(age) || age < 13 || age > 100) {
+      Utils.showToast('Please enter a valid age (13–100 years)', 'warning');
       return;
     }
 
-    // Convert imperial height to cm
-    let hCm = height;
+    if (isNaN(weight) || weight < 20 || weight > 300) {
+      Utils.showToast('Please enter a valid weight (20–300 kg)', 'warning');
+      return;
+    }
+
+    let hCm;
     if (heightUnit === 'ft') {
-      hCm = (height * 30.48) + (heightInches * 2.54);
+      const ft = parseFloat(document.getElementById('goal-height-ft')?.value || 0);
+      const inches = parseFloat(document.getElementById('goal-height-in')?.value || 0);
+      if (isNaN(ft) || ft < 1 || ft > 7) { Utils.showToast('Feet must be between 1 and 7 ft', 'warning'); return; }
+      if (isNaN(inches) || inches < 0 || inches > 11) { Utils.showToast('Inches must be between 0 and 11 in', 'warning'); return; }
+      hCm = (ft * 30.48) + (inches * 2.54);
+    } else {
+      hCm = parseFloat(document.getElementById('goal-height').value);
+      if (isNaN(hCm) || hCm < 50 || hCm > 250) { Utils.showToast('Please enter a valid height (50–250 cm)', 'warning'); return; }
     }
 
     // Mifflin-St Jeor
@@ -95,12 +110,12 @@ window.Goals = (() => {
 
     let tdee = Math.round(bmr * activity);
 
-    // Dynamic Goal adjustment based on calculated TDEE
+    // Dynamic Goal adjustment
     let adjustment = 0;
     if (goal === 'cut') {
-      adjustment = -Math.min(500, Math.round(tdee * 0.20)); // 20% deficit, max 500
+      adjustment = -Math.min(500, Math.round(tdee * 0.20));
     } else if (goal === 'bulk') {
-      adjustment = Math.max(100, Math.min(300, Math.round(tdee * 0.10))); // 10% surplus, min 100, max 300
+      adjustment = Math.max(100, Math.min(300, Math.round(tdee * 0.10)));
     }
     tdee = Math.round(tdee + adjustment);
     tdee = Math.max(1200, tdee);
@@ -122,91 +137,63 @@ window.Goals = (() => {
 
     // Show results
     document.getElementById('recalc-tdee').textContent = `${tdee} kcal`;
+    document.getElementById('recalc-protein').textContent = calculatedMacros.protein;
+    document.getElementById('recalc-carbs').textContent = calculatedMacros.carbs;
+    document.getElementById('recalc-fat').textContent = calculatedMacros.fat;
     document.getElementById('recalc-result').classList.remove('hidden');
-
-    // Set sliders
-    const pSlider = document.getElementById('slider-protein');
-    const cSlider = document.getElementById('slider-carbs');
-    const fSlider = document.getElementById('slider-fat');
-    pSlider.value = calculatedMacros.protein;
-    cSlider.value = calculatedMacros.carbs;
-    fSlider.value = calculatedMacros.fat;
-    document.getElementById('slider-protein-val').textContent = `${calculatedMacros.protein}g`;
-    document.getElementById('slider-carbs-val').textContent = `${calculatedMacros.carbs}g`;
-    document.getElementById('slider-fat-val').textContent = `${calculatedMacros.fat}g`;
-
-    // Hide previous AI feedback
-    document.getElementById('ai-macro-feedback').classList.add('hidden');
 
     Utils.showToast(`New TDEE: ${tdee} kcal`, 'success');
     if (window.lucide) lucide.createIcons();
   }
 
-  async function validateWithAI() {
-    const btn = document.getElementById('validate-macros-btn');
-    const feedbackEl = document.getElementById('ai-macro-feedback');
-    const protein = parseInt(document.getElementById('slider-protein').value);
-    const carbs = parseInt(document.getElementById('slider-carbs').value);
-    const fat = parseInt(document.getElementById('slider-fat').value);
-    const totalCals = protein * 4 + carbs * 4 + fat * 9;
-    const profile = Store.getProfile();
-
-    btn.disabled = true;
-    btn.innerHTML = '<i data-lucide="loader-2" class="spinning"></i> Checking...';
-    if (window.lucide) lucide.createIcons();
-
-    try {
-      const result = await Gemini.validateMacros({
-        tdee: calculatedTDEE,
-        protein, carbs, fat, totalCals,
-        goal: document.getElementById('goal-type').value,
-        weight: parseFloat(document.getElementById('goal-weight').value),
-        age: parseInt(document.getElementById('goal-age').value),
-        gender: document.getElementById('goal-gender').value || profile?.gender || 'female',
-      });
-
-      feedbackEl.textContent = result.feedback;
-      feedbackEl.className = `ai-feedback ${result.isGood ? 'good' : 'bad'}`;
-      feedbackEl.classList.remove('hidden');
-    } catch (err) {
-      feedbackEl.textContent = 'Could not validate macros. Try again later.';
-      feedbackEl.className = 'ai-feedback bad';
-      feedbackEl.classList.remove('hidden');
-      console.error('Macro validation error:', err);
-    }
-
-    btn.disabled = false;
-    btn.innerHTML = '<i data-lucide="sparkles"></i> AI Check';
-    if (window.lucide) lucide.createIcons();
-  }
-
   function applyGoals() {
-    const protein = parseInt(document.getElementById('slider-protein').value);
-    const carbs = parseInt(document.getElementById('slider-carbs').value);
-    const fat = parseInt(document.getElementById('slider-fat').value);
-    const totalCals = protein * 4 + carbs * 4 + fat * 9;
-
     const profile = Store.getProfile();
     if (!profile) return;
 
-    // Update profile
-    profile.tdee = totalCals;
-    profile.protein = protein;
-    profile.carbs = carbs;
-    profile.fat = fat;
-    profile.age = parseInt(document.getElementById('goal-age').value) || profile.age;
+    const age = parseInt(document.getElementById('goal-age').value);
+    if (isNaN(age) || age < 13 || age > 100) {
+      Utils.showToast('Please enter a valid age (13–100 years)', 'warning');
+      return;
+    }
+
+    const weight = parseFloat(document.getElementById('goal-weight').value);
+    if (isNaN(weight) || weight < 20 || weight > 300) {
+      Utils.showToast('Please enter a valid weight (20–300 kg)', 'warning');
+      return;
+    }
+
+    const heightUnit = document.getElementById('goal-height-unit')?.value || 'cm';
+    if (heightUnit === 'ft') {
+      const ft = parseFloat(document.getElementById('goal-height-ft')?.value || 0);
+      const inches = parseFloat(document.getElementById('goal-height-in')?.value || 0);
+      if (isNaN(ft) || ft < 1 || ft > 7) { Utils.showToast('Feet must be between 1 and 7 ft', 'warning'); return; }
+      if (isNaN(inches) || inches < 0 || inches > 11) { Utils.showToast('Inches must be between 0 and 11 in', 'warning'); return; }
+    } else {
+      const hCm = parseFloat(document.getElementById('goal-height').value);
+      if (isNaN(hCm) || hCm < 50 || hCm > 250) { Utils.showToast('Please enter a valid height (50–250 cm)', 'warning'); return; }
+    }
+
+    profile.tdee = calculatedTDEE;
+    profile.protein = calculatedMacros.protein;
+    profile.carbs = calculatedMacros.carbs;
+    profile.fat = calculatedMacros.fat;
+    profile.age = age || profile.age;
     profile.gender = document.getElementById('goal-gender').value || profile.gender;
     profile.weight = parseFloat(document.getElementById('goal-weight').value) || profile.weight;
-    profile.height = parseFloat(document.getElementById('goal-height').value) || profile.height;
-    profile.heightUnit = document.getElementById('goal-height-unit')?.value || 'cm';
-    profile.heightInches = parseFloat(document.getElementById('goal-height-inches')?.value || 0);
+    profile.heightUnit = heightUnit;
+    if (heightUnit === 'ft') {
+      profile.heightFt = parseFloat(document.getElementById('goal-height-ft')?.value || 0);
+      profile.heightIn = parseFloat(document.getElementById('goal-height-in')?.value || 0);
+      profile.height = (profile.heightFt * 30.48) + (profile.heightIn * 2.54);
+    } else {
+      profile.height = parseFloat(document.getElementById('goal-height').value) || profile.height;
+    }
     profile.activityLevel = parseFloat(document.getElementById('goal-activity').value) || profile.activityLevel;
     profile.goal = document.getElementById('goal-type').value || profile.goal;
 
     Store.saveProfile(profile);
-    Utils.showToast(`Goals updated! New target: ${totalCals} kcal`, 'success');
+    Utils.showToast(`Goals updated! New target: ${calculatedTDEE} kcal`, 'success');
 
-    // Refresh dashboard if visible
     if (window.Dashboard && typeof window.Dashboard.refresh === 'function') {
       window.Dashboard.refresh();
     }
