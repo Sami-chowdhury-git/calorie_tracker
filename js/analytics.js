@@ -44,6 +44,35 @@ window.Analytics = {
       document.dispatchEvent(new CustomEvent('check-achievements'));
     });
 
+    // Report Exporter
+    const exportModal = document.getElementById('export-report-modal');
+    document.getElementById('export-report-btn')?.addEventListener('click', () => {
+      if (exportModal) {
+        exportModal.classList.remove('hidden');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    });
+
+    document.getElementById('export-modal-close')?.addEventListener('click', () => {
+      if (exportModal) exportModal.classList.add('hidden');
+    });
+
+    exportModal?.addEventListener('click', (e) => {
+      if (e.target === exportModal) exportModal.classList.add('hidden');
+    });
+
+    document.getElementById('export-csv-action-btn')?.addEventListener('click', () => {
+      const range = document.getElementById('export-range-select')?.value || 7;
+      if (window.Report) window.Report.exportCSV(range);
+      if (exportModal) exportModal.classList.add('hidden');
+    });
+
+    document.getElementById('export-pdf-action-btn')?.addEventListener('click', () => {
+      const range = document.getElementById('export-range-select')?.value || 7;
+      if (window.Report) window.Report.exportPDF(range);
+      if (exportModal) exportModal.classList.add('hidden');
+    });
+
     document.addEventListener('meal-logged', () => this.refresh());
   },
 

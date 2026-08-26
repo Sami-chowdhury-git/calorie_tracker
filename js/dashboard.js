@@ -54,6 +54,39 @@ window.Dashboard = {
       Utils.showToast(`Custom macros saved! Target: ${calories} kcal`, 'success');
       this.refresh();
     });
+
+    // Water Tracker Quick Actions
+    document.querySelectorAll('.water-btn[data-ml]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ml = parseInt(btn.dataset.ml);
+        const today = Utils.todayStr();
+        Store.addWater(today, ml);
+        this.renderWaterTracker();
+        Utils.showToast(`💧 Added +${ml}ml water`, 'success', 2000);
+      });
+    });
+
+    document.getElementById('water-custom-btn')?.addEventListener('click', () => {
+      const input = window.prompt('Enter water amount in ml (e.g. 350):', '250');
+      if (input !== null && input.trim() !== '') {
+        const ml = parseInt(input);
+        if (!isNaN(ml) && ml > 0 && ml <= 5000) {
+          const today = Utils.todayStr();
+          Store.addWater(today, ml);
+          this.renderWaterTracker();
+          Utils.showToast(`💧 Added +${ml}ml water`, 'success', 2000);
+        } else {
+          Utils.showToast('Please enter a valid amount (1–5000 ml)', 'warning');
+        }
+      }
+    });
+
+    document.getElementById('water-reset-btn')?.addEventListener('click', () => {
+      const today = Utils.todayStr();
+      Store.saveWaterLog(today, { total: 0, goal: Store.getWaterGoal(), entries: [] });
+      this.renderWaterTracker();
+      Utils.showToast('Water reset for today', 'info', 2000);
+    });
   },
 
   refresh() {
@@ -88,6 +121,12 @@ window.Dashboard = {
     this.updateMacro('carbs', t.carbs, profile.carbs);
     this.updateMacro('fat', t.fat, profile.fat);
 
+    // Micronutrients
+    this.renderMicronutrients(t);
+
+    // Water Tracker
+    this.renderWaterTracker();
+
     // Stats
     document.getElementById('meals-logged-count').textContent = t.meals;
     document.getElementById('dash-streak-count').textContent = Store.getStreakData().currentStreak;
@@ -96,6 +135,65 @@ window.Dashboard = {
 
     // Meals preview
     this.renderMealsPreview();
+  },
+
+  renderMicronutrients(totals) {
+    const fiberEl = document.getElementById('fiber-consumed');
+    const sugarEl = document.getElementById('sugar-consumed');
+    const sodiumEl = document.getElementById('sodium-consumed');
+
+    const fiberBar = document.getElementById('fiber-bar-fill');
+    const sugarBar = document.getElementById('sugar-bar-fill');
+    const sodiumBar = document.getElementById('sodium-bar-fill');
+
+    const fiber = Math.round((totals.fiber || 0) * 10) / 10;
+    const sugar = Math.round((totals.sugar || 0) * 10) / 10;
+    const sodium = Math.round(totals.sodium || 0);
+
+    if (fiberEl) fiberEl.textContent = fiber;
+    if (sugarEl) sugarEl.textContent = sugar;
+    if (sodiumEl) sodiumEl.textContent = sodium;
+
+    // Daily recommendations: Fiber 28g, Sugar <50g, Sodium <2300mg
+    if (fiberBar) {
+      const pct = Math.min(100, Math.round((fiber / 28) * 100));
+      fiberBar.style.width = `${pct}%`;
+    }
+    if (sugarBar) {
+      const pct = Math.min(100, Math.round((sugar / 50) * 100));
+      sugarBar.style.width = `${pct}%`;
+      if (sugar > 50) sugarBar.classList.add('exceeded');
+      else sugarBar.classList.remove('exceeded');
+    }
+    if (sodiumBar) {
+      const pct = Math.min(100, Math.round((sodium / 2300) * 100));
+      sodiumBar.style.width = `${pct}%`;
+      if (sodium > 2300) sodiumBar.classList.add('exceeded');
+      else sodiumBar.classList.remove('exceeded');
+    }
+  },
+
+  renderWaterTracker() {
+    const today = Utils.todayStr();
+    const water = Store.getWaterLog(today);
+    const goal = water.goal || Store.getWaterGoal() || 2500;
+    const total = water.total || 0;
+
+    const currentEl = document.getElementById('water-current');
+    const goalEl = document.getElementById('water-goal-display');
+    const barEl = document.getElementById('water-progress-bar');
+    const badgeEl = document.getElementById('water-percent-badge');
+
+    if (currentEl) currentEl.textContent = Utils.formatNum(total);
+    if (goalEl) goalEl.textContent = Utils.formatNum(goal);
+
+    const pct = Math.min(100, Math.round((total / goal) * 100));
+    if (barEl) barEl.style.width = `${pct}%`;
+    if (badgeEl) {
+      badgeEl.textContent = `${pct}%`;
+      if (pct >= 100) badgeEl.classList.add('goal-reached');
+      else badgeEl.classList.remove('goal-reached');
+    }
   },
 
   updateRing(id, radius, progress) {

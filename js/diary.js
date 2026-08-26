@@ -41,6 +41,13 @@ window.Diary = {
     document.getElementById('diary-total-protein').textContent = Math.round(t.protein);
     document.getElementById('diary-total-carbs').textContent = Math.round(t.carbs);
     document.getElementById('diary-total-fat').textContent = Math.round(t.fat);
+    
+    const fiberEl = document.getElementById('diary-total-fiber');
+    const sugarEl = document.getElementById('diary-total-sugar');
+    const sodiumEl = document.getElementById('diary-total-sodium');
+    if (fiberEl) fiberEl.textContent = `${Math.round(t.fiber * 10) / 10}g`;
+    if (sugarEl) sugarEl.textContent = `${Math.round(t.sugar * 10) / 10}g`;
+    if (sodiumEl) sodiumEl.textContent = `${Math.round(t.sodium)}mg`;
 
     ['breakfast','lunch','dinner','snacks'].forEach(meal => {
       const container = document.querySelector(`.meal-group-items[data-meal="${meal}"]`);
@@ -49,18 +56,25 @@ window.Diary = {
         container.innerHTML = '<p class="meal-empty">No items logged</p>';
         return;
       }
-      container.innerHTML = items.map(item => `
+      container.innerHTML = items.map(item => {
+        const microParts = [];
+        if (item.fiber) microParts.push(`Fib:${Math.round(item.fiber * 10) / 10}g`);
+        if (item.sugar) microParts.push(`Sug:${Math.round(item.sugar * 10) / 10}g`);
+        if (item.sodium) microParts.push(`Sod:${Math.round(item.sodium)}mg`);
+        const microStr = microParts.length ? ` · ${microParts.join(' ')}` : '';
+
+        return `
         <div class="meal-item" data-id="${item.id}">
           <div class="meal-item-info">
             <span class="meal-item-name">${item.name}</span>
-            <span class="meal-item-serving">${item.serving || ''} · P:${Math.round(item.protein)}g C:${Math.round(item.carbs)}g F:${Math.round(item.fat)}g</span>
+            <span class="meal-item-serving">${item.serving || ''} · P:${Math.round(item.protein)}g C:${Math.round(item.carbs)}g F:${Math.round(item.fat)}g${microStr}</span>
           </div>
           <span class="meal-item-cals">${item.calories}</span>
           <button class="meal-item-delete icon-btn" onclick="Diary.deleteItem('${this.currentDate}','${meal}','${item.id}')" title="Remove">
             <i data-lucide="trash-2"></i>
           </button>
         </div>
-      `).join('');
+      `}).join('');
     });
 
     this.renderRecentFoods();

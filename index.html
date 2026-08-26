@@ -503,6 +503,73 @@
           </div>
         </div>
 
+        <!-- Micronutrients Card -->
+        <div class="dash-micros-card">
+          <div class="micros-header">
+            <div class="micros-title"><i data-lucide="salad"></i> <span>Key Micronutrients</span></div>
+            <span class="micros-hint">Daily Health Targets</span>
+          </div>
+          <div class="micros-grid">
+            <div class="micro-item">
+              <div class="micro-info">
+                <span class="micro-label">Fiber</span>
+                <span class="micro-val"><span id="fiber-consumed">0</span>g <span class="micro-target">/ 28g</span></span>
+              </div>
+              <div class="micro-bar-bg"><div class="micro-bar-fill fiber" id="fiber-bar-fill" style="width: 0%;"></div></div>
+            </div>
+            <div class="micro-item">
+              <div class="micro-info">
+                <span class="micro-label">Sugar</span>
+                <span class="micro-val"><span id="sugar-consumed">0</span>g <span class="micro-target">/ &lt;50g</span></span>
+              </div>
+              <div class="micro-bar-bg"><div class="micro-bar-fill sugar" id="sugar-bar-fill" style="width: 0%;"></div></div>
+            </div>
+            <div class="micro-item">
+              <div class="micro-info">
+                <span class="micro-label">Sodium</span>
+                <span class="micro-val"><span id="sodium-consumed">0</span>mg <span class="micro-target">/ &lt;2300mg</span></span>
+              </div>
+              <div class="micro-bar-bg"><div class="micro-bar-fill sodium" id="sodium-bar-fill" style="width: 0%;"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Water / Hydration Tracker -->
+        <div class="dash-water-card">
+          <div class="water-card-header">
+            <div class="water-title">
+              <i data-lucide="droplets" class="water-icon"></i>
+              <div>
+                <h3>Hydration Tracker</h3>
+                <span class="water-subtitle"><span id="water-current">0</span> / <span id="water-goal-display">2,500</span> ml</span>
+              </div>
+            </div>
+            <div class="water-percent-badge" id="water-percent-badge">0%</div>
+          </div>
+          
+          <div class="water-progress-track">
+            <div class="water-progress-bar" id="water-progress-bar" style="width: 0%;"></div>
+          </div>
+
+          <div class="water-quick-actions">
+            <button class="water-btn" data-ml="250" title="Add 1 Glass (250ml)">
+              <i data-lucide="glass-water"></i> +250 ml
+            </button>
+            <button class="water-btn" data-ml="500" title="Add 1 Bottle (500ml)">
+              <i data-lucide="cup-soda"></i> +500 ml
+            </button>
+            <button class="water-btn" data-ml="750" title="Add 750ml">
+              <i data-lucide="droplet"></i> +750 ml
+            </button>
+            <button class="water-btn btn-icon-only" id="water-custom-btn" title="Add Custom Amount">
+              <i data-lucide="plus"></i>
+            </button>
+            <button class="water-btn btn-icon-only water-reset-btn" id="water-reset-btn" title="Reset Today's Water">
+              <i data-lucide="rotate-ccw"></i>
+            </button>
+          </div>
+        </div>
+
         <!-- Quick Stats -->
         <div class="dash-stats-row">
           <div class="dash-stat-card">
@@ -602,6 +669,19 @@
             <span class="dt-value" id="diary-total-fat">0</span>
             <span class="dt-label">Fats</span>
           </div>
+          <div class="diary-total-sep"></div>
+          <div class="diary-total-item fiber" title="Fiber">
+            <span class="dt-value" id="diary-total-fiber">0</span>
+            <span class="dt-label">Fiber</span>
+          </div>
+          <div class="diary-total-item sugar" title="Sugar">
+            <span class="dt-value" id="diary-total-sugar">0</span>
+            <span class="dt-label">Sugar</span>
+          </div>
+          <div class="diary-total-item sodium" title="Sodium">
+            <span class="dt-value" id="diary-total-sodium">0</span>
+            <span class="dt-label">Sodium</span>
+          </div>
         </div>
 
         <!-- Meal Groups -->
@@ -691,9 +771,49 @@
     <!-- ═══════ ANALYTICS VIEW ═══════ -->
     <div id="analytics-view" class="view">
       <div class="view-content">
-        <div class="analytics-header">
-          <h2>Analytics</h2>
-          <p>Track your progress over time</p>
+        <div class="analytics-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h2>Analytics</h2>
+            <p>Track your progress over time</p>
+          </div>
+          <div class="analytics-actions">
+            <button id="export-report-btn" class="btn btn-secondary btn-sm" title="Export nutrition and progress reports">
+              <i data-lucide="download"></i> Export Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Export Report Modal -->
+        <div id="export-report-modal" class="modal hidden">
+          <div class="modal-content" style="max-width: 440px;">
+            <div class="modal-header">
+              <h3><i data-lucide="file-text" style="display:inline;vertical-align:-3px;margin-right:6px;color:var(--primary);"></i> Export Report</h3>
+              <button id="export-modal-close" class="modal-close-btn"><i data-lucide="x"></i></button>
+            </div>
+            <div style="padding: 12px 0;">
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                Download your daily calories, macros, micronutrients (fiber/sugar/sodium), and water intake summary.
+              </p>
+              
+              <div class="input-group" style="margin-bottom: 16px;">
+                <label for="export-range-select" style="font-size: 0.82rem; margin-bottom: 6px; display: block;">Select Time Range</label>
+                <select id="export-range-select" class="input-field" style="background: var(--bg-tertiary);">
+                  <option value="7" selected>Past 7 Days</option>
+                  <option value="30">Past 30 Days</option>
+                  <option value="all">All-Time History</option>
+                </select>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <button id="export-csv-action-btn" class="btn btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                  <i data-lucide="table"></i> Download CSV
+                </button>
+                <button id="export-pdf-action-btn" class="btn btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                  <i data-lucide="printer"></i> Print / PDF
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Weekly Summary -->
@@ -937,6 +1057,9 @@
           <button class="tab-btn" data-tab="image">
             <i data-lucide="camera"></i> Photo
           </button>
+          <button class="tab-btn" data-tab="barcode">
+            <i data-lucide="scan-barcode"></i> Barcode
+          </button>
           <button class="tab-btn" data-tab="manual">
             <i data-lucide="edit-3"></i> Manual
           </button>
@@ -1010,6 +1133,59 @@
           </div>
         </div>
 
+        <!-- Barcode Tab -->
+        <div id="barcode-tab" class="tab-panel">
+          <div class="barcode-scanner-section">
+            <div id="barcode-scanner-box" class="barcode-scanner-box">
+              <video id="barcode-video" class="barcode-video" playsinline muted></video>
+              <div class="barcode-target-guide">
+                <div class="barcode-laser-line"></div>
+                <div class="barcode-corner tl"></div>
+                <div class="barcode-corner tr"></div>
+                <div class="barcode-corner bl"></div>
+                <div class="barcode-corner br"></div>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 8px; margin: 12px 0;">
+              <button type="button" id="barcode-camera-toggle-btn" class="btn btn-secondary btn-sm" style="flex:1;">
+                <i data-lucide="camera"></i> Start Camera Scan
+              </button>
+            </div>
+
+            <!-- Manual Barcode Search -->
+            <div class="input-group" style="margin-top: 10px;">
+              <label for="barcode-input" style="font-size: 0.8rem; margin-bottom: 6px; display: block;">Or Enter Barcode Number</label>
+              <div class="input-with-action" style="display: flex; gap: 6px;">
+                <input type="text" id="barcode-input" class="input-field" placeholder="e.g. 5449000000996" style="flex: 1;" />
+                <button id="barcode-search-btn" class="btn btn-primary" style="padding: 0 16px;">
+                  <i data-lucide="search"></i> Lookup
+                </button>
+              </div>
+            </div>
+
+            <!-- Sample Barcodes -->
+            <div class="barcode-samples" style="margin-top: 12px;">
+              <span style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 6px;">Try popular examples (Open Food Facts):</span>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                <button type="button" class="barcode-chip" data-code="5449000000996">🥤 Coca-Cola</button>
+                <button type="button" class="barcode-chip" data-code="3017620422003">🍫 Nutella</button>
+                <button type="button" class="barcode-chip" data-code="0030000010204">🥣 Quaker Oats</button>
+                <button type="button" class="barcode-chip" data-code="0070470003004">🥛 Greek Yogurt</button>
+              </div>
+            </div>
+
+            <div id="barcode-results" class="parsed-results hidden" style="margin-top: 16px;">
+              <h4>Detected Product</h4>
+              <div id="barcode-items-list" class="parsed-items-list"></div>
+              <div class="parsed-total" id="barcode-total"></div>
+              <button id="barcode-confirm-btn" class="btn btn-primary btn-full">
+                <i data-lucide="check"></i> Confirm & Log
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Manual Tab -->
         <div id="manual-tab" class="tab-panel">
           <div class="manual-form">
@@ -1035,7 +1211,21 @@
                 <input type="number" id="manual-fat" class="input-field" placeholder="0" min="0" step="0.1" />
               </div>
             </div>
-            <div class="input-group">
+            <div class="manual-macros-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 8px;">
+              <div class="input-group">
+                <label for="manual-fiber">Fiber (g)</label>
+                <input type="number" id="manual-fiber" class="input-field" placeholder="0" min="0" step="0.1" />
+              </div>
+              <div class="input-group">
+                <label for="manual-sugar">Sugar (g)</label>
+                <input type="number" id="manual-sugar" class="input-field" placeholder="0" min="0" step="0.1" />
+              </div>
+              <div class="input-group">
+                <label for="manual-sodium">Sodium (mg)</label>
+                <input type="number" id="manual-sodium" class="input-field" placeholder="0" min="0" />
+              </div>
+            </div>
+            <div class="input-group" style="margin-top: 8px;">
               <label for="manual-serving">Serving Size</label>
               <input type="text" id="manual-serving" class="input-field" placeholder="e.g. 1 cup, 200g" />
             </div>
@@ -1089,6 +1279,7 @@
   <script src="js/achievements.js"></script>
   <script src="js/goals.js"></script>
   <script src="js/ai-coach.js"></script>
+  <script src="js/report.js"></script>
   <script src="js/landing.js"></script>
   <script src="js/app.js"></script>
 </body>

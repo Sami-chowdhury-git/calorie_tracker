@@ -26,6 +26,9 @@ window.Gemini = {
         protein: parseFloat(((item.protein || 0) / qty).toFixed(1)),
         carbs: parseFloat(((item.carbs || 0) / qty).toFixed(1)),
         fat: parseFloat(((item.fat || 0) / qty).toFixed(1)),
+        fiber: parseFloat(((item.fiber || item.fiber_g || 0) / qty).toFixed(1)),
+        sugar: parseFloat(((item.sugar || item.sugar_g || 0) / qty).toFixed(1)),
+        sodium: Math.round((item.sodium || item.sodium_mg || 0) / qty),
         serving: item.serving || (item.weight_grams ? `${item.weight_grams}g` : '1 serving'),
         weight_grams: item.weight_grams || null,
         unit: 'serving',
@@ -38,6 +41,9 @@ window.Gemini = {
             protein: parseFloat((ing.protein || 0).toFixed(1)),
             carbs: parseFloat((ing.carbs || 0).toFixed(1)),
             fat: parseFloat((ing.fat || 0).toFixed(1)),
+            fiber: parseFloat((ing.fiber || ing.fiber_g || 0).toFixed(1)),
+            sugar: parseFloat((ing.sugar || ing.sugar_g || 0).toFixed(1)),
+            sodium: Math.round(ing.sodium || ing.sodium_mg || 0),
             serving: ing.serving || (ing.weight_grams ? `${ing.weight_grams}g` : '1 serving'),
             weight_grams: ing.weight_grams || null,
           }))
@@ -47,6 +53,9 @@ window.Gemini = {
       totalProtein: parseFloat((item.protein || 0).toFixed(1)),
       totalCarbs: parseFloat((item.carbs || 0).toFixed(1)),
       totalFat: parseFloat((item.fat || 0).toFixed(1)),
+      totalFiber: parseFloat(((item.fiber || item.fiber_g || 0)).toFixed(1)),
+      totalSugar: parseFloat(((item.sugar || item.sugar_g || 0)).toFixed(1)),
+      totalSodium: Math.round(item.sodium || item.sodium_mg || 0),
     };
   },
 
@@ -87,18 +96,22 @@ Return ONLY a valid JSON array. No markdown, no explanation, no code fences. Eac
     "protein": 10.0,
     "carbs": 20.0,
     "fat": 5.0,
+    "fiber": 3.0,
+    "sugar": 2.0,
+    "sodium": 220,
     "weight_grams": 200,
     "serving": "200g"
   }
 ]
 
 Rules:
-- calories/protein/carbs/fat are the TOTAL for the stated quantity.
+- calories/protein/carbs/fat/fiber/sugar/sodium are the TOTAL for the stated quantity.
+- fiber (g), sugar (g), sodium (mg).
 - Parse quantity from the text (e.g. "3 eggs" → quantity: 3).
 - ALWAYS include "weight_grams" — the total weight in grams for the item.
 - "serving" should be the weight (e.g. "200g", "150g"), NOT "1 serving".
 - Use USDA-based nutritional values.
-- Calories must be a whole number. Macros can have 1 decimal place.`;
+- Calories/sodium must be whole numbers. Macros/fiber/sugar can have 1 decimal place.`;
 
     try {
       const res = await this._fetch({
@@ -173,6 +186,9 @@ Otherwise return a JSON array:
     "protein": 35.0,
     "carbs": 70.0,
     "fat": 22.0,
+    "fiber": 6.0,
+    "sugar": 4.0,
+    "sodium": 850,
     "weight_grams": 400,
     "serving": "400g",
     "ingredients": [
@@ -183,6 +199,9 @@ Otherwise return a JSON array:
         "protein": 5.0,
         "carbs": 55.0,
         "fat": 1.0,
+        "fiber": 1.5,
+        "sugar": 0.2,
+        "sodium": 5,
         "weight_grams": 200,
         "serving": "200g"
       }
@@ -192,11 +211,12 @@ Otherwise return a JSON array:
 
 Rules:
 - ALWAYS include "weight_grams" — estimated weight in grams for EVERY item and ingredient.
+- Include fiber (g), sugar (g), sodium (mg).
 - "serving" MUST be the weight (e.g. "400g", "150g"), NEVER "1 serving" or "1 plate".
 - Identify the main DISH name — not individual ingredients as top-level items.
 - Provide ingredient breakdown for complex dishes. Simple foods (apple) can have empty [].
 - Estimate portion size visually. Typical plate ≈ 400-600g.
-- Calories whole number, macros 1 decimal.
+- Calories/sodium whole number, macros/fiber/sugar 1 decimal.
 - Return ONLY the JSON array. No markdown.`;
 
       const res = await this._fetch({

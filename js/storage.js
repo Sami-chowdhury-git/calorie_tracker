@@ -25,6 +25,16 @@ window.Store = {
     if (!s || this._syncing) return;
     this._syncing = true;
 
+    const waterLogs = {};
+    const waterPrefix = this._key('water_' + s.id + '_');
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(waterPrefix)) {
+        const dateStr = k.replace(waterPrefix, '');
+        waterLogs[dateStr] = this.getWaterLog(dateStr);
+      }
+    }
+
     const payload = {
       profile: this.getProfile(),
       diary: [],
@@ -36,7 +46,9 @@ window.Store = {
           nlp: this.getNlpCount(),
           meals: this.getTotalMeals(),
           proteinStreak: this.getProteinStreakData(),
-          weightLogStreak: this.getWeightLogStreak()
+          weightLogStreak: this.getWeightLogStreak(),
+          waterLogs,
+          waterGoal: this.getWaterGoal()
         },
         food_freq: this.getFoodFrequency()
       },
@@ -108,6 +120,14 @@ window.Store = {
           if (c.meals != null) this._set('tm_' + s.id, c.meals, true);
           if (c.proteinStreak) this._set('ps_' + s.id, c.proteinStreak, true);
           if (c.weightLogStreak) this._set('ws_' + s.id, c.weightLogStreak, true);
+          if (c.waterLogs) {
+            Object.entries(c.waterLogs).forEach(([dateStr, wlog]) => {
+              this._set('water_' + s.id + '_' + dateStr, wlog, true);
+            });
+          }
+          if (c.waterGoal) {
+            this._set('water_goal_' + s.id, c.waterGoal, true);
+          }
         }
       }
 
@@ -158,13 +178,16 @@ window.Store = {
 
   getDayTotals(dateStr) {
     const d = this.getDiary(dateStr);
-    const t = { calories: 0, protein: 0, carbs: 0, fat: 0, meals: 0 };
+    const t = { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0, sodium: 0, meals: 0 };
     ['breakfast','lunch','dinner','snacks'].forEach(m => {
       d[m].forEach(i => {
         t.calories += i.calories || 0;
         t.protein += i.protein || 0;
         t.carbs += i.carbs || 0;
         t.fat += i.fat || 0;
+        t.fiber += i.fiber || 0;
+        t.sugar += i.sugar || 0;
+        t.sodium += i.sodium || 0;
         t.meals++;
       });
     });
@@ -248,6 +271,28 @@ window.Store = {
     return s ? (this._get('ws_' + s.id) || { streak: 0, lastDate: null }) : { streak: 0, lastDate: null };
   },
   saveWeightLogStreak(d) { const s = this.getSession(); if (s) this._set('ws_' + s.id, d); },
+
+  /* ── Water Tracking ── */
+  getWaterLog(dateStr) {
+    const s = this.getSession(); if (!s) return { total: 0, goal: 2500, entries: [] };
+    return this._get('water_' + s.id + '_' + dateStr) || { total: 0, goal: 2500, entries: [] };
+  },
+  saveWaterLog(dateStr, data) {
+    const s = this.getSession(); if (s) this._set('water_' + s.id + '_' + dateStr, data);
+  },
+  addWater(dateStr, ml) {
+    const log = this.getWaterLog(dateStr);
+    log.total += ml;
+    log.entries.push({ ml, time: new Date().toISOString() });
+    this.saveWaterLog(dateStr, log);
+    return log;
+  },
+  setWaterGoal(ml) {
+    const s = this.getSession(); if (s) this._set('water_goal_' + s.id, ml);
+  },
+  getWaterGoal() {
+    const s = this.getSession(); return s ? (this._get('water_goal_' + s.id) || 2500) : 2500;
+  },
 
   /* ── Reset all user data ── */
   resetAllData() {

@@ -8,6 +8,8 @@ window.MealLogger = {
   parsedItems: [],
   _selectedImageFile: null,
   _selectedImageDataUrl: null,
+  _videoStream: null,
+  _barcodeInterval: null,
 
   init() {
     document.addEventListener('open-meal-log', (e) => {
@@ -36,7 +38,14 @@ window.MealLogger = {
         document.querySelectorAll('#meal-log-tabs .tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.getElementById(btn.dataset.tab + '-tab').classList.add('active');
+        const targetTab = document.getElementById(btn.dataset.tab + '-tab');
+        if (targetTab) targetTab.classList.add('active');
+
+        if (btn.dataset.tab === 'barcode') {
+          this.startBarcodeCamera();
+        } else {
+          this.stopBarcodeCamera();
+        }
       });
     });
 
@@ -47,6 +56,10 @@ window.MealLogger = {
     // Image
     this.initImageUpload();
     document.getElementById('image-confirm-btn').addEventListener('click', () => this.confirmParsed('image'));
+
+    // Barcode
+    this.initBarcodeScanner();
+    document.getElementById('barcode-confirm-btn')?.addEventListener('click', () => this.confirmParsed('barcode'));
 
     // Manual
     document.getElementById('manual-add-btn').addEventListener('click', () => this.addManual());
@@ -74,6 +87,7 @@ window.MealLogger = {
 
   close() {
     document.getElementById('meal-log-modal').classList.add('hidden');
+    this.stopBarcodeCamera();
     this.resetForm();
   },
 
@@ -100,6 +114,10 @@ window.MealLogger = {
     document.getElementById('nlp-input').value = '';
     document.getElementById('nlp-results').classList.add('hidden');
     document.getElementById('image-results').classList.add('hidden');
+    const barcodeResults = document.getElementById('barcode-results');
+    if (barcodeResults) barcodeResults.classList.add('hidden');
+    const barcodeInput = document.getElementById('barcode-input');
+    if (barcodeInput) barcodeInput.value = '';
     document.getElementById('image-processing').classList.add('hidden');
     document.getElementById('image-drop-zone').style.display = '';
     const previewSection = document.getElementById('image-preview-section');
@@ -108,8 +126,11 @@ window.MealLogger = {
     if (descInput) descInput.value = '';
     const resultPreview = document.getElementById('image-result-preview');
     if (resultPreview) resultPreview.classList.add('hidden');
-    ['manual-food-name','manual-calories','manual-protein','manual-carbs','manual-fat','manual-serving']
-      .forEach(id => document.getElementById(id).value = '');
+    ['manual-food-name','manual-calories','manual-protein','manual-carbs','manual-fat','manual-fiber','manual-sugar','manual-sodium','manual-serving']
+      .forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
     this.parsedItems = [];
     this._selectedImageFile = null;
     this._selectedImageDataUrl = null;
@@ -517,6 +538,197 @@ window.MealLogger = {
     }
   },
 
+  initBarcodeScanner() {
+    const searchBtn = document.getElementById('barcode-search-btn');
+    const input = document.getElementById('barcode-input');
+    const cameraToggleBtn = document.getElementById('barcode-camera-toggle-btn');
+
+    searchBtn?.addEventListener('click', () => {
+      this.lookupBarcode(input.value);
+    });
+
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.lookupBarcode(input.value);
+      }
+    });
+
+    cameraToggleBtn?.addEventListener('click', () => {
+      if (this._videoStream) {
+        this.stopBarcodeCamera();
+        cameraToggleBtn.innerHTML = '<i data-lucide="camera"></i> Start Camera Scan';
+      } else {
+        this.startBarcodeCamera();
+        cameraToggleBtn.innerHTML = '<i data-lucide="camera-off"></i> Stop Camera';
+      }
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+
+    // Sample barcode chips
+    document.querySelectorAll('.barcode-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const code = chip.dataset.code;
+        if (input) input.value = code;
+        this.lookupBarcode(code);
+      });
+    });
+  },
+
+  async startBarcodeCamera() {
+    const video = document.getElementById('barcode-video');
+    const container = document.getElementById('barcode-scanner-box');
+    const toggleBtn = document.getElementById('barcode-camera-toggle-btn');
+    if (!video) return;
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      Utils.showToast('Camera access not supported on this browser. Use manual entry below.', 'info', 3000);
+      return;
+    }
+
+    try {
+      this._videoStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
+      });
+      video.srcObject = this._videoStream;
+      video.setAttribute('playsinline', 'true');
+      await video.play();
+      if (container) container.classList.add('active');
+      if (toggleBtn) {
+        toggleBtn.innerHTML = '<i data-lucide="camera-off"></i> Stop Camera';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+
+      if ('BarcodeDetector' in window) {
+        const detector = new window.BarcodeDetector({
+          formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'qr_code']
+        });
+
+        this._barcodeInterval = setInterval(async () => {
+          if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            try {
+              const barcodes = await detector.detect(video);
+              if (barcodes.length > 0) {
+                const code = barcodes[0].rawValue;
+                this.stopBarcodeCamera();
+                const inp = document.getElementById('barcode-input');
+                if (inp) inp.value = code;
+                this.lookupBarcode(code);
+              }
+            } catch (e) {
+              // Frame dropped, continue
+            }
+          }
+        }, 350);
+      }
+    } catch (err) {
+      console.warn('Camera start error:', err);
+      Utils.showToast('Could not start camera. Please enter barcode number below.', 'info', 3500);
+    }
+  },
+
+  stopBarcodeCamera() {
+    if (this._barcodeInterval) {
+      clearInterval(this._barcodeInterval);
+      this._barcodeInterval = null;
+    }
+    if (this._videoStream) {
+      this._videoStream.getTracks().forEach(t => t.stop());
+      this._videoStream = null;
+    }
+    const container = document.getElementById('barcode-scanner-box');
+    if (container) container.classList.remove('active');
+    const toggleBtn = document.getElementById('barcode-camera-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.innerHTML = '<i data-lucide="camera"></i> Start Camera Scan';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+  },
+
+  async lookupBarcode(barcode) {
+    barcode = (barcode || '').trim();
+    if (!barcode) {
+      Utils.showToast('Please enter a barcode number', 'warning');
+      return;
+    }
+
+    const searchBtn = document.getElementById('barcode-search-btn');
+    if (searchBtn) {
+      searchBtn.disabled = true;
+      searchBtn.innerHTML = '<i data-lucide="loader-2" class="spin-icon"></i> Searching...';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    try {
+      const url = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+      const data = await res.json();
+
+      if (data.status === 1 && data.product) {
+        const p = data.product;
+        const nut = p.nutriments || {};
+        const name = p.product_name || p.product_name_en || p.generic_name || 'Packaged Item';
+        const brand = p.brands ? ` (${p.brands})` : '';
+        const serving = p.serving_size || '100g';
+
+        let cal = Math.round(nut['energy-kcal_100g'] || nut['energy-kcal_value'] || (nut['energy-kj_100g'] ? nut['energy-kj_100g'] / 4.184 : 0));
+        let prot = parseFloat((nut.proteins_100g || nut.proteins_value || 0).toFixed(1));
+        let carbs = parseFloat((nut.carbohydrates_100g || nut.carbohydrates_value || 0).toFixed(1));
+        let fat = parseFloat((nut.fat_100g || nut.fat_value || 0).toFixed(1));
+        let fiber = parseFloat((nut.fiber_100g || nut.fiber_value || 0).toFixed(1));
+        let sugar = parseFloat((nut.sugars_100g || nut.sugars_value || 0).toFixed(1));
+        let sodium = Math.round((nut.sodium_100g || (nut.salt_100g ? nut.salt_100g / 2.5 : 0)) * 1000);
+
+        this.parsedItems = [{
+          food: {
+            name: name + brand,
+            aliases: [],
+            category: 'packaged',
+            calories: cal,
+            protein: prot,
+            carbs: carbs,
+            fat: fat,
+            fiber: fiber,
+            sugar: sugar,
+            sodium: sodium,
+            serving: serving,
+            weight_grams: 100,
+            unit: 'serving'
+          },
+          ingredients: [],
+          quantity: 1,
+          totalCalories: cal,
+          totalProtein: prot,
+          totalCarbs: carbs,
+          totalFat: fat,
+          totalFiber: fiber,
+          totalSugar: sugar,
+          totalSodium: sodium
+        }];
+
+        if (p.image_front_url || p.image_url) {
+          this._selectedImageDataUrl = p.image_front_url || p.image_url;
+        }
+
+        Utils.showToast(`📦 Found: ${name}`, 'success', 2500);
+        this.renderParsedItems('barcode');
+        this.stopBarcodeCamera();
+      } else {
+        Utils.showToast('Product not found in Open Food Facts. Try manual entry.', 'warning', 4000);
+      }
+    } catch (err) {
+      console.error('Barcode lookup failed:', err);
+      Utils.showToast('Failed to connect to Open Food Facts database', 'error');
+    } finally {
+      if (searchBtn) {
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = '<i data-lucide="search"></i> Lookup';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    }
+  },
+
   confirmParsed(source) {
     if (this.parsedItems.length === 0) return;
     const dateStr = this.targetDate || (Diary.currentDate ? Diary.currentDate : Utils.todayStr());
@@ -524,9 +736,15 @@ window.MealLogger = {
 
     this.parsedItems.forEach(item => {
       diary[this.selectedMealType].push({
-        id: Utils.uuid(), name: item.food.name,
-        calories: item.totalCalories, protein: item.totalProtein,
-        carbs: item.totalCarbs, fat: item.totalFat,
+        id: Utils.uuid(),
+        name: item.food.name,
+        calories: item.totalCalories,
+        protein: item.totalProtein,
+        carbs: item.totalCarbs,
+        fat: item.totalFat,
+        fiber: item.totalFiber != null ? item.totalFiber : (item.food.fiber ? Math.round(item.food.fiber * item.quantity * 10) / 10 : 0),
+        sugar: item.totalSugar != null ? item.totalSugar : (item.food.sugar ? Math.round(item.food.sugar * item.quantity * 10) / 10 : 0),
+        sodium: item.totalSodium != null ? item.totalSodium : (item.food.sodium ? Math.round(item.food.sodium * item.quantity) : 0),
         serving: `${item.quantity} × ${item.food.serving}`,
         timestamp: new Date().toISOString(),
         ingredients: item.ingredients || [],
@@ -550,6 +768,9 @@ window.MealLogger = {
     const protein = parseFloat(document.getElementById('manual-protein').value) || 0;
     const carbs = parseFloat(document.getElementById('manual-carbs').value) || 0;
     const fat = parseFloat(document.getElementById('manual-fat').value) || 0;
+    const fiber = parseFloat(document.getElementById('manual-fiber')?.value) || 0;
+    const sugar = parseFloat(document.getElementById('manual-sugar')?.value) || 0;
+    const sodium = parseFloat(document.getElementById('manual-sodium')?.value) || 0;
     const serving = document.getElementById('manual-serving').value.trim() || '1 serving';
 
     if (!name) { Utils.showToast('Please enter a food name', 'warning'); return; }
@@ -557,11 +778,23 @@ window.MealLogger = {
     if (isNaN(protein) || protein < 0 || protein > 1000) { Utils.showToast('Protein cannot be negative or exceed 1000g', 'warning'); return; }
     if (isNaN(carbs) || carbs < 0 || carbs > 1000) { Utils.showToast('Carbs cannot be negative or exceed 1000g', 'warning'); return; }
     if (isNaN(fat) || fat < 0 || fat > 1000) { Utils.showToast('Fat cannot be negative or exceed 1000g', 'warning'); return; }
+    if (isNaN(fiber) || fiber < 0 || fiber > 500) { Utils.showToast('Fiber cannot be negative or exceed 500g', 'warning'); return; }
+    if (isNaN(sugar) || sugar < 0 || sugar > 1000) { Utils.showToast('Sugar cannot be negative or exceed 1000g', 'warning'); return; }
+    if (isNaN(sodium) || sodium < 0 || sodium > 50000) { Utils.showToast('Sodium cannot be negative or exceed 50,000mg', 'warning'); return; }
 
     const dateStr = this.targetDate || (Diary.currentDate ? Diary.currentDate : Utils.todayStr());
     const diary = Store.getDiary(dateStr);
     diary[this.selectedMealType].push({
-      id: Utils.uuid(), name, calories, protein, carbs, fat, serving,
+      id: Utils.uuid(),
+      name,
+      calories,
+      protein,
+      carbs,
+      fat,
+      fiber,
+      sugar,
+      sodium,
+      serving,
       timestamp: new Date().toISOString(),
     });
 

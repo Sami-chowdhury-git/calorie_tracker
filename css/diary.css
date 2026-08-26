@@ -22,6 +22,9 @@
 .diary-total-item.protein .dt-value { color: var(--protein-color); }
 .diary-total-item.carbs .dt-value { color: var(--carbs-color); }
 .diary-total-item.fats .dt-value { color: var(--fats-color); }
+.diary-total-item.fiber .dt-value { color: #10b981; }
+.diary-total-item.sugar .dt-value { color: #f59e0b; }
+.diary-total-item.sodium .dt-value { color: #3b82f6; }
 
 /* Meal Groups */
 .diary-meals { display: flex; flex-direction: column; gap: 16px; }
