@@ -334,11 +334,11 @@ window.MealLogger = {
     listEl.innerHTML = this.parsedItems.map((item, i) => {
       let ingHtml = '';
       const hasIngredients = item.ingredients && item.ingredients.length > 0;
-      ingHtml = `<div class="parsed-item-ingredients" style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-color); grid-column: 1 / -1;">
-          ${hasIngredients ? `<div style="margin-bottom: 8px; font-weight: 500; color: var(--text-primary); font-size: 0.82rem;">Ingredients:</div>` : ''}
+      ingHtml = `<div class="parsed-item-ingredients" style="margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--border-color); width: 100%;">
+          ${hasIngredients ? `<div style="margin-bottom: 6px; font-weight: 500; color: var(--text-primary); font-size: 0.8rem;">Ingredients:</div>` : ''}
           ${hasIngredients ? item.ingredients.map((ing, j) => `
             <div class="ingredient-row">
-              <span class="ingredient-name">• ${ing.name}</span>
+              <span class="ingredient-name" style="word-break: break-word; white-space: normal;">• ${ing.name}</span>
               <span class="ingredient-weight">
                 ${ing.serving || '—'}
                 <button class="weight-edit-btn" onclick="MealLogger.editIngredientWeight(${i}, ${j})" title="Edit weight">✏️</button>
@@ -354,42 +354,46 @@ window.MealLogger = {
               </span>
             </div>
           `).join('') : ''}
-          <button id="add-ing-show-btn-${i}" class="btn btn-ghost btn-sm" onclick="document.getElementById('add-ing-form-${i}').style.display='flex'; this.style.display='none';" style="margin-top:8px; font-size:0.78rem; color: var(--primary); padding: 4px 10px;">
-            <i data-lucide="plus-circle" style="width:14px;height:14px;"></i> Add Ingredient
+          <button id="add-ing-show-btn-${i}" class="btn btn-ghost btn-sm" onclick="document.getElementById('add-ing-form-${i}').style.display='flex'; this.style.display='none';" style="margin-top:6px; font-size:0.76rem; color: var(--accent-primary); padding: 4px 8px;">
+            <i data-lucide="plus-circle" style="width:13px;height:13px;"></i> Add Ingredient
           </button>
-          <div id="add-ing-form-${i}" style="display:none; margin-top:8px; gap:8px; align-items:center; width:100%;">
-            <input type="text" id="add-ing-name-${i}" placeholder="Name (e.g. Cheese)" class="input-field" style="flex:1; padding:6px 8px; font-size:0.8rem; background: var(--bg-tertiary);">
-            <input type="number" id="add-ing-weight-${i}" placeholder="Weight (g)" class="input-field" style="width:80px; padding:6px 8px; font-size:0.8rem; background: var(--bg-tertiary);">
+          <div id="add-ing-form-${i}" style="display:none; margin-top:8px; gap:8px; align-items:center; width:100%; flex-wrap:wrap;">
+            <input type="text" id="add-ing-name-${i}" placeholder="Name (e.g. Cheese)" class="input-field" style="flex:1; min-width:120px; padding:6px 8px; font-size:0.8rem; background: var(--bg-primary);">
+            <input type="number" id="add-ing-weight-${i}" placeholder="Weight (g)" class="input-field" style="width:80px; padding:6px 8px; font-size:0.8rem; background: var(--bg-primary);">
             <button class="btn btn-primary btn-sm" id="add-ing-btn-${i}" onclick="MealLogger.submitNewIngredient(${i})" style="padding:6px 12px; font-size:0.8rem;">Add</button>
             <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-ing-form-${i}').style.display='none'; document.getElementById('add-ing-show-btn-${i}').style.display='flex';" style="padding:6px; font-size:0.8rem;"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
           </div>
         </div>`;
 
       return `
-      <div class="parsed-item ${item.unknown ? 'unknown' : ''}" style="flex-wrap: wrap; animation: staggerFadeIn 0.3s ease both; animation-delay: ${i * 0.08}s;">
-        <div class="parsed-item-info">
-          <span class="parsed-item-name">${item.food.name}${item.unknown ? ' ⚠️' : ''}</span>
-          <span class="parsed-item-detail" style="display: flex; align-items: center; gap: 4px;">
-            ${item.food.serving}
-            <button class="weight-edit-btn" onclick="MealLogger.editServing(${i})" title="Edit weight">✏️</button>
-          </span>
+      <div class="parsed-item ${item.unknown ? 'unknown' : ''}" style="animation: staggerFadeIn 0.3s ease both; animation-delay: ${i * 0.08}s;">
+        <div class="parsed-item-top">
+          <div class="parsed-item-info">
+            <span class="parsed-item-name">${item.food.name}${item.unknown ? ' ⚠️' : ''}</span>
+            <span class="parsed-item-detail">
+              ${item.food.serving}
+              <button class="weight-edit-btn" onclick="MealLogger.editServing(${i})" title="Edit weight">✏️</button>
+            </span>
+          </div>
+          <button class="parsed-item-remove-btn" onclick="MealLogger.removeItem(${i})" title="Remove item">
+            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+          </button>
         </div>
-        <div class="parsed-item-qty">
-          <button class="qty-btn" onclick="MealLogger.updateQty(${i}, -1)">−</button>
-          <span class="qty-value">${item.quantity}</span>
-          <button class="qty-btn" onclick="MealLogger.updateQty(${i}, 1)">+</button>
-        </div>
-        <div class="parsed-item-macros">
-          <span class="parsed-item-cals">${item.totalCalories} kcal</span>
-          <div class="parsed-item-macro-row">
-            <span>P:${item.totalProtein}g</span>
-            <span>C:${item.totalCarbs}g</span>
-            <span>F:${item.totalFat}g</span>
+        <div class="parsed-item-bottom">
+          <div class="parsed-item-qty">
+            <button class="qty-btn" onclick="MealLogger.updateQty(${i}, -1)">−</button>
+            <span class="qty-value">${item.quantity}</span>
+            <button class="qty-btn" onclick="MealLogger.updateQty(${i}, 1)">+</button>
+          </div>
+          <div class="parsed-item-macros">
+            <span class="parsed-item-cals">${item.totalCalories} kcal</span>
+            <div class="parsed-item-macro-row">
+              <span>P:<strong>${item.totalProtein}g</strong></span>
+              <span>C:<strong>${item.totalCarbs}g</strong></span>
+              <span>F:<strong>${item.totalFat}g</strong></span>
+            </div>
           </div>
         </div>
-        <button class="parsed-item-remove-btn" onclick="MealLogger.removeItem(${i})" title="Remove item">
-          <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
-        </button>
         ${ingHtml}
       </div>
     `}).join('');

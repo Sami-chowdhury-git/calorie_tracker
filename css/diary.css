@@ -61,7 +61,7 @@
 .meal-item-info { flex: 1; min-width: 0; }
 .meal-item-name {
   font-weight: 500; font-size: 0.9rem; display: block;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  word-break: break-word; line-height: 1.35;
 }
 .meal-item-serving { font-size: 0.72rem; color: var(--text-muted); }
 .meal-item-cals {

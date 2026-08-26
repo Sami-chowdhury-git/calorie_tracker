@@ -328,21 +328,24 @@
     font-size: 0.82rem;
   }
   .parsed-item {
-    padding: 10px;
+    padding: 10px 12px;
     gap: 6px;
   }
   .parsed-item-name {
-    font-size: 0.82rem;
+    font-size: 0.88rem;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.35;
   }
   .parsed-item-detail {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
   }
   .parsed-item-cals {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
   }
   .parsed-item-macro-row {
-    font-size: 0.65rem;
-    gap: 3px;
+    font-size: 0.68rem;
+    gap: 4px;
   }
   .qty-btn {
     width: 24px;
