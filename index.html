@@ -19,6 +19,10 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 
+  <!-- jsPDF & AutoTable for client-side PDF generation & download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/components.css" />
@@ -851,7 +855,7 @@
                   <i data-lucide="table"></i> Download CSV
                 </button>
                 <button id="export-pdf-action-btn" class="btn btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                  <i data-lucide="printer"></i> Print / PDF
+                  <i data-lucide="download"></i> Download PDF
                 </button>
               </div>
             </div>

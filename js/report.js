@@ -13,7 +13,6 @@ window.Report = {
       const logged = Store.getLoggedDates();
       if (logged.length === 0) dates.push(today);
       else {
-        // Range from earliest logged date to today
         let curr = logged[0];
         while (curr <= today) {
           dates.push(curr);
@@ -145,129 +144,260 @@ window.Report = {
     Utils.showToast(`📊 CSV report downloaded (${data.range})`, 'success');
   },
 
-  exportPDF(days = 7) {
+  async exportPDF(days = 7) {
     const data = this.getReportData(days);
-    
-    // Create printable window/overlay
+
+    // Resolve jsPDF constructor
+    let jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+
+    if (!jsPDFClass) {
+      try {
+        await this._loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+        await this._loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+        jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+      } catch (e) {
+        console.warn('Could not load jsPDF from CDN, using fallback', e);
+      }
+    }
+
+    if (!jsPDFClass) {
+      this._exportPDFFallback(data, days);
+      return;
+    }
+
+    try {
+      const doc = new jsPDFClass({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: 'a4'
+      });
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+
+      // Top brand accent bar
+      doc.setFillColor(79, 70, 229);
+      doc.rect(0, 0, pageWidth, 6, 'F');
+
+      // Title & Logo Header
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.setTextColor(79, 70, 229);
+      doc.text('MacroLens', 40, 40);
+
+      doc.setFontSize(13);
+      doc.setTextColor(31, 41, 55);
+      doc.text('Nutrition & Hydration Progress Report', 40, 58);
+
+      // Meta info (right aligned)
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(107, 114, 128);
+      doc.text(`Period: ${data.range}`, pageWidth - 40, 36, { align: 'right' });
+      doc.text(`Generated: ${data.generatedAt}`, pageWidth - 40, 50, { align: 'right' });
+      doc.text(`User: ${data.user.name}`, pageWidth - 40, 64, { align: 'right' });
+
+      // Personalized Targets Card / Banner
+      doc.setFillColor(243, 244, 246);
+      doc.roundedRect(40, 78, pageWidth - 80, 48, 6, 6, 'F');
+      doc.setDrawColor(229, 231, 235);
+      doc.roundedRect(40, 78, pageWidth - 80, 48, 6, 6, 'S');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(79, 70, 229);
+      doc.text('PERSONALIZED DAILY TARGETS', 52, 94);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(55, 65, 81);
+      doc.text(`Calories: ${data.targets.tdee} kcal   |   Protein: ${data.targets.protein}g   |   Carbs: ${data.targets.carbs}g   |   Fat: ${data.targets.fat}g`, 52, 108);
+      doc.text(`Hydration Goal: ${data.targets.water} ml   |   Fiber: ${data.targets.fiber}g   |   Sugar Limit: <${data.targets.sugar}g   |   Sodium Limit: <${data.targets.sodium}mg`, 52, 120);
+
+      // 4 Metric Summary Cards
+      const cardWidth = (pageWidth - 80 - 36) / 4;
+      const cardY = 134;
+      const cardH = 44;
+
+      const metrics = [
+        { label: 'AVG CALORIES', value: `${data.averages.calories} kcal`, color: [79, 70, 229] },
+        { label: 'AVG PROTEIN', value: `${data.averages.protein}g`, color: [220, 38, 38] },
+        { label: 'AVG WATER', value: `${data.averages.water} ml`, color: [2, 132, 199] },
+        { label: 'TOTAL MEALS', value: `${data.totalMealsLogged}`, color: [5, 150, 105] }
+      ];
+
+      metrics.forEach((m, idx) => {
+        const x = 40 + idx * (cardWidth + 12);
+        doc.setFillColor(249, 250, 251);
+        doc.roundedRect(x, cardY, cardWidth, cardH, 4, 4, 'F');
+        doc.setDrawColor(229, 231, 235);
+        doc.roundedRect(x, cardY, cardWidth, cardH, 4, 4, 'S');
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(6.5);
+        doc.setTextColor(107, 114, 128);
+        doc.text(m.label, x + cardWidth / 2, cardY + 14, { align: 'center' });
+
+        doc.setFontSize(11);
+        doc.setTextColor(m.color[0], m.color[1], m.color[2]);
+        doc.text(m.value, x + cardWidth / 2, cardY + 32, { align: 'center' });
+      });
+
+      // Daily Breakdown Table
+      const tableHeaders = [
+        ['Date', 'Day', 'Calories', 'Protein', 'Carbs', 'Fat', 'Fiber', 'Sugar', 'Sodium', 'Water', 'Meals']
+      ];
+
+      const tableRows = data.rows.map(r => [
+        r.date,
+        r.day,
+        `${r.calories}`,
+        `${r.protein}g`,
+        `${r.carbs}g`,
+        `${r.fat}g`,
+        `${r.fiber}g`,
+        `${r.sugar}g`,
+        `${r.sodium}mg`,
+        `${r.water}ml`,
+        r.meals
+      ]);
+
+      // Average footer row
+      tableRows.push([
+        'DAILY AVG',
+        '-',
+        `${data.averages.calories}`,
+        `${data.averages.protein}g`,
+        `${data.averages.carbs}g`,
+        `${data.averages.fat}g`,
+        `${data.averages.fiber}g`,
+        `${data.averages.sugar}g`,
+        `${data.averages.sodium}mg`,
+        `${data.averages.water}ml`,
+        '-'
+      ]);
+
+      if (typeof doc.autoTable === 'function') {
+        doc.autoTable({
+          startY: 188,
+          margin: { left: 40, right: 40 },
+          head: tableHeaders,
+          body: tableRows,
+          theme: 'striped',
+          headStyles: {
+            fillColor: [79, 70, 229],
+            textColor: 255,
+            fontStyle: 'bold',
+            fontSize: 7.5,
+            halign: 'center'
+          },
+          bodyStyles: {
+            fontSize: 7,
+            textColor: [31, 41, 55],
+            halign: 'center'
+          },
+          alternateRowStyles: {
+            fillColor: [249, 250, 251]
+          },
+          columnStyles: {
+            0: { halign: 'left', fontStyle: 'bold' },
+            1: { halign: 'left' }
+          },
+          didParseCell: function(cellData) {
+            if (cellData.row.index === tableRows.length - 1) {
+              cellData.cell.styles.fontStyle = 'bold';
+              cellData.cell.styles.fillColor = [238, 242, 255];
+              cellData.cell.styles.textColor = [67, 56, 202];
+            }
+          },
+          didDrawPage: function(pageData) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor(156, 163, 175);
+            doc.text('Generated by MacroLens AI Nutrition Tracker • Clinical Progress Report', 40, pageHeight - 16);
+            doc.text(`Page ${pageData.pageNumber}`, pageWidth - 40, pageHeight - 16, { align: 'right' });
+          }
+        });
+      }
+
+      // Automatic download
+      const fileName = `MacroLens_Report_${Utils.todayStr()}_${days}D.pdf`;
+      doc.save(fileName);
+
+      Utils.showToast(`📄 PDF downloaded automatically (${fileName})`, 'success', 3500);
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      this._exportPDFFallback(data, days);
+    }
+  },
+
+  _loadScript(src) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) return resolve();
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  },
+
+  _exportPDFFallback(data, days) {
+    // Printable / Blob download fallback
     const printContainer = document.createElement('div');
     printContainer.id = 'macrolens-print-report';
     printContainer.innerHTML = `
       <style>
-        @media screen {
-          #macrolens-print-report { display: none; }
-        }
+        @media screen { #macrolens-print-report { display: none; } }
         @media print {
           body > *:not(#macrolens-print-report) { display: none !important; }
           #macrolens-print-report {
             display: block !important;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #111827;
-            padding: 24px;
-            max-width: 900px;
-            margin: 0 auto;
-            background: #ffffff !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #111827; padding: 24px; max-width: 900px; margin: 0 auto; background: #fff !important;
           }
-          .p-header { border-bottom: 2px solid #6366f1; padding-bottom: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
-          .p-logo { font-size: 24px; font-weight: 800; color: #4f46e5; }
-          .p-meta { font-size: 12px; color: #6b7280; text-align: right; }
-          .p-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-          .p-card { background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center; }
-          .p-card-val { font-size: 18px; font-weight: 700; color: #1f2937; margin-top: 4px; }
-          .p-card-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6b7280; }
-          .p-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 12px; }
-          .p-table th { background: #eef2ff; color: #4338ca; padding: 8px 6px; text-align: right; border: 1px solid #e0e7ff; font-weight: 600; }
-          .p-table th:first-child, .p-table th:nth-child(2) { text-align: left; }
-          .p-table td { padding: 6px; text-align: right; border: 1px solid #e5e7eb; }
-          .p-table td:first-child, .p-table td:nth-child(2) { text-align: left; font-weight: 500; }
-          .p-table tr.p-avg-row { background: #faf5ff; font-weight: 700; }
-          .p-footer { border-top: 1px solid #e5e7eb; padding-top: 12px; font-size: 11px; color: #9ca3af; text-align: center; }
         }
       </style>
-      <div class="p-header">
-        <div>
-          <div class="p-logo">MacroLens</div>
-          <div style="font-size: 14px; font-weight: 600; color: #374151; margin-top: 2px;">Nutrition & Hydration Progress Report</div>
-          <div style="font-size: 12px; color: #6b7280; margin-top: 2px;">User: <strong>${data.user.name}</strong> (${data.user.email || 'Client'})</div>
-        </div>
-        <div class="p-meta">
-          <div><strong>Period:</strong> ${data.range}</div>
-          <div><strong>Targets:</strong> ${data.targets.tdee} kcal · P:${data.targets.protein}g · C:${data.targets.carbs}g · F:${data.targets.fat}g</div>
-          <div><strong>Hydration Target:</strong> ${data.targets.water} ml · <strong>Fiber:</strong> ${data.targets.fiber}g</div>
-          <div><strong>Generated:</strong> ${data.generatedAt}</div>
-        </div>
+      <div style="border-bottom: 2px solid #6366f1; padding-bottom: 12px; margin-bottom: 16px;">
+        <h1 style="color:#4f46e5; margin:0;">MacroLens</h1>
+        <p style="margin:4px 0; color:#6b7280;">Nutrition & Hydration Progress Report</p>
+        <p style="margin:4px 0; font-size:12px;"><strong>User:</strong> ${data.user.name} | <strong>Period:</strong> ${data.range} | <strong>Generated:</strong> ${data.generatedAt}</p>
       </div>
-
-      <div class="p-cards">
-        <div class="p-card">
-          <div class="p-card-lbl">Avg Daily Calories</div>
-          <div class="p-card-val" style="color: #4f46e5;">${data.averages.calories} <span style="font-size:12px;font-weight:400;">kcal</span></div>
-        </div>
-        <div class="p-card">
-          <div class="p-card-lbl">Avg Daily Protein</div>
-          <div class="p-card-val" style="color: #dc2626;">${data.averages.protein}g</div>
-        </div>
-        <div class="p-card">
-          <div class="p-card-lbl">Avg Daily Water</div>
-          <div class="p-card-val" style="color: #0284c7;">${data.averages.water} <span style="font-size:12px;font-weight:400;">ml</span></div>
-        </div>
-        <div class="p-card">
-          <div class="p-card-lbl">Total Meals Logged</div>
-          <div class="p-card-val" style="color: #059669;">${data.totalMealsLogged}</div>
-        </div>
-      </div>
-
-      <table class="p-table">
+      <table style="width:100%; border-collapse:collapse; font-size:12px;">
         <thead>
-          <tr>
-            <th>Date</th>
-            <th>Day</th>
-            <th>Calories</th>
-            <th>Protein</th>
-            <th>Carbs</th>
-            <th>Fat</th>
-            <th>Fiber</th>
-            <th>Sugar</th>
-            <th>Sodium</th>
-            <th>Water</th>
-            <th>Meals</th>
+          <tr style="background:#eef2ff; color:#4338ca;">
+            <th style="padding:6px; border:1px solid #e0e7ff;">Date</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Day</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Calories</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Protein</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Carbs</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Fat</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Fiber</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Sugar</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Sodium</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Water</th>
+            <th style="padding:6px; border:1px solid #e0e7ff;">Meals</th>
           </tr>
         </thead>
         <tbody>
           ${data.rows.map(r => `
             <tr>
-              <td>${r.date}</td>
-              <td>${r.day}</td>
-              <td>${r.calories}</td>
-              <td>${r.protein}g</td>
-              <td>${r.carbs}g</td>
-              <td>${r.fat}g</td>
-              <td>${r.fiber}g</td>
-              <td>${r.sugar}g</td>
-              <td>${r.sodium}mg</td>
-              <td>${r.water}ml</td>
-              <td>${r.meals}</td>
+              <td style="padding:6px; border:1px solid #e5e7eb;">${r.date}</td>
+              <td style="padding:6px; border:1px solid #e5e7eb;">${r.day}</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.calories}</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.protein}g</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.carbs}g</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.fat}g</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.fiber}g</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.sugar}g</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.sodium}mg</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.water}ml</td>
+              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.meals}</td>
             </tr>
           `).join('')}
-          <tr class="p-avg-row">
-            <td colspan="2">DAILY AVERAGE</td>
-            <td>${data.averages.calories}</td>
-            <td>${data.averages.protein}g</td>
-            <td>${data.averages.carbs}g</td>
-            <td>${data.averages.fat}g</td>
-            <td>${data.averages.fiber}g</td>
-            <td>${data.averages.sugar}g</td>
-            <td>${data.averages.sodium}mg</td>
-            <td>${data.averages.water}ml</td>
-            <td>-</td>
-          </tr>
         </tbody>
       </table>
-
-      <div class="p-footer">
-        Generated by MacroLens AI Calorie & Nutrition Tracker • Verified Health Summary
-      </div>
     `;
-
     document.body.appendChild(printContainer);
     window.print();
     setTimeout(() => {
@@ -275,7 +405,5 @@ window.Report = {
         document.body.removeChild(printContainer);
       }
     }, 1500);
-
-    Utils.showToast('📄 Print dialog opened for PDF export', 'success');
   }
 };
