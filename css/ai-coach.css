@@ -1,13 +1,13 @@
-/* ═══════════════════════════════════════════ */
-/* AI COACH — Chat Interface                   */
-/* ═══════════════════════════════════════════ */
 
-/* ═══ Header ═══ */
+
+
+
+
 .coach-header {
   padding: 64px 0 12px;
 }
 
-/* ═══ Chat Container ═══ */
+
 .coach-chat {
   display: flex;
   flex-direction: column;
@@ -18,7 +18,7 @@
   max-height: calc(100vh - 220px);
 }
 
-/* ═══ Chat Messages ═══ */
+
 .chat-message {
   max-width: 85%;
   padding: 12px 16px;
@@ -46,7 +46,7 @@
   white-space: pre-wrap;
 }
 
-/* ═══ Input Bar ═══ */
+
 .coach-input-bar {
   position: fixed;
   bottom: 56px;
@@ -94,7 +94,7 @@
   cursor: not-allowed;
 }
 
-/* ═══ Typing Indicator ═══ */
+
 .typing-indicator {
   display: flex;
   gap: 4px;
@@ -123,7 +123,7 @@
   40% { transform: translateY(-8px); }
 }
 
-/* ═══ Welcome Screen ═══ */
+
 .coach-welcome {
   text-align: center;
   padding: 60px 20px;
@@ -148,7 +148,7 @@
   font-size: 0.85rem;
 }
 
-/* ═══ Suggestion Chips ═══ */
+
 .coach-suggestion-chips {
   display: flex;
   flex-wrap: wrap;
@@ -173,7 +173,7 @@
   color: var(--accent-primary);
 }
 
-/* ═══ Conversation Tabs Bar ═══ */
+
 .coach-tabs-bar {
   display: flex;
   gap: 6px;
@@ -232,7 +232,7 @@
   opacity: 1;
 }
 
-/* AI response formatting */
+
 .chat-message.ai .msg-text strong {
   color: var(--accent-primary);
   font-weight: 600;

@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* MEAL LOGGER — NLP, Image, Manual logging    */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.MealLogger = {
   selectedMealType: 'breakfast',
@@ -23,7 +23,7 @@ window.MealLogger = {
       if (e.target.id === 'meal-log-modal') this.close();
     });
 
-    // Meal type buttons
+    
     document.querySelectorAll('.meal-type-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.meal-type-btn').forEach(b => b.classList.remove('active'));
@@ -32,7 +32,7 @@ window.MealLogger = {
       });
     });
 
-    // Tab switching
+    
     document.querySelectorAll('#meal-log-tabs .tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#meal-log-tabs .tab-btn').forEach(b => b.classList.remove('active'));
@@ -49,19 +49,19 @@ window.MealLogger = {
       });
     });
 
-    // NLP
+    
     document.getElementById('nlp-parse-btn').addEventListener('click', () => this.parseNLP());
     document.getElementById('nlp-confirm-btn').addEventListener('click', () => this.confirmParsed('nlp'));
 
-    // Image
+    
     this.initImageUpload();
     document.getElementById('image-confirm-btn').addEventListener('click', () => this.confirmParsed('image'));
 
-    // Barcode
+    
     this.initBarcodeScanner();
     document.getElementById('barcode-confirm-btn')?.addEventListener('click', () => this.confirmParsed('barcode'));
 
-    // Manual
+    
     document.getElementById('manual-add-btn').addEventListener('click', () => this.addManual());
   },
 
@@ -70,12 +70,12 @@ window.MealLogger = {
     this.resetTabs();
     const selectorEl = document.querySelector('.meal-type-selector');
     if (this._explicitMealType) {
-      // Use the explicitly passed meal type (from diary + buttons)
+      
       this.selectedMealType = this._explicitMealType;
       document.querySelectorAll('.meal-type-btn').forEach(b => b.classList.remove('active'));
       const btn = document.querySelector(`.meal-type-btn[data-meal="${this._explicitMealType}"]`);
       if (btn) btn.classList.add('active');
-      // Hide selector — user already chose via diary
+      
       if (selectorEl) selectorEl.style.display = 'none';
       this._explicitMealType = null;
     } else {
@@ -134,7 +134,7 @@ window.MealLogger = {
     this.parsedItems = [];
     this._selectedImageFile = null;
     this._selectedImageDataUrl = null;
-    // Clear file inputs so same file can be re-selected
+    
     const fi = document.getElementById('image-file-input');
     const ci = document.getElementById('camera-file-input');
     if (fi) fi.value = '';
@@ -179,7 +179,7 @@ window.MealLogger = {
     if (newVal !== null && newVal.trim() !== '') {
       const grams = parseFloat(newVal);
       if (!isNaN(grams) && grams >= 0 && item.food.weight_grams) {
-        // Proportionally recalculate macros based on new weight
+        
         const ratio = grams / item.food.weight_grams;
         item.food.calories = Math.round(item.food.calories * ratio);
         item.food.protein = parseFloat((item.food.protein * ratio).toFixed(1));
@@ -187,7 +187,7 @@ window.MealLogger = {
         item.food.fat = parseFloat((item.food.fat * ratio).toFixed(1));
         item.food.weight_grams = grams;
         item.food.serving = `${grams}g`;
-        // Recalculate totals
+        
         item.totalCalories = Math.round(item.food.calories * item.quantity);
         item.totalProtein = parseFloat((item.food.protein * item.quantity).toFixed(1));
         item.totalCarbs = parseFloat((item.food.carbs * item.quantity).toFixed(1));
@@ -216,7 +216,7 @@ window.MealLogger = {
         ing.fat = parseFloat((ing.fat * ratio).toFixed(1));
         ing.weight_grams = grams;
         ing.serving = `${grams}g`;
-        // Update parent totals
+        
         const calDiff = ing.calories - oldCals;
         item.food.calories += Math.round(calDiff / item.quantity);
         item.totalCalories = Math.round(item.food.calories * item.quantity);
@@ -241,10 +241,8 @@ window.MealLogger = {
     const ing = item.ingredients[ingIndex];
     const oldCals = ing.calories;
     
-    // Remove it
     item.ingredients.splice(ingIndex, 1);
     
-    // Update parent totals
     const calDiff = 0 - oldCals;
     item.food.calories += Math.round(calDiff / item.quantity);
     item.totalCalories = Math.round(item.food.calories * item.quantity);
@@ -299,7 +297,6 @@ window.MealLogger = {
         if (!item.ingredients) item.ingredients = [];
         item.ingredients.push(newIng);
         
-        // Update parent totals
         item.food.calories += Math.round(newIng.calories / item.quantity);
         item.totalCalories = Math.round(item.food.calories * item.quantity);
         item.food.protein = parseFloat(item.ingredients.reduce((s, i) => s + i.protein, 0).toFixed(1));
@@ -448,7 +445,7 @@ window.MealLogger = {
     const fileChangeHandler = (e) => {
       if (e.target.files && e.target.files.length > 0) {
         this.showImagePreview(e.target.files[0]);
-        // Reset so same file can be re-selected
+        
         e.target.value = '';
       }
     };
@@ -456,7 +453,7 @@ window.MealLogger = {
     if (fi) fi.addEventListener('change', fileChangeHandler);
     if (ci) ci.addEventListener('change', fileChangeHandler);
 
-    // Analyze button
+    
     document.getElementById('image-analyze-btn')?.addEventListener('click', () => this.processImage());
   },
 
@@ -465,7 +462,7 @@ window.MealLogger = {
     const reader = new FileReader();
     reader.onload = (e) => {
       this._selectedImageDataUrl = e.target.result;
-      // Show preview
+      
       document.getElementById('image-preview-img').src = e.target.result;
       document.getElementById('image-preview-section').classList.remove('hidden');
       document.getElementById('image-drop-zone').style.display = 'none';
@@ -493,7 +490,7 @@ window.MealLogger = {
       
       if (geminiResult && geminiResult.length > 0 && !geminiResult[0].error) {
         this.parsedItems = geminiResult;
-        // Show image above results
+        
         if (this._selectedImageDataUrl) {
           const resultPreview = document.getElementById('image-result-preview');
           document.getElementById('image-result-img').src = this._selectedImageDataUrl;
@@ -509,7 +506,7 @@ window.MealLogger = {
         document.getElementById('image-file-input').value = '';
         document.getElementById('camera-file-input').value = '';
       } else {
-        // If we have a description, try text-based analysis as fallback
+        
         if (description && description.trim()) {
           Utils.showToast('Image unclear — analyzing from your description...', 'info', 3000);
           const textResult = await Gemini.analyzeText(description.trim());
@@ -526,7 +523,7 @@ window.MealLogger = {
           }
         }
         Utils.showToast('Could not identify food. Try adding a description and retry.', 'warning', 4000);
-        // Show preview section again so user can add description and retry
+        
         document.getElementById('image-preview-section').classList.remove('hidden');
         document.getElementById('image-drop-zone').style.display = 'none';
       }
@@ -569,7 +566,7 @@ window.MealLogger = {
       if (typeof lucide !== 'undefined') lucide.createIcons();
     });
 
-    // Sample barcode chips
+    
     document.querySelectorAll('.barcode-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         const code = chip.dataset.code;
@@ -620,7 +617,7 @@ window.MealLogger = {
                 this.lookupBarcode(code);
               }
             } catch (e) {
-              // Frame dropped, continue
+              
             }
           }
         }, 350);

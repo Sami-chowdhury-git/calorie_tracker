@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* AUTH — Authentication via API               */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Auth = {
   _listeners: [],
@@ -16,7 +16,7 @@ window.Auth = {
       if (!data.success) return { success: false, error: data.error };
       
       Store.setSession(data.user);
-      await Store.syncFromServer(); // Fetch any existing data just in case
+      await Store.syncFromServer(); 
       this._notify(data.user);
       return { success: true, user: data.user };
     } catch (e) {
@@ -35,7 +35,7 @@ window.Auth = {
       if (!data.success) return { success: false, error: data.error };
       
       Store.setSession(data.user);
-      await Store.syncFromServer(); // Download all data from MySQL
+      await Store.syncFromServer(); 
       this._notify(data.user);
       return { success: true, user: data.user };
     } catch (e) {

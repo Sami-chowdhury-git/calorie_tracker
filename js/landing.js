@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* LANDING — Wheel/touch driven slide show     */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Landing = {
   totalSlides: 10,
@@ -14,16 +14,16 @@ window.Landing = {
 
     this.totalSlides = document.querySelectorAll('.landing-slide').length || 10;
 
-    // Wheel event (PC/Mac trackpad)
+    
     screen.addEventListener('wheel', (e) => this.onWheel(e), { passive: false });
 
-    // Touch events (phone/tablet)
+    
     screen.addEventListener('touchstart', (e) => {
       this.touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     screen.addEventListener('touchmove', (e) => {
-      e.preventDefault(); // prevent page scroll
+      e.preventDefault(); 
     }, { passive: false });
 
     screen.addEventListener('touchend', (e) => {
@@ -34,7 +34,7 @@ window.Landing = {
       }
     }, { passive: true });
 
-    // Keyboard
+    
     document.addEventListener('keydown', (e) => {
       const screen = document.getElementById('auth-screen');
       if (!screen || !screen.classList.contains('active')) return;
@@ -42,7 +42,7 @@ window.Landing = {
       if (e.key === 'ArrowUp') { e.preventDefault(); this.prev(); }
     });
 
-    // Set initial slide
+    
     this.setSlide(0);
     if (typeof lucide !== 'undefined') lucide.createIcons();
   },
@@ -51,11 +51,11 @@ window.Landing = {
     const screen = document.getElementById('auth-screen');
     if (!screen || !screen.classList.contains('active')) return;
 
-    e.preventDefault(); // prevent any actual scrolling
+    e.preventDefault(); 
 
     if (this.isTransitioning) return;
 
-    // Use deltaY to determine direction
+    
     if (e.deltaY > 20) this.next();
     else if (e.deltaY < -20) this.prev();
   },
@@ -76,7 +76,7 @@ window.Landing = {
     if (this.isTransitioning || index === this.currentSlide) return;
     this.isTransitioning = true;
     this.setSlide(index);
-    // Lock transitions for 700ms to prevent rapid scrolling
+    
     setTimeout(() => { this.isTransitioning = false; }, 700);
   },
 
@@ -92,7 +92,7 @@ window.Landing = {
       } else if (num < index) {
         slide.classList.add('exit-up');
       }
-      // Slides after current: default state (hidden below)
+      
     });
   }
 };

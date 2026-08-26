@@ -1,11 +1,9 @@
-/* ═══════════════════════════════════════════ */
-/* GEMINI — Google Gemini AI Integration       */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Gemini = {
-  // No API key here — it's stored in .env (local) and Vercel env vars (production).
-  // All requests go through /api/gemini serverless proxy.
-
+  
   async _fetch(body) {
     const res = await fetch('/api/gemini', {
       method: 'POST',
@@ -63,12 +61,11 @@ window.Gemini = {
     if (!text) return null;
     const trimmed = text.trim();
     
-    // First try standard cleaning of code block fences
     const cleaned = trimmed.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
     try {
       return JSON.parse(cleaned);
     } catch (e) {
-      // If that fails, extract the first matching JSON block {...} or [...]
+      
       const braceMatch = trimmed.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
       if (braceMatch) {
         try {

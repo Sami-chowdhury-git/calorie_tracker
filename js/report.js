@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* REPORT — Nutrition Report Exporter (CSV & PDF)*/
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Report = {
   getReportData(days = 7) {
@@ -147,7 +147,7 @@ window.Report = {
   async exportPDF(days = 7) {
     const data = this.getReportData(days);
 
-    // Resolve jsPDF constructor
+    
     let jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
 
     if (!jsPDFClass) {
@@ -175,11 +175,11 @@ window.Report = {
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
 
-      // Top brand accent bar
+      
       doc.setFillColor(79, 70, 229);
       doc.rect(0, 0, pageWidth, 6, 'F');
 
-      // Title & Logo Header
+      
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(22);
       doc.setTextColor(79, 70, 229);
@@ -189,7 +189,7 @@ window.Report = {
       doc.setTextColor(31, 41, 55);
       doc.text('Nutrition & Hydration Progress Report', 40, 58);
 
-      // Meta info (right aligned)
+      
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor(107, 114, 128);
@@ -197,7 +197,7 @@ window.Report = {
       doc.text(`Generated: ${data.generatedAt}`, pageWidth - 40, 50, { align: 'right' });
       doc.text(`User: ${data.user.name}`, pageWidth - 40, 64, { align: 'right' });
 
-      // Personalized Targets Card / Banner
+      
       doc.setFillColor(243, 244, 246);
       doc.roundedRect(40, 78, pageWidth - 80, 48, 6, 6, 'F');
       doc.setDrawColor(229, 231, 235);
@@ -214,7 +214,7 @@ window.Report = {
       doc.text(`Calories: ${data.targets.tdee} kcal   |   Protein: ${data.targets.protein}g   |   Carbs: ${data.targets.carbs}g   |   Fat: ${data.targets.fat}g`, 52, 108);
       doc.text(`Hydration Goal: ${data.targets.water} ml   |   Fiber: ${data.targets.fiber}g   |   Sugar Limit: <${data.targets.sugar}g   |   Sodium Limit: <${data.targets.sodium}mg`, 52, 120);
 
-      // 4 Metric Summary Cards
+      
       const cardWidth = (pageWidth - 80 - 36) / 4;
       const cardY = 134;
       const cardH = 44;
@@ -243,7 +243,7 @@ window.Report = {
         doc.text(m.value, x + cardWidth / 2, cardY + 32, { align: 'center' });
       });
 
-      // Daily Breakdown Table
+      
       const tableHeaders = [
         ['Date', 'Day', 'Calories', 'Protein', 'Carbs', 'Fat', 'Fiber', 'Sugar', 'Sodium', 'Water', 'Meals']
       ];
@@ -262,7 +262,7 @@ window.Report = {
         r.meals
       ]);
 
-      // Average footer row
+      
       tableRows.push([
         'DAILY AVG',
         '-',
@@ -320,7 +320,7 @@ window.Report = {
         });
       }
 
-      // Automatic download
+      
       const fileName = `MacroLens_Report_${Utils.todayStr()}_${days}D.pdf`;
       doc.save(fileName);
 
@@ -343,7 +343,7 @@ window.Report = {
   },
 
   _exportPDFFallback(data, days) {
-    // Printable / Blob download fallback
+    
     const printContainer = document.createElement('div');
     printContainer.id = 'macrolens-print-report';
     printContainer.innerHTML = `

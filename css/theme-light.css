@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* THEME LIGHT — Light mode variable overrides */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 [data-theme='light'] {
   --bg-primary: #f5f5fa;
@@ -25,12 +25,12 @@
   --shadow-glow-strong: 0 4px 20px rgba(99, 102, 241, 0.2);
 }
 
-/* ═══ Smooth Theme Transition ═══ */
+
 body, .card, .modal, .app-header, .bottom-nav, .btn, .input-field {
   transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-/* ═══ Element-Specific Light Overrides ═══ */
+
 [data-theme='light'] .app-header {
   background: rgba(255, 255, 255, 0.9);
 }
@@ -48,7 +48,7 @@ body, .card, .modal, .app-header, .bottom-nav, .btn, .input-field {
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-/* ═══ Scrollbar ═══ */
+
 [data-theme='light'] ::-webkit-scrollbar-track {
   background: #f0f0f5;
 }

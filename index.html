@@ -8,22 +8,22 @@
   <meta name="description" content="Track your calories, macros, and fitness goals with an intelligent AI-powered food diary." />
   <title>MacroLens — Smart Calorie & Macro Tracker</title>
 
-  <!-- Fonts -->
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- Chart.js -->
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
-  <!-- Lucide Icons -->
+  
   <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 
-  <!-- jsPDF & AutoTable for client-side PDF generation & download -->
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-  <!-- Stylesheets -->
+  
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/onboarding.css" />
@@ -37,26 +37,24 @@
   <link rel="stylesheet" href="css/theme-light.css" />
   <link rel="stylesheet" href="css/mobile.css" />
 
-  <!-- Inline utility for Gemini loading spinner -->
+  
   <style>.spin-icon { animation: spin 1s linear infinite; display: inline-block; }</style>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- AUTH SCREEN                                  -->
-  <!-- ═══════════════════════════════════════════ -->
+  
   <section id="auth-screen" class="screen active">
-    <!-- Background orbs -->
+    
     <div class="landing-bg">
       <div class="landing-bg-orb"></div>
       <div class="landing-bg-orb"></div>
       <div class="landing-bg-orb"></div>
     </div>
 
-    <!-- All slides -->
+    
     <div class="landing-slides">
 
-      <!-- Slide 0: Hero -->
+      
       <div class="landing-slide active" data-slide="0">
         <div class="landing-hero-logo">
           <i data-lucide="flame"></i>
@@ -69,7 +67,7 @@
         </div>
       </div>
 
-      <!-- Slide 1: AI Food Scanner -->
+      
       <div class="landing-slide" data-slide="1">
         <div class="feature-icon-wrapper feature-icon-1">
           <i data-lucide="camera"></i>
@@ -83,7 +81,7 @@
         </div>
       </div>
 
-      <!-- Slide 2: Smart Macro Tracking -->
+      
       <div class="landing-slide" data-slide="2">
         <div class="feature-icon-wrapper feature-icon-2">
           <i data-lucide="pie-chart"></i>
@@ -97,7 +95,7 @@
         </div>
       </div>
 
-      <!-- Slide 3: Food Diary -->
+      
       <div class="landing-slide" data-slide="3">
         <div class="feature-icon-wrapper feature-icon-3">
           <i data-lucide="book-open"></i>
@@ -111,7 +109,7 @@
         </div>
       </div>
 
-      <!-- Slide 4: Smart Hydration Tracker -->
+      
       <div class="landing-slide" data-slide="4">
         <div class="feature-icon-wrapper feature-icon-4">
           <i data-lucide="droplets"></i>
@@ -125,7 +123,7 @@
         </div>
       </div>
 
-      <!-- Slide 5: Barcode Food Scanner -->
+      
       <div class="landing-slide" data-slide="5">
         <div class="feature-icon-wrapper feature-icon-5">
           <i data-lucide="scan-barcode"></i>
@@ -139,7 +137,7 @@
         </div>
       </div>
 
-      <!-- Slide 6: Micronutrients & Clinical Reports -->
+      
       <div class="landing-slide" data-slide="6">
         <div class="feature-icon-wrapper feature-icon-6">
           <i data-lucide="file-text"></i>
@@ -153,7 +151,7 @@
         </div>
       </div>
 
-      <!-- Slide 7: AI Coach -->
+      
       <div class="landing-slide" data-slide="7">
         <div class="feature-icon-wrapper feature-icon-7">
           <i data-lucide="bot"></i>
@@ -167,7 +165,7 @@
         </div>
       </div>
 
-      <!-- Slide 8: Analytics & Badges -->
+      
       <div class="landing-slide" data-slide="8">
         <div class="feature-icon-wrapper feature-icon-8">
           <i data-lucide="trophy"></i>
@@ -181,7 +179,7 @@
         </div>
       </div>
 
-      <!-- Slide 9: Auth Forms (final) -->
+      
       <div class="landing-slide" data-slide="9">
         <div class="landing-auth-card">
           <div class="auth-brand">
@@ -192,7 +190,7 @@
             <p class="brand-subtitle">Ready to transform your nutrition?</p>
           </div>
 
-          <!-- Login Form -->
+          
           <form id="auth-login-form" class="auth-form">
             <h2 class="auth-heading">Welcome</h2>
             <div class="input-group">
@@ -212,7 +210,7 @@
             </p>
           </form>
 
-          <!-- Signup Form -->
+          
           <form id="auth-signup-form" class="auth-form hidden">
             <h2 class="auth-heading">Create account</h2>
             <div class="input-group">
@@ -241,12 +239,10 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- ONBOARDING WIZARD                            -->
-  <!-- ═══════════════════════════════════════════ -->
+  
   <section id="onboarding-screen" class="screen">
     <div class="onboarding-container">
-      <!-- Progress Bar -->
+      
       <div id="onboarding-progress" class="ob-progress">
         <div class="ob-progress-track">
           <div class="ob-progress-fill" id="ob-progress-fill"></div>
@@ -260,7 +256,7 @@
         </div>
       </div>
 
-      <!-- Step 1: Personal Info -->
+      
       <div class="onboarding-step active" data-step="1">
         <div class="ob-step-header">
           <i data-lucide="user" class="ob-step-icon"></i>
@@ -290,7 +286,7 @@
         </div>
       </div>
 
-      <!-- Step 2: Body Metrics -->
+      
       <div class="onboarding-step" data-step="2">
         <div class="ob-step-header">
           <i data-lucide="ruler" class="ob-step-icon"></i>
@@ -325,7 +321,7 @@
         </div>
       </div>
 
-      <!-- Step 3: Activity Level -->
+      
       <div class="onboarding-step" data-step="3">
         <div class="ob-step-header">
           <i data-lucide="activity" class="ob-step-icon"></i>
@@ -361,7 +357,7 @@
         </div>
       </div>
 
-      <!-- Step 4: Goal -->
+      
       <div class="onboarding-step" data-step="4">
         <div class="ob-step-header">
           <i data-lucide="target" class="ob-step-icon"></i>
@@ -390,7 +386,7 @@
         </div>
       </div>
 
-      <!-- Step 5: Results -->
+      
       <div class="onboarding-step" data-step="5">
         <div class="ob-step-header">
           <i data-lucide="sparkles" class="ob-step-icon"></i>
@@ -426,7 +422,7 @@
         </div>
       </div>
 
-      <!-- Navigation Buttons -->
+      
       <div class="ob-nav">
         <button type="button" id="ob-back-btn" class="btn btn-ghost hidden">
           <i data-lucide="arrow-left"></i> Back
@@ -441,12 +437,10 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- MAIN APP SHELL                               -->
-  <!-- ═══════════════════════════════════════════ -->
+  
   <section id="app-shell" class="screen">
 
-    <!-- Top Bar -->
+    
     <header id="app-header" class="app-header">
       <div class="header-left">
         <h1 class="header-logo">Macro<span class="accent">Lens</span></h1>
@@ -465,7 +459,7 @@
       </div>
     </header>
 
-    <!-- Custom Confirm Modal (replaces native confirm() for iPad compatibility) -->
+    
     <div id="confirm-modal" class="hidden" style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); padding:20px;">
       <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:16px; max-width:380px; width:100%; text-align:center; padding:28px 24px; box-shadow:0 20px 60px rgba(0,0,0,0.5);">
         <h3 id="confirm-modal-title" style="margin-bottom:10px; font-size:1.1rem; color:var(--text-primary);"></h3>
@@ -477,16 +471,16 @@
       </div>
     </div>
 
-    <!-- ═══════ DASHBOARD VIEW ═══════ -->
+    
     <div id="dashboard-view" class="view active">
       <div class="view-content">
-        <!-- Greeting -->
+        
         <div class="dash-greeting">
           <h2 id="greeting-text">Good evening, User</h2>
           <p id="current-date">Thursday, May 22</p>
         </div>
 
-        <!-- Main Calorie Ring -->
+        
         <div class="calorie-ring-container">
           <svg class="calorie-ring" viewBox="0 0 200 200" id="calorie-ring-svg">
             <circle class="ring-bg" cx="100" cy="100" r="85" />
@@ -503,9 +497,9 @@
           </div>
         </div>
 
-        <!-- Macro Rings Row -->
+        
         <div class="macro-rings-row">
-          <!-- Protein -->
+          
           <div class="macro-ring-card">
             <div class="macro-ring-container">
               <svg class="macro-ring" viewBox="0 0 80 80">
@@ -519,7 +513,7 @@
               </div>
             </div>
           </div>
-          <!-- Carbs -->
+          
           <div class="macro-ring-card">
             <div class="macro-ring-container">
               <svg class="macro-ring" viewBox="0 0 80 80">
@@ -533,7 +527,7 @@
               </div>
             </div>
           </div>
-          <!-- Fats -->
+          
           <div class="macro-ring-card">
             <div class="macro-ring-container">
               <svg class="macro-ring" viewBox="0 0 80 80">
@@ -549,7 +543,7 @@
           </div>
         </div>
 
-        <!-- Micronutrients Card -->
+        
         <div class="dash-micros-card">
           <div class="micros-header">
             <div class="micros-title"><i data-lucide="salad"></i> <span>Key Micronutrients</span></div>
@@ -580,7 +574,7 @@
           </div>
         </div>
 
-        <!-- Water / Hydration Tracker -->
+        
         <div class="dash-water-card">
           <div class="water-card-header">
             <div class="water-title">
@@ -616,7 +610,7 @@
           </div>
         </div>
 
-        <!-- Quick Stats -->
+        
         <div class="dash-stats-row">
           <div class="dash-stat-card">
             <i data-lucide="utensils"></i>
@@ -635,7 +629,7 @@
           </div>
         </div>
 
-        <!-- Today's Meals Quick View -->
+        
         <div class="dash-meals-preview">
           <div class="section-header">
             <h3>Today's Meals</h3>
@@ -649,7 +643,7 @@
           </div>
         </div>
 
-        <!-- Custom Macros -->
+        
         <div class="dash-custom-macros-section">
           <div class="section-header">
             <h3>Custom Macros</h3>
@@ -681,13 +675,13 @@
         </div>
       </div>
 
-      <!-- Floating Action Button -->
+      
       <button id="quick-add-btn" class="fab" title="Log a meal">
         <i data-lucide="plus"></i>
       </button>
     </div>
 
-    <!-- ═══════ DIARY VIEW ═══════ -->
+    
     <div id="diary-view" class="view">
       <div class="view-content">
         <div class="diary-header">
@@ -696,7 +690,7 @@
           <button id="diary-next-btn" class="icon-btn"><i data-lucide="chevron-right"></i></button>
         </div>
 
-        <!-- Daily Totals Bar -->
+        
         <div class="diary-totals">
           <div class="diary-total-item">
             <span class="dt-value" id="diary-total-calories">0</span>
@@ -730,7 +724,7 @@
           </div>
         </div>
 
-        <!-- Meal Groups -->
+        
         <div class="diary-meals">
           <div class="meal-group" id="diary-breakfast">
             <div class="meal-group-header">
@@ -785,7 +779,7 @@
           </div>
         </div>
 
-        <!-- Recently Logged -->
+        
         <div class="frequent-section">
           <div class="section-header">
             <h3><i data-lucide="clock"></i> Recently Logged</h3>
@@ -795,7 +789,7 @@
           </div>
         </div>
 
-        <!-- Recent Item Detail Modal -->
+        
         <div id="recent-detail-modal" class="modal hidden">
           <div class="modal-content" style="max-width:500px; max-height:85vh; overflow-y:auto;">
             <div class="modal-header">
@@ -814,7 +808,7 @@
 
     </div>
 
-    <!-- ═══════ ANALYTICS VIEW ═══════ -->
+    
     <div id="analytics-view" class="view">
       <div class="view-content">
         <div class="analytics-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -829,7 +823,7 @@
           </div>
         </div>
 
-        <!-- Export Report Modal -->
+        
         <div id="export-report-modal" class="modal hidden">
           <div class="modal-content" style="max-width: 440px;">
             <div class="modal-header">
@@ -862,7 +856,7 @@
           </div>
         </div>
 
-        <!-- Weekly Summary -->
+        
         <div class="analytics-summary-row">
           <div class="analytics-stat-card">
             <i data-lucide="flame"></i>
@@ -884,7 +878,7 @@
           </div>
         </div>
 
-        <!-- Calorie Chart -->
+        
         <div class="chart-card">
           <div class="chart-card-header">
             <h3>Daily Calories</h3>
@@ -895,7 +889,7 @@
           </div>
         </div>
 
-        <!-- Weight Chart -->
+        
         <div class="chart-card">
           <div class="chart-card-header">
             <div>
@@ -918,7 +912,7 @@
           </div>
         </div>
 
-        <!-- Recalculate Goals -->
+        
         <div class="chart-card" style="margin-top:8px;">
           <div class="chart-card-header">
             <div>
@@ -1004,7 +998,7 @@
       </div>
     </div>
 
-    <!-- ═══════ ACHIEVEMENTS VIEW ═══════ -->
+    
     <div id="achievements-view" class="view">
       <div class="view-content">
         <div class="achievements-header">
@@ -1012,7 +1006,7 @@
           <p>Keep the momentum going!</p>
         </div>
 
-        <!-- Streak Display -->
+        
         <div class="streak-hero">
           <div class="streak-flame" id="streak-fire">
             <i data-lucide="flame"></i>
@@ -1024,17 +1018,17 @@
           <p class="streak-message" id="streak-message">Log a meal to start your streak!</p>
         </div>
 
-        <!-- Badges Grid -->
+        
         <div class="badges-section">
           <h3>Badges</h3>
           <div id="badges-grid" class="badges-grid">
-            <!-- Badges will be rendered by JS -->
+            
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ═══════ AI COACH VIEW ═══════ -->
+    
     <div id="coach-view" class="view">
       <div class="view-content" style="padding-bottom:120px;">
         <div class="coach-header">
@@ -1071,7 +1065,7 @@
       </div>
     </div>
 
-    <!-- ═══════ MEAL LOG MODAL ═══════ -->
+    
     <div id="meal-log-modal" class="modal-overlay hidden">
       <div class="modal">
         <div class="modal-header">
@@ -1079,7 +1073,7 @@
           <button id="meal-log-close-btn" class="icon-btn"><i data-lucide="x"></i></button>
         </div>
 
-        <!-- Meal Type Selector -->
+        
         <div class="meal-type-selector">
           <button class="meal-type-btn active" data-meal="breakfast">
             <i data-lucide="sunrise"></i> Breakfast
@@ -1095,7 +1089,7 @@
           </button>
         </div>
 
-        <!-- Tabs -->
+        
         <div id="meal-log-tabs" class="tab-bar">
           <button class="tab-btn active" data-tab="nlp">
             <i data-lucide="message-square"></i> Describe
@@ -1111,7 +1105,7 @@
           </button>
         </div>
 
-        <!-- NLP Tab -->
+        
         <div id="nlp-tab" class="tab-panel active">
           <div class="nlp-input-area">
             <textarea id="nlp-input" class="input-field textarea" placeholder="" rows="3"></textarea>
@@ -1129,7 +1123,7 @@
           </div>
         </div>
 
-        <!-- Image Tab -->
+        
         <div id="image-tab" class="tab-panel">
           <div id="image-drop-zone" class="drop-zone">
             <i data-lucide="image-plus" class="drop-zone-icon"></i>
@@ -1145,7 +1139,7 @@
             <input type="file" id="camera-file-input" accept="image/*" capture="environment" class="drop-zone-input" style="display: none;" />
             <input type="file" id="image-file-input" accept="image/*" class="drop-zone-input" style="display: none;" />
           </div>
-          <!-- Image preview + description (shown after image selected, before analysis) -->
+          
           <div id="image-preview-section" class="hidden">
             <div class="image-preview-container">
               <img id="image-preview-img" class="image-preview" alt="Food preview" />
@@ -1179,7 +1173,7 @@
           </div>
         </div>
 
-        <!-- Barcode Tab -->
+        
         <div id="barcode-tab" class="tab-panel">
           <div class="barcode-scanner-section">
             <div id="barcode-scanner-box" class="barcode-scanner-box">
@@ -1199,7 +1193,7 @@
               </button>
             </div>
 
-            <!-- Manual Barcode Search -->
+            
             <div class="input-group" style="margin-top: 10px;">
               <label for="barcode-input" style="font-size: 0.8rem; margin-bottom: 6px; display: block;">Or Enter Barcode Number</label>
               <div class="input-with-action" style="display: flex; gap: 6px;">
@@ -1210,7 +1204,7 @@
               </div>
             </div>
 
-            <!-- Sample Barcodes -->
+            
             <div class="barcode-samples" style="margin-top: 12px;">
               <span style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 6px;">Try popular examples (Open Food Facts):</span>
               <div style="display: flex; flex-wrap: wrap; gap: 6px;">
@@ -1232,7 +1226,7 @@
           </div>
         </div>
 
-        <!-- Manual Tab -->
+        
         <div id="manual-tab" class="tab-panel">
           <div class="manual-form">
             <div class="input-group">
@@ -1283,7 +1277,7 @@
       </div>
     </div>
 
-    <!-- ═══════ BOTTOM NAVIGATION ═══════ -->
+    
     <nav id="bottom-nav" class="bottom-nav">
       <button class="nav-item active" id="nav-dashboard" data-view="dashboard">
         <i data-lucide="home"></i>
@@ -1308,10 +1302,10 @@
     </nav>
   </section>
 
-  <!-- Toast Container -->
+  
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- Scripts -->
+  
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/food-database.js"></script>

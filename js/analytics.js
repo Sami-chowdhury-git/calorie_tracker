@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* ANALYTICS — Charts & Stats (Chart.js)       */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Analytics = {
   calorieChart: null,
@@ -31,7 +31,7 @@ window.Analytics = {
       Store.saveWeightLog(log);
       document.getElementById('weight-input').value = '';
 
-      // Weight log streak
+      
       const ws = Store.getWeightLogStreak();
       const yesterday = Utils.addDays(today, -1);
       if (ws.lastDate === yesterday) ws.streak++;
@@ -44,7 +44,7 @@ window.Analytics = {
       document.dispatchEvent(new CustomEvent('check-achievements'));
     });
 
-    // Report Exporter
+    
     const exportModal = document.getElementById('export-report-modal');
     document.getElementById('export-report-btn')?.addEventListener('click', () => {
       if (exportModal) {
@@ -149,7 +149,7 @@ window.Analytics = {
     const labels = filtered.map(e => { const d=new Date(e.date+'T12:00:00'); return `${d.getMonth()+1}/${d.getDate()}`; });
     const weights = filtered.map(e => e.weight);
 
-    // Weight change info
+    
     if (filtered.length >= 2) {
       const change = (weights[weights.length-1] - weights[0]).toFixed(1);
       const changeText = change > 0 ? `+${change}` : change;
@@ -193,7 +193,7 @@ window.Analytics = {
     const profile = Store.getProfile();
     if (!profile) return;
 
-    // This week
+    
     let totalC = 0, totalP = 0, days = 0;
     for (let i = 0; i < 7; i++) {
       const t = Store.getDayTotals(Utils.addDays(Utils.todayStr(), -i));
@@ -202,7 +202,7 @@ window.Analytics = {
     const avgC = days > 0 ? Math.round(totalC / days) : 0;
     const avgP = days > 0 ? Math.round(totalP / days) : 0;
 
-    // Last week for comparison
+    
     let lastTotalC = 0, lastDays = 0;
     for (let i = 7; i < 14; i++) {
       const t = Store.getDayTotals(Utils.addDays(Utils.todayStr(), -i));
@@ -210,7 +210,7 @@ window.Analytics = {
     }
     const lastAvgC = lastDays > 0 ? Math.round(lastTotalC / lastDays) : 0;
 
-    // Consistency
+    
     let consistent = 0;
     const streakData = Store.getStreakData();
     for (let i = 0; i < 7; i++) {
@@ -219,12 +219,12 @@ window.Analytics = {
     }
     const consistencyPct = days > 0 ? Math.round((consistent / 7) * 100) : 0;
 
-    // Update UI
+    
     document.getElementById('avg-calories').textContent = avgC > 0 ? `${Utils.formatNum(avgC)} kcal` : '\u2014';
     document.getElementById('avg-protein').textContent = avgP > 0 ? `${avgP} g` : '\u2014';
     document.getElementById('consistency-score').textContent = days > 0 ? `${consistencyPct}%` : '\u2014';
 
-    // Change indicators
+    
     const calChange = document.getElementById('avg-cal-change');
     if (calChange && lastAvgC > 0 && avgC > 0) {
       const pct = Math.round(((avgC - lastAvgC) / lastAvgC) * 100);

@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* ACHIEVEMENTS — Streaks & Badges             */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 const BADGES = [
   { id:'first_log', name:'First Log', icon:'🍽️', desc:'Log your first meal' },
@@ -72,7 +72,7 @@ window.Achievements = {
     if (diary.breakfast.length > 0 && new Date().getHours() < 9) unlock('early_bird');
     if (Store.getNlpCount() >= 10) unlock('quick_logger');
 
-    // Protein Pro
+    
     if (profile) {
       const ps = Store.getProteinStreakData();
       if (totals.protein >= profile.protein * 0.9) {
@@ -85,10 +85,10 @@ window.Achievements = {
       if (ps.streak >= 5) unlock('protein_pro');
     }
 
-    // Data Nerd
+    
     if (Store.getWeightLogStreak().streak >= 7) unlock('data_nerd');
 
-    // Consistency King
+    
     if (profile) {
       let c = 0;
       for (let i = 0; i < 7; i++) {

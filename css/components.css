@@ -1,8 +1,8 @@
-/* ═══════════════════════════════════════════ */
-/* COMPONENTS — Buttons, Inputs, Cards, etc.   */
-/* ═══════════════════════════════════════════ */
 
-/* ═══ Buttons ═══ */
+
+
+
+
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 12px 24px; border-radius: var(--radius-md); border: none;
@@ -45,7 +45,7 @@
 .icon-btn i { width: 20px; height: 20px; }
 .icon-btn:hover { background: rgba(99,102,241,0.12); color: var(--accent-secondary); }
 
-/* ═══ Inputs ═══ */
+
 .input-group { display: flex; flex-direction: column; gap: 6px; position: relative; }
 .input-group label {
   font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);
@@ -84,7 +84,7 @@
 }
 .input-group:has(.input-icon) .input-field { padding-left: 42px; }
 
-/* ═══ Cards ═══ */
+
 .card {
   background: var(--bg-card); backdrop-filter: blur(12px);
   border: 1px solid var(--border-color); border-radius: var(--radius-lg);
@@ -100,7 +100,7 @@
 }
 .section-header h3 i { width: 18px; height: 18px; color: var(--accent-primary); }
 
-/* ═══ Modal ═══ */
+
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.7);
   backdrop-filter: blur(4px); z-index: 1000;
@@ -123,7 +123,7 @@
 }
 .modal-header h2 { font-size: 1.15rem; }
 
-/* ═══ Tabs ═══ */
+
 .tab-bar {
   display: flex; gap: 4px; background: var(--bg-primary);
   border-radius: var(--radius-full); padding: 4px; margin-bottom: 20px;
@@ -142,7 +142,7 @@
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
 
-/* ═══ Toast ═══ */
+
 .toast-container {
   position: fixed; top: 16px; right: 16px; z-index: 2000;
   display: flex; flex-direction: column; gap: 8px; pointer-events: none;
@@ -169,7 +169,7 @@
 .toast.error .toast-content i { color: var(--danger); }
 .toast-content span { flex: 1; }
 
-/* ═══ Header ═══ */
+
 .app-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; justify-content: space-between; align-items: center;
@@ -179,7 +179,7 @@
 .header-logo { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; }
 .header-right { display: flex; gap: 4px; }
 
-/* ═══ Bottom Nav ═══ */
+
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
   display: flex; justify-content: space-around;
@@ -203,7 +203,7 @@
 .nav-item { position: relative; }
 .nav-item:hover:not(.active) { color: var(--text-secondary); }
 
-/* ═══ FAB ═══ */
+
 .fab {
   position: fixed; bottom: 84px; right: 20px; z-index: 50;
   width: 56px; height: 56px; border-radius: 50%; border: none;
@@ -216,14 +216,14 @@
 .fab:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(99,102,241,0.5); }
 .fab:active { transform: scale(0.95); }
 
-/* ═══ Empty States ═══ */
+
 .empty-state-mini {
   text-align: center; padding: 40px 20px; color: var(--text-muted);
 }
 .empty-state-mini i { width: 32px; height: 32px; margin: 0 auto 12px; opacity: 0.5; }
 .empty-state-mini p { font-size: 0.85rem; }
 
-/* ═══ Auth Styles ═══ */
+
 .auth-container {
   max-width: 400px; margin: 0 auto; padding: 48px 24px;
   min-height: 100vh; display: flex; flex-direction: column;
@@ -251,7 +251,7 @@
   z-index: 0; pointer-events: none;
 }
 
-/* ═══ Meal Preview Items (Dashboard) ═══ */
+
 .meal-preview-item {
   display: flex; justify-content: space-between; align-items: center;
   padding: 10px 14px; background: var(--bg-card); border-radius: var(--radius-md);
@@ -262,7 +262,7 @@
 .meal-preview-meal { text-transform: capitalize; color: var(--text-muted); font-size: 0.75rem; }
 .meal-preview-cals { font-weight: 600; color: var(--accent-secondary); font-size: 0.85rem; }
 
-/* ═══ Enhanced Interactions ═══ */
+
 .btn-primary { position: relative; overflow: hidden; }
 .btn-primary::after {
   content: ''; position: absolute; width: 20px; height: 20px;
@@ -282,7 +282,7 @@
 .icon-btn { transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease; }
 .icon-btn:active { transform: scale(0.85); }
 
-/* Theme Toggle */
+
 .theme-toggle {
   display: flex; align-items: center; justify-content: center;
   width: 36px; height: 36px; border-radius: 50%;
@@ -293,7 +293,7 @@
 .theme-toggle.switching i { animation: themeSwitch 0.5s ease; }
 .theme-toggle i { width: 20px; height: 20px; }
 
-/* Goals Modal */
+
 .goals-modal .modal { max-width: 480px; }
 .goals-form { display: flex; flex-direction: column; gap: 16px; }
 .goals-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -306,7 +306,7 @@
 .ai-feedback.good { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: var(--success); }
 .ai-feedback.bad { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--danger); }
 
-/* Recalculate Macros Display */
+
 .recalc-macros-display {
   display: flex; gap: 12px; margin: 12px 0;
 }
@@ -327,7 +327,7 @@
   text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;
 }
 
-/* Unit label inside input */
+
 .unit-label {
   display: flex; align-items: center; padding: 0 10px;
   font-size: 0.82rem; color: var(--text-secondary);

@@ -1,9 +1,9 @@
-/* ═══════════════════════════════════════════ */
-/* AI COACH — Multi-tab Chat with App Context  */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.AICoach = (() => {
-  let conversations = []; // [{id, title, messages}]
+  let conversations = []; 
   let activeConvId = null;
   const MAX_HISTORY = 30;
   const STORAGE_KEY = 'caltrack_coach_convs';
@@ -25,12 +25,12 @@ window.AICoach = (() => {
 
     sendBtn.addEventListener('click', sendMessage);
 
-    // New chat button
+    
     document.getElementById('coach-new-chat-btn')?.addEventListener('click', () => {
       createNewConversation();
     });
 
-    // Suggestion chips
+    
     document.querySelectorAll('.suggestion-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         input.value = chip.dataset.q;
@@ -39,7 +39,7 @@ window.AICoach = (() => {
       });
     });
 
-    // Load saved conversations
+    
     loadConversations();
     renderTabBar();
 
@@ -125,7 +125,7 @@ window.AICoach = (() => {
       </button>
     `).join('');
 
-    // Bind tab clicks
+    
     tabBar.querySelectorAll('.coach-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         if (e.target.classList.contains('coach-tab-close')) {
@@ -157,7 +157,7 @@ window.AICoach = (() => {
           </div>
         </div>
       `;
-      // Rebind suggestion chips
+      
       chatEl.querySelectorAll('.suggestion-chip').forEach(chip => {
         chip.addEventListener('click', () => {
           document.getElementById('coach-input').value = chip.dataset.q;
@@ -186,7 +186,7 @@ window.AICoach = (() => {
     if (role === 'ai') {
       const msgText = document.createElement('div');
       msgText.className = 'msg-text';
-      // Simple markdown-like formatting
+      
       msgText.innerHTML = formatCoachResponse(text);
       bubble.appendChild(msgText);
     } else {
@@ -229,7 +229,7 @@ window.AICoach = (() => {
     const weightLog = Store.getWeightLog();
     const freqFoods = Store.getFrequentFoods(10);
 
-    // Build recent meals summary
+    
     let todayMeals = [];
     ['breakfast','lunch','dinner','snacks'].forEach(m => {
       diary[m].forEach(item => {
@@ -237,7 +237,7 @@ window.AICoach = (() => {
       });
     });
 
-    // Get recent days
+    
     const loggedDates = Store.getLoggedDates().slice(-7);
     let weekSummary = [];
     loggedDates.forEach(d => {
@@ -283,7 +283,7 @@ window.AICoach = (() => {
     appendBubble(text, 'user');
     conv.messages.push({ role: 'user', text });
 
-    // Auto-title from first message
+    
     if (conv.messages.length === 1) {
       conv.title = text.length > 30 ? text.substring(0, 30) + '…' : text;
       renderTabBar();

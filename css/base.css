@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* BASE — Reset, Variables, Typography         */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 :root {
   --bg-primary: #0a0a0f;
@@ -75,7 +75,7 @@ button { font-family: 'Inter', sans-serif; cursor: pointer; }
 input, select, textarea { font-family: 'Inter', sans-serif; }
 img { max-width: 100%; display: block; }
 
-/* Screen / View System */
+
 .screen { display: none; min-height: 100vh; }
 .screen.active { display: block; }
 
@@ -88,12 +88,12 @@ img { max-width: 100%; display: block; }
   padding: 0 20px 24px;
 }
 
-/* Utilities */
+
 .hidden { display: none !important; }
 .accent { color: var(--accent-primary); }
 .text-center { text-align: center; }
 
-/* Scrollbar */
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: var(--radius-full); }
@@ -101,7 +101,7 @@ img { max-width: 100%; display: block; }
 
 ::selection { background: var(--accent-primary); color: white; }
 
-/* ═══ Keyframe Animations ═══ */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -168,7 +168,7 @@ img { max-width: 100%; display: block; }
   100% { transform: rotate(360deg) scale(1); }
 }
 
-/* ═══ Stagger Utilities ═══ */
+
 .stagger-1 { animation-delay: 0.05s; }
 .stagger-2 { animation-delay: 0.1s; }
 .stagger-3 { animation-delay: 0.15s; }

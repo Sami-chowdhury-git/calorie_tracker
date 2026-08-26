@@ -1,10 +1,10 @@
-/* ═══════════════════════════════════════════ */
-/* FOOD DATABASE — 130+ common food items      */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.FoodDB = {
   items: [
-    // ═══ PROTEINS ═══
+    
     { name:'Scrambled Eggs', aliases:['eggs','scrambled egg','egg','fried egg'], category:'protein', calories:147, protein:10, carbs:1.6, fat:11, serving:'2 large', unit:'eggs' },
     { name:'Chicken Breast', aliases:['grilled chicken','chicken','chicken breast grilled'], category:'protein', calories:165, protein:31, carbs:0, fat:3.6, serving:'100g', unit:'g' },
     { name:'Salmon Fillet', aliases:['salmon','grilled salmon','baked salmon'], category:'protein', calories:208, protein:20, carbs:0, fat:13, serving:'100g', unit:'g' },
@@ -23,7 +23,7 @@ window.FoodDB = {
     { name:'Boiled Egg', aliases:['hard boiled egg','egg boiled'], category:'protein', calories:78, protein:6, carbs:0.6, fat:5.3, serving:'1 large', unit:'egg' },
     { name:'Chicken Thigh', aliases:['chicken thighs','dark meat chicken'], category:'protein', calories:209, protein:26, carbs:0, fat:11, serving:'1 thigh', unit:'thigh' },
 
-    // ═══ GRAINS & CARBS ═══
+    
     { name:'White Rice', aliases:['rice','steamed rice','boiled rice'], category:'grain', calories:206, protein:4.3, carbs:45, fat:0.4, serving:'1 cup cooked', unit:'cup' },
     { name:'Brown Rice', aliases:['brown rice cooked'], category:'grain', calories:216, protein:5, carbs:45, fat:1.8, serving:'1 cup cooked', unit:'cup' },
     { name:'Bread', aliases:['white bread','toast','slice of bread','sourdough toast','sourdough','bread slice'], category:'grain', calories:79, protein:2.7, carbs:15, fat:1, serving:'1 slice', unit:'slice' },
@@ -41,7 +41,7 @@ window.FoodDB = {
     { name:'Sweet Potato', aliases:['baked sweet potato','yam'], category:'grain', calories:103, protein:2.3, carbs:24, fat:0.1, serving:'1 medium', unit:'potato' },
     { name:'Potato', aliases:['baked potato','mashed potato','boiled potato'], category:'grain', calories:161, protein:4.3, carbs:37, fat:0.2, serving:'1 medium', unit:'potato' },
 
-    // ═══ DAIRY ═══
+    
     { name:'Whole Milk', aliases:['milk','glass of milk','cow milk'], category:'dairy', calories:149, protein:8, carbs:12, fat:8, serving:'1 cup', unit:'cup' },
     { name:'Skim Milk', aliases:['fat free milk','nonfat milk'], category:'dairy', calories:83, protein:8, carbs:12, fat:0.2, serving:'1 cup', unit:'cup' },
     { name:'Greek Yogurt', aliases:['yogurt','yoghurt','plain yogurt','greek yoghurt'], category:'dairy', calories:100, protein:17, carbs:6, fat:0.7, serving:'1 cup', unit:'cup' },
@@ -52,7 +52,7 @@ window.FoodDB = {
     { name:'Butter', aliases:['salted butter','unsalted butter'], category:'dairy', calories:102, protein:0.1, carbs:0, fat:12, serving:'1 tbsp', unit:'tbsp' },
     { name:'Parmesan', aliases:['parmesan cheese','parmigiano'], category:'dairy', calories:21, protein:1.4, carbs:0.2, fat:1.4, serving:'1 tbsp grated', unit:'tbsp' },
 
-    // ═══ FRUITS ═══
+    
     { name:'Banana', aliases:['banana fruit'], category:'fruit', calories:105, protein:1.3, carbs:27, fat:0.4, serving:'1 medium', unit:'banana' },
     { name:'Apple', aliases:['apple fruit','green apple','red apple'], category:'fruit', calories:95, protein:0.5, carbs:25, fat:0.3, serving:'1 medium', unit:'apple' },
     { name:'Orange', aliases:['navel orange','mandarin'], category:'fruit', calories:62, protein:1.2, carbs:15, fat:0.2, serving:'1 medium', unit:'orange' },
@@ -68,7 +68,7 @@ window.FoodDB = {
     { name:'Dried Dates', aliases:['dates','medjool dates'], category:'fruit', calories:66, protein:0.4, carbs:18, fat:0, serving:'1 date', unit:'date' },
     { name:'Raisins', aliases:['dried grapes'], category:'fruit', calories:129, protein:1.3, carbs:34, fat:0.2, serving:'0.25 cup', unit:'cup' },
 
-    // ═══ VEGETABLES ═══
+    
     { name:'Broccoli', aliases:['steamed broccoli','broccoli florets'], category:'vegetable', calories:55, protein:3.7, carbs:11, fat:0.6, serving:'1 cup', unit:'cup' },
     { name:'Spinach', aliases:['baby spinach','spinach leaves','raw spinach'], category:'vegetable', calories:7, protein:0.9, carbs:1.1, fat:0.1, serving:'1 cup raw', unit:'cup' },
     { name:'Carrot', aliases:['carrots','baby carrots','carrot sticks'], category:'vegetable', calories:25, protein:0.6, carbs:6, fat:0.1, serving:'1 medium', unit:'carrot' },
@@ -85,7 +85,7 @@ window.FoodDB = {
     { name:'Cauliflower', aliases:['cauliflower rice','cauliflower florets'], category:'vegetable', calories:25, protein:2, carbs:5, fat:0.3, serving:'1 cup', unit:'cup' },
     { name:'Asparagus', aliases:['asparagus spears'], category:'vegetable', calories:27, protein:2.9, carbs:5.2, fat:0.2, serving:'6 spears', unit:'spears' },
 
-    // ═══ NUTS & LEGUMES ═══
+    
     { name:'Almonds', aliases:['raw almonds','almond'], category:'nut', calories:164, protein:6, carbs:6, fat:14, serving:'1 oz (23 nuts)', unit:'oz' },
     { name:'Peanut Butter', aliases:['pb','peanut butter spread'], category:'nut', calories:94, protein:4, carbs:3, fat:8, serving:'1 tbsp', unit:'tbsp' },
     { name:'Almond Butter', aliases:['almond spread'], category:'nut', calories:98, protein:3.4, carbs:3, fat:9, serving:'1 tbsp', unit:'tbsp' },
@@ -97,7 +97,7 @@ window.FoodDB = {
     { name:'Kidney Beans', aliases:['red beans','rajma'], category:'legume', calories:225, protein:15, carbs:40, fat:0.9, serving:'1 cup', unit:'cup' },
     { name:'Mixed Nuts', aliases:['trail mix nuts','assorted nuts'], category:'nut', calories:172, protein:5, carbs:7, fat:15, serving:'1 oz', unit:'oz' },
 
-    // ═══ SNACKS ═══
+    
     { name:'Potato Chips', aliases:['chips','crisps','lays'], category:'snack', calories:152, protein:2, carbs:15, fat:10, serving:'1 oz', unit:'oz' },
     { name:'Granola Bar', aliases:['energy bar','nature valley','cereal bar'], category:'snack', calories:190, protein:4, carbs:29, fat:7, serving:'1 bar', unit:'bar' },
     { name:'Protein Bar', aliases:['quest bar','rxbar','kind bar'], category:'snack', calories:210, protein:20, carbs:22, fat:8, serving:'1 bar', unit:'bar' },
@@ -109,7 +109,7 @@ window.FoodDB = {
     { name:'Ice Cream', aliases:['vanilla ice cream','ice cream scoop'], category:'snack', calories:137, protein:2.3, carbs:16, fat:7.3, serving:'0.5 cup', unit:'cup' },
     { name:'Cookie', aliases:['chocolate chip cookie','biscuit'], category:'snack', calories:78, protein:0.9, carbs:10, fat:3.6, serving:'1 cookie', unit:'cookie' },
 
-    // ═══ BEVERAGES ═══
+    
     { name:'Black Coffee', aliases:['coffee','americano','espresso','drip coffee'], category:'beverage', calories:2, protein:0.3, carbs:0, fat:0, serving:'1 cup', unit:'cup' },
     { name:'Latte', aliases:['cafe latte','coffee latte','milk coffee'], category:'beverage', calories:190, protein:10, carbs:18, fat:7, serving:'16 oz', unit:'cup' },
     { name:'Orange Juice', aliases:['oj','fresh orange juice','juice'], category:'beverage', calories:112, protein:1.7, carbs:26, fat:0.5, serving:'1 cup', unit:'cup' },
@@ -121,7 +121,7 @@ window.FoodDB = {
     { name:'Coconut Water', aliases:['coconut drink'], category:'beverage', calories:46, protein:1.7, carbs:9, fat:0.5, serving:'1 cup', unit:'cup' },
     { name:'Almond Milk', aliases:['oat milk','soy milk','plant milk'], category:'beverage', calories:39, protein:1, carbs:3.4, fat:2.5, serving:'1 cup', unit:'cup' },
 
-    // ═══ CONDIMENTS ═══
+    
     { name:'Olive Oil', aliases:['extra virgin olive oil','evoo','cooking oil'], category:'condiment', calories:119, protein:0, carbs:0, fat:14, serving:'1 tbsp', unit:'tbsp' },
     { name:'Honey', aliases:['raw honey'], category:'condiment', calories:64, protein:0.1, carbs:17, fat:0, serving:'1 tbsp', unit:'tbsp' },
     { name:'Ketchup', aliases:['tomato ketchup','catsup'], category:'condiment', calories:20, protein:0.2, carbs:5, fat:0, serving:'1 tbsp', unit:'tbsp' },
@@ -131,7 +131,7 @@ window.FoodDB = {
     { name:'Hummus', aliases:['hummus dip'], category:'condiment', calories:70, protein:2, carbs:4, fat:5, serving:'2 tbsp', unit:'tbsp' },
     { name:'Salsa', aliases:['tomato salsa','pico de gallo'], category:'condiment', calories:10, protein:0.5, carbs:2, fat:0, serving:'2 tbsp', unit:'tbsp' },
 
-    // ═══ COMMON MEALS ═══
+    
     { name:'Pizza Slice', aliases:['pizza','cheese pizza','pepperoni pizza','slice of pizza'], category:'meal', calories:285, protein:12, carbs:36, fat:10, serving:'1 large slice', unit:'slice' },
     { name:'Cheeseburger', aliases:['burger','hamburger','beef burger'], category:'meal', calories:354, protein:20, carbs:29, fat:17, serving:'1 burger', unit:'burger' },
     { name:'Chicken Sandwich', aliases:['sandwich','grilled chicken sandwich'], category:'meal', calories:400, protein:28, carbs:42, fat:12, serving:'1 sandwich', unit:'sandwich' },

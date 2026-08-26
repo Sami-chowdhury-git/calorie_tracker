@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* ONBOARDING — Multi-step wizard              */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Onboarding = {
   currentStep: 1,
@@ -9,7 +9,7 @@ window.Onboarding = {
           weightUnit:'kg', heightUnit:'cm', activityLevel:1.55, goal:'maintain' },
 
   init() {
-    // Gender toggles
+    
     document.querySelectorAll('.ob-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.ob-toggle').forEach(b => b.classList.remove('active'));
@@ -18,7 +18,7 @@ window.Onboarding = {
       });
     });
 
-    // Unit selects
+    
     document.getElementById('ob-height-unit').addEventListener('change', (e) => {
       const isFt = e.target.value === 'ft';
       this.data.heightUnit = e.target.value;
@@ -32,7 +32,7 @@ window.Onboarding = {
       this.data.weightUnit = e.target.value;
     });
 
-    // Activity cards
+    
     document.querySelectorAll('.ob-selection-card[data-level]').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.ob-selection-card[data-level]').forEach(c => c.classList.remove('active'));
@@ -41,7 +41,7 @@ window.Onboarding = {
       });
     });
 
-    // Goal cards
+    
     document.querySelectorAll('.ob-selection-card[data-goal]').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.ob-selection-card[data-goal]').forEach(c => c.classList.remove('active'));
@@ -50,7 +50,7 @@ window.Onboarding = {
       });
     });
 
-    // Navigation
+    
     document.getElementById('ob-next-btn').addEventListener('click', () => {
       if (this.validateStep(this.currentStep)) this.goToStep(this.currentStep + 1);
     });
@@ -59,7 +59,7 @@ window.Onboarding = {
     });
     document.getElementById('ob-finish-btn').addEventListener('click', () => this.finish());
 
-    // Pre-fill name
+    
     const session = Auth.getCurrentUser();
     if (session && session.name) {
       document.getElementById('ob-name').value = session.name;
@@ -70,14 +70,14 @@ window.Onboarding = {
   goToStep(step) {
     if (step < 1 || step > this.totalSteps) return;
 
-    // Collect data from current step before leaving
+    
     this.collectData(this.currentStep);
 
-    // Hide current, show target
+    
     document.querySelectorAll('.onboarding-step').forEach(s => s.classList.remove('active'));
     document.querySelector(`.onboarding-step[data-step="${step}"]`).classList.add('active');
 
-    // Progress
+    
     document.getElementById('ob-progress-fill').style.width = `${(step / this.totalSteps) * 100}%`;
     document.querySelectorAll('.ob-dot').forEach(dot => {
       const ds = parseInt(dot.dataset.step);
@@ -86,12 +86,12 @@ window.Onboarding = {
       else if (ds === step) dot.classList.add('active');
     });
 
-    // Nav buttons
+    
     document.getElementById('ob-back-btn').classList.toggle('hidden', step === 1);
     document.getElementById('ob-next-btn').classList.toggle('hidden', step === this.totalSteps);
     document.getElementById('ob-finish-btn').classList.toggle('hidden', step !== this.totalSteps);
 
-    // Results on step 5
+    
     if (step === 5) this.showResults();
 
     this.currentStep = step;

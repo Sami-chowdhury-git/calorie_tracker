@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* ANALYTICS — Charts & Stats                  */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 .analytics-header { padding: 72px 0 8px; }
 .analytics-header h2 { font-size: 1.5rem; }
@@ -37,7 +37,7 @@
   font-size: 0.68rem; color: var(--text-muted); display: block; margin-top: 2px;
 }
 
-/* Chart Cards */
+
 .chart-card {
   background: var(--bg-card); border: 1px solid var(--border-color);
   border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px;
@@ -52,7 +52,7 @@
 
 .chart-wrapper { position: relative; height: 220px; width: 100%; }
 
-/* Period Toggle */
+
 .chart-period-toggle {
   display: flex; gap: 4px; background: var(--bg-primary);
   border-radius: var(--radius-full); padding: 3px;
@@ -67,7 +67,7 @@
 .period-btn.active { background: var(--accent-primary); color: #fff; }
 .period-btn:hover:not(.active) { color: var(--text-secondary); }
 
-/* Weight Log */
+
 .weight-log-form {
   margin-top: 16px; padding-top: 16px;
   border-top: 1px solid var(--border-color);

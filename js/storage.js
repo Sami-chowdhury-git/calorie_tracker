@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* STORAGE — localStorage + MySQL sync layer   */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Store = {
   _key(n) { return 'caltrack_' + n; },
@@ -11,7 +11,7 @@ window.Store = {
   },
   _remove(n) { localStorage.removeItem(this._key(n)); },
 
-  /* ── Sync Engine ── */
+  
   _syncTimeout: null,
   _syncing: false,
 
@@ -142,7 +142,7 @@ window.Store = {
     }
   },
 
-  /* ── Coach Conversations ── */
+  
   getCoachData() {
     const s = this.getSession();
     if (!s) return null;
@@ -152,20 +152,20 @@ window.Store = {
     } catch { return null; }
   },
 
-  /* ── Users (kept local for backward compat) ── */
+  
   getUsers() { return this._get('users') || {}; },
   saveUser(email, data) { const u = this.getUsers(); u[email] = data; this._set('users', u, true); },
 
-  /* ── Session ── */
+  
   setSession(u) { this._set('session', u, true); },
   getSession() { return this._get('session'); },
   clearSession() { this._remove('session'); },
 
-  /* ── Profile ── */
+  
   getProfile() { const s = this.getSession(); return s ? this._get('profile_' + s.id) : null; },
   saveProfile(p) { const s = this.getSession(); if (s) this._set('profile_' + s.id, p); },
 
-  /* ── Diary ── */
+  
   _emptyDay() { return { breakfast: [], lunch: [], dinner: [], snacks: [] }; },
   getDiary(dateStr) {
     const s = this.getSession();
@@ -205,11 +205,11 @@ window.Store = {
     return dates.sort();
   },
 
-  /* ── Weight ── */
+  
   getWeightLog() { const s = this.getSession(); return s ? (this._get('weight_' + s.id) || []) : []; },
   saveWeightLog(l) { const s = this.getSession(); if (s) this._set('weight_' + s.id, l); },
 
-  /* ── Streak ── */
+  
   getStreakData() {
     const s = this.getSession();
     return s ? (this._get('streak_' + s.id) || { currentStreak: 0, lastLogDate: null, longestStreak: 0 }) :
@@ -217,11 +217,11 @@ window.Store = {
   },
   saveStreakData(d) { const s = this.getSession(); if (s) this._set('streak_' + s.id, d); },
 
-  /* ── Achievements ── */
+  
   getAchievements() { const s = this.getSession(); return s ? (this._get('ach_' + s.id) || {}) : {}; },
   saveAchievements(d) { const s = this.getSession(); if (s) this._set('ach_' + s.id, d); },
 
-  /* ── Food frequency ── */
+  
   getFoodFrequency() { const s = this.getSession(); return s ? (this._get('freq_' + s.id) || {}) : {}; },
   incrementFoodFreq(name) {
     const f = this.getFoodFrequency(); f[name] = (f[name] || 0) + 1;
@@ -251,28 +251,28 @@ window.Store = {
     return items.slice(0, limit);
   },
 
-  /* ── Counters ── */
+  
   getNlpCount() { const s = this.getSession(); return s ? (this._get('nlpc_' + s.id) || 0) : 0; },
   incrementNlpCount() { const s = this.getSession(); if (s) this._set('nlpc_' + s.id, this.getNlpCount() + 1); },
 
   getTotalMeals() { const s = this.getSession(); return s ? (this._get('tm_' + s.id) || 0) : 0; },
   incrementTotalMeals(c = 1) { const s = this.getSession(); if (s) this._set('tm_' + s.id, this.getTotalMeals() + c); },
 
-  /* ── Protein streak ── */
+  
   getProteinStreakData() {
     const s = this.getSession();
     return s ? (this._get('ps_' + s.id) || { streak: 0, lastDate: null }) : { streak: 0, lastDate: null };
   },
   saveProteinStreakData(d) { const s = this.getSession(); if (s) this._set('ps_' + s.id, d); },
 
-  /* ── Weight log streak ── */
+  
   getWeightLogStreak() {
     const s = this.getSession();
     return s ? (this._get('ws_' + s.id) || { streak: 0, lastDate: null }) : { streak: 0, lastDate: null };
   },
   saveWeightLogStreak(d) { const s = this.getSession(); if (s) this._set('ws_' + s.id, d); },
 
-  /* ── Water Tracking ── */
+  
   getWaterLog(dateStr) {
     const s = this.getSession(); if (!s) return { total: 0, goal: 2500, entries: [] };
     return this._get('water_' + s.id + '_' + dateStr) || { total: 0, goal: 2500, entries: [] };
@@ -294,7 +294,7 @@ window.Store = {
     const s = this.getSession(); return s ? (this._get('water_goal_' + s.id) || 2500) : 2500;
   },
 
-  /* ── Reset all user data ── */
+  
   resetAllData() {
     const s = this.getSession();
     if (!s) return;
@@ -311,7 +311,7 @@ window.Store = {
     keysToRemove.forEach(k => localStorage.removeItem(k));
     this._remove('profile_' + userId);
 
-    // Also clear from the MySQL database
+    
     fetch('/api/data/reset', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + userId }

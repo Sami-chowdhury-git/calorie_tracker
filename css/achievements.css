@@ -1,12 +1,12 @@
-/* ═══════════════════════════════════════════ */
-/* ACHIEVEMENTS — Streaks & Badges             */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 .achievements-header { padding: 72px 0 8px; }
 .achievements-header h2 { font-size: 1.5rem; }
 .achievements-header p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px; }
 
-/* Streak Hero */
+
 .streak-hero {
   background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(79,70,229,0.06));
   border: 1px solid var(--border-color-strong);
@@ -36,7 +36,7 @@
 .streak-label { color: var(--text-secondary); font-size: 0.9rem; display: block; }
 .streak-message { color: var(--text-muted); font-size: 0.82rem; margin-top: 10px; position: relative; }
 
-/* Badges */
+
 .badges-section { margin-top: 28px; }
 .badges-section h3 { font-size: 1.1rem; margin-bottom: 16px; }
 

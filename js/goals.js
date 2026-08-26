@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* GOALS — Recalculate TDEE & Apply Goals     */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Goals = (() => {
   let calculatedTDEE = 0;
@@ -43,15 +43,15 @@ window.Goals = (() => {
       };
     }
 
-    // Recalculate button
+    
     document.getElementById('recalc-btn')?.addEventListener('click', recalculate);
 
-    // Height unit toggle
+    
     document.getElementById('goal-height-unit')?.addEventListener('change', (e) => {
       toggleHeightInputs(e.target.value);
     });
 
-    // Apply goals
+    
     document.getElementById('apply-goals-btn')?.addEventListener('click', applyGoals);
   }
 
@@ -59,7 +59,7 @@ window.Goals = (() => {
     const cmGroup = document.getElementById('goal-height-cm-group');
     const ftGroup = document.getElementById('goal-height-ft-group');
     if (unit === 'ft') {
-      // Hide the cm input but keep the unit select visible
+      
       if (cmGroup) {
         const mainInput = cmGroup.querySelector('#goal-height');
         if (mainInput) mainInput.style.display = 'none';
@@ -104,13 +104,13 @@ window.Goals = (() => {
       if (isNaN(hCm) || hCm < 50 || hCm > 250) { Utils.showToast('Please enter a valid height (50–250 cm)', 'warning'); return; }
     }
 
-    // Mifflin-St Jeor
+    
     let bmr = 10 * weight + 6.25 * hCm - 5 * age;
     bmr += gender === 'male' ? 5 : -161;
 
     let tdee = Math.round(bmr * activity);
 
-    // Dynamic Goal adjustment
+    
     let adjustment = 0;
     if (goal === 'cut') {
       adjustment = -Math.min(500, Math.round(tdee * 0.20));
@@ -120,7 +120,7 @@ window.Goals = (() => {
     tdee = Math.round(tdee + adjustment);
     tdee = Math.max(1200, tdee);
 
-    // Macro splits
+    
     const splits = {
       cut: { p: 0.40, c: 0.30, f: 0.30 },
       maintain: { p: 0.30, c: 0.40, f: 0.30 },
@@ -135,7 +135,7 @@ window.Goals = (() => {
       fat: Math.round((tdee * s.f) / 9),
     };
 
-    // Show results
+    
     document.getElementById('recalc-tdee').textContent = `${tdee} kcal`;
     document.getElementById('recalc-protein').textContent = calculatedMacros.protein;
     document.getElementById('recalc-carbs').textContent = calculatedMacros.carbs;

@@ -1,13 +1,13 @@
-/* ═══════════════════════════════════════════ */
-/* ONBOARDING — Multi-step Wizard              */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 .onboarding-container {
   max-width: 500px; margin: 0 auto; padding: 40px 20px;
   min-height: 100vh; display: flex; flex-direction: column;
 }
 
-/* Progress */
+
 .ob-progress { margin-bottom: 40px; }
 .ob-progress-track {
   height: 4px; background: var(--bg-tertiary);
@@ -35,7 +35,7 @@
 }
 .ob-dot.completed { background: var(--success); color: #fff; }
 
-/* Steps */
+
 .onboarding-step { display: none; flex-direction: column; flex: 1; }
 .onboarding-step.active { display: flex; animation: fadeIn 0.4s ease; }
 
@@ -44,11 +44,11 @@
 .ob-step-header h2 { font-size: 1.6rem; margin-bottom: 8px; }
 .ob-step-header p { color: var(--text-secondary); font-size: 0.9rem; }
 
-/* Form Grid */
+
 .ob-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .ob-form-grid .full-width { grid-column: span 2; }
 
-/* Toggle Group */
+
 .ob-toggle-group { display: flex; gap: 8px; }
 .ob-toggle {
   flex: 1; padding: 12px; background: var(--bg-tertiary);
@@ -64,7 +64,7 @@
 }
 .ob-toggle:hover:not(.active) { border-color: var(--text-muted); }
 
-/* Selection Cards */
+
 .ob-card-grid { display: grid; gap: 12px; }
 .ob-selection-card {
   background: var(--bg-tertiary); border: 1.5px solid var(--border-color);
@@ -95,7 +95,7 @@
   font-size: 0.75rem; font-weight: 600; border-radius: var(--radius-full);
 }
 
-/* Results */
+
 .ob-results { text-align: center; }
 .ob-result-hero {
   background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(79,70,229,0.08));
@@ -131,13 +131,13 @@
 .ob-macro-card.carbs i, .ob-macro-card.carbs .macro-value { color: var(--carbs-color); }
 .ob-macro-card.fats i, .ob-macro-card.fats .macro-value { color: var(--fats-color); }
 
-/* Navigation */
+
 .ob-nav {
   display: flex; gap: 12px; margin-top: auto; padding-top: 24px;
 }
 .ob-nav .btn { flex: 1; }
 
-/* Responsive */
+
 @media (max-width: 480px) {
   .ob-form-grid { grid-template-columns: 1fr; }
   .ob-form-grid .full-width { grid-column: span 1; }

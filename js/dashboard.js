@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* DASHBOARD — Main dashboard view             */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Dashboard = {
   init() {
@@ -11,13 +11,13 @@ window.Dashboard = {
       document.dispatchEvent(new CustomEvent('navigate', { detail: { view: 'diary' } }));
     });
 
-    // Custom macros toggle
+    
     document.getElementById('dash-edit-macros-btn')?.addEventListener('click', () => {
       const form = document.getElementById('custom-macros-form');
       const isHidden = form.classList.contains('hidden');
       form.classList.toggle('hidden');
       if (isHidden) {
-        // Pre-fill with current profile values
+        
         const profile = Store.getProfile();
         if (profile) {
           document.getElementById('custom-calories').value = profile.tdee || '';
@@ -29,7 +29,7 @@ window.Dashboard = {
       }
     });
 
-    // Save custom macros
+    
     document.getElementById('custom-macros-save-btn')?.addEventListener('click', () => {
       const calories = parseInt(document.getElementById('custom-calories').value);
       const protein = parseInt(document.getElementById('custom-protein').value);
@@ -55,7 +55,7 @@ window.Dashboard = {
       this.refresh();
     });
 
-    // Water Tracker Quick Actions
+    
     document.querySelectorAll('.water-btn[data-ml]').forEach(btn => {
       btn.addEventListener('click', () => {
         const ml = parseInt(btn.dataset.ml);
@@ -94,45 +94,45 @@ window.Dashboard = {
     if (!profile) return;
     const session = Auth.getCurrentUser();
 
-    // Greeting
+    
     const firstName = (session?.name || profile.name || 'there').split(' ')[0];
     document.getElementById('greeting-text').textContent = `${Utils.getGreeting()}, ${firstName}`;
     document.getElementById('current-date').textContent = Utils.formatDate(Utils.todayStr());
 
-    // Today's totals
+    
     const t = Store.getDayTotals(Utils.todayStr());
     const target = profile.tdee;
     const remaining = Math.max(0, target - t.calories);
 
-    // Calorie ring (radius 85)
+    
     this.updateRing('calorie-ring-fill', 85, t.calories / target);
     document.getElementById('calories-remaining').textContent = Utils.formatNum(remaining);
     document.getElementById('calories-consumed').textContent = Utils.formatNum(t.calories);
     document.getElementById('calories-target').textContent = Utils.formatNum(target);
 
-    // Dynamic color
+    
     const rf = document.getElementById('calorie-ring-fill');
     rf.classList.remove('warning', 'danger');
     if (t.calories / target > 1) rf.classList.add('danger');
     else if (t.calories / target > 0.8) rf.classList.add('warning');
 
-    // Macro rings (radius 32)
+    
     this.updateMacro('protein', t.protein, profile.protein);
     this.updateMacro('carbs', t.carbs, profile.carbs);
     this.updateMacro('fat', t.fat, profile.fat);
 
-    // Micronutrients & Water (personalized based on sex, age, weight, height, activity & goals)
+    
     const targets = Utils.calculateNutritionTargets(profile);
     this.renderMicronutrients(t, targets);
     this.renderWaterTracker(targets);
 
-    // Stats
+    
     document.getElementById('meals-logged-count').textContent = t.meals;
     document.getElementById('dash-streak-count').textContent = Store.getStreakData().currentStreak;
     const ach = Store.getAchievements();
     document.getElementById('dash-badges-count').textContent = Object.values(ach).filter(b => b.unlocked).length;
 
-    // Meals preview
+    
     this.renderMealsPreview();
   },
 

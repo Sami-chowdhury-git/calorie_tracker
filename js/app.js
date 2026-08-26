@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* APP — Main application controller           */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 (function() {
   'use strict';
@@ -150,7 +150,7 @@
         if (this.currentView === 'dashboard') Dashboard.refresh();
       });
 
-      // Prevent typing minus sign or exponent in numeric inputs
+      
       document.addEventListener('keydown', (e) => {
         if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'number') {
           if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
@@ -200,7 +200,7 @@
       document.getElementById('confirm-modal-msg').textContent = message;
       const okBtn = document.getElementById('confirm-modal-ok');
       okBtn.textContent = confirmText || 'Confirm';
-      // Style destructive actions
+      
       if (confirmText === 'Delete Everything') {
         okBtn.style.background = 'var(--danger)';
       } else {

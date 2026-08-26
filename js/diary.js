@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* DIARY — Food diary view                     */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 window.Diary = {
   currentDate: null,
@@ -25,8 +25,7 @@ window.Diary = {
       });
     });
 
-    // FAB removed — meal-add-btn buttons handle this per meal type
-
+    
     document.addEventListener('meal-logged', () => this.render());
   },
 
@@ -117,7 +116,7 @@ window.Diary = {
     const modal = document.getElementById('recent-detail-modal');
     document.getElementById('recent-detail-title').textContent = item.name;
 
-    // Image
+    
     const imgSection = document.getElementById('recent-detail-image');
     const imgEl = document.getElementById('recent-detail-img');
     if (item.imageDataUrl) {
@@ -127,7 +126,7 @@ window.Diary = {
       imgSection.classList.add('hidden');
     }
 
-    // Macros
+    
     document.getElementById('recent-detail-macros').innerHTML = `
       <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center;">
         <div style="background:var(--bg-tertiary); padding:10px 6px; border-radius:10px;">
@@ -152,7 +151,7 @@ window.Diary = {
       </div>
     `;
 
-    // Ingredients
+    
     const ingContainer = document.getElementById('recent-detail-ingredients');
     if (item.ingredients && item.ingredients.length > 0) {
       ingContainer.innerHTML = `
@@ -171,7 +170,7 @@ window.Diary = {
     modal.classList.remove('hidden');
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
-    // Close handlers
+    
     document.getElementById('recent-detail-close').onclick = () => modal.classList.add('hidden');
     modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
   },

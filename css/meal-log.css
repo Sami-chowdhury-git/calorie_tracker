@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════ */
-/* MEAL LOG — Modal Tabs, NLP, Image, Manual   */
-/* ═══════════════════════════════════════════ */
+
+
+
 
 .meal-type-selector {
   display: flex; gap: 6px; padding-bottom: 16px;
@@ -21,10 +21,10 @@
 }
 .meal-type-btn:hover:not(.active) { border-color: var(--text-muted); }
 
-/* NLP */
+
 .nlp-input-area { display: flex; flex-direction: column; gap: 12px; }
 
-/* Parsed Results */
+
 .parsed-results { animation: fadeIn 0.3s ease; }
 .parsed-results h4 { margin-bottom: 12px; font-size: 0.9rem; color: var(--text-secondary); }
 .parsed-items-list { display: flex; flex-direction: column; gap: 8px; }
@@ -82,7 +82,7 @@
   font-weight: 600; font-size: 0.85rem;
 }
 
-/* Image Upload */
+
 .drop-zone {
   border: 2px dashed var(--border-color); border-radius: var(--radius-lg);
   padding: 48px 24px; text-align: center; cursor: pointer;
@@ -99,7 +99,7 @@
   position: absolute; inset: 0; opacity: 0; cursor: pointer;
 }
 
-/* Processing State */
+
 .processing-state { text-align: center; padding: 48px 20px; }
 .processing-state p { color: var(--text-secondary); font-size: 0.9rem; }
 .processing-spinner {
@@ -121,11 +121,11 @@
   animation: spin 2s linear infinite;
 }
 
-/* Manual Form */
+
 .manual-form { display: flex; flex-direction: column; gap: 16px; }
 .manual-macros-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
-/* Image Preview */
+
 .image-preview-container {
   margin-bottom: 16px; border-radius: var(--radius-lg); overflow: hidden;
   border: 1px solid var(--border-color); animation: fadeIn 0.3s ease;
@@ -151,7 +151,7 @@
   align-self: flex-end;
 }
 
-/* Weight Edit */
+
 .weight-edit-btn {
   background: none; border: none; color: var(--text-muted); cursor: pointer;
   padding: 2px 4px; font-size: 0.7rem; transition: color 0.2s;
@@ -163,7 +163,7 @@
   color: var(--text-primary); font-size: 0.75rem; text-align: center; outline: none;
 }
 
-/* Ingredient detail row */
+
 .ingredient-row {
   display: flex; justify-content: space-between; align-items: center;
   padding: 6px 12px; font-size: 0.78rem; color: var(--text-secondary);
@@ -174,7 +174,7 @@
 .ingredient-weight { color: var(--text-muted); font-size: 0.72rem; margin-right: 8px; display: flex; align-items: center; gap: 4px; }
 .ingredient-macros { font-size: 0.68rem; color: var(--text-muted); display: flex; gap: 6px; }
 
-/* Item Remove Button */
+
 .parsed-item-remove-btn {
   background: transparent;
   border: none;
@@ -198,7 +198,7 @@
   transform: scale(0.95);
 }
 
-/* ════ Barcode Scanner ════ */
+
 .barcode-scanner-section {
   display: flex;
   flex-direction: column;

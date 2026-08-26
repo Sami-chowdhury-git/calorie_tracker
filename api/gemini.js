@@ -1,13 +1,7 @@
-/**
- * Vercel Serverless Function — Gemini API Proxy
- * 
- * Keeps the API key on the server. The browser never sees it.
- * Set GEMINI_API_KEY (and optionally GEMINI_API_KEY_2) in
- * Vercel Dashboard → Project Settings → Environment Variables.
- */
+
 
 module.exports = async function handler(req, res) {
-  // CORS headers for the frontend
+  
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

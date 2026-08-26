@@ -1,16 +1,16 @@
-/* ═══════════════════════════════════════════ */
-/* MOBILE — Responsive styles for phones       */
-/* ═══════════════════════════════════════════ */
 
-/* ═══ Phones (< 640px) ═══ */
+
+
+
+
 @media (max-width: 640px) {
 
-  /* Prevent zoom on input focus (iOS) */
+  
   input, select, textarea {
     font-size: 16px !important;
   }
 
-  /* ─── Layout ─── */
+  
   .view-content {
     padding: 0 14px 20px;
   }
@@ -18,7 +18,7 @@
     padding-bottom: 70px;
   }
 
-  /* ─── Header ─── */
+  
   .app-header {
     padding: 10px 14px;
   }
@@ -26,7 +26,7 @@
     font-size: 1.05rem;
   }
 
-  /* ─── Bottom Nav ─── */
+  
   .bottom-nav {
     padding: 4px 0 max(4px, env(safe-area-inset-bottom));
   }
@@ -40,7 +40,7 @@
     height: 20px;
   }
 
-  /* ─── FAB ─── */
+  
   .fab {
     bottom: 70px;
     right: 14px;
@@ -52,7 +52,7 @@
     height: 22px;
   }
 
-  /* ─── Toast ─── */
+  
   .toast-container {
     top: auto;
     bottom: 68px;
@@ -68,7 +68,7 @@
     font-size: 0.8rem;
   }
 
-  /* ─── Auth Screen ─── */
+  
   .auth-container {
     padding: 28px 16px;
   }
@@ -98,7 +98,7 @@
     font-size: 0.85rem;
   }
 
-  /* ─── Onboarding ─── */
+  
   .onboarding-container {
     padding: 20px 14px;
   }
@@ -182,7 +182,7 @@
     font-size: 0.7rem;
   }
 
-  /* ─── Dashboard ─── */
+  
   .dash-greeting {
     padding: 64px 0 4px;
   }
@@ -193,7 +193,7 @@
     font-size: 0.8rem;
   }
 
-  /* Calorie Ring — MUST size container, not just the SVG */
+  
   .calorie-ring-container {
     width: 170px;
     height: 170px;
@@ -210,7 +210,7 @@
     gap: 4px;
   }
 
-  /* Macro Rings */
+  
   .macro-rings-row {
     gap: 16px;
     margin: 16px 0;
@@ -234,7 +234,7 @@
     transform: translate(-50%, -50%);
   }
 
-  /* Stats Row */
+  
   .dash-stats-row {
     gap: 8px;
     margin: 12px 0;
@@ -254,7 +254,7 @@
     margin-bottom: 4px;
   }
 
-  /* Meals Preview */
+  
   .section-header h3 {
     font-size: 0.9rem;
   }
@@ -268,7 +268,7 @@
     font-size: 0.8rem;
   }
 
-  /* ─── Meal Log Modal ─── */
+  
   .modal-overlay {
     padding: 0;
     align-items: flex-end;
@@ -376,7 +376,7 @@
     height: 60px;
   }
 
-  /* ─── Diary ─── */
+  
   .diary-header {
     padding: 64px 0 12px;
     gap: 8px;
@@ -452,7 +452,7 @@
     font-size: 0.68rem;
   }
 
-  /* ─── Analytics ─── */
+  
   .analytics-header {
     padding: 64px 0 4px;
   }
@@ -503,7 +503,7 @@
     padding-top: 10px;
   }
 
-  /* ─── Achievements ─── */
+  
   .achievements-header {
     padding: 64px 0 4px;
   }
@@ -559,7 +559,7 @@
     font-size: 0.55rem;
   }
 
-  /* ─── Cards global ─── */
+  
   .card {
     padding: 14px;
   }
@@ -567,7 +567,7 @@
     margin-bottom: 10px;
   }
 
-  /* ─── Empty States ─── */
+  
   .empty-state-mini {
     padding: 28px 14px;
   }
@@ -579,7 +579,7 @@
     font-size: 0.8rem;
   }
 
-  /* ─── AI Coach ─── */
+  
   .coach-chat {
     max-height: calc(100vh - 200px);
   }
@@ -599,7 +599,7 @@
     padding: 6px 10px;
   }
 
-  /* ─── Goals Modal ─── */
+  
   .goals-form-grid {
     grid-template-columns: 1fr;
   }
@@ -607,7 +607,7 @@
     grid-column: span 1;
   }
 
-  /* ─── Image Preview ─── */
+  
   .image-preview {
     max-height: 180px;
   }
@@ -617,13 +617,13 @@
   }
 }
 
-/* ═══ Extra small phones (< 380px) ═══ */
+
 @media (max-width: 380px) {
   .view-content {
     padding: 0 10px 16px;
   }
 
-  /* Ring even smaller */
+  
   .calorie-ring-container {
     width: 150px;
     height: 150px;
