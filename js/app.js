@@ -63,24 +63,30 @@
         document.getElementById('auth-login-form').classList.remove('hidden');
       });
 
-      document.getElementById('auth-login-form').addEventListener('submit', (e) => {
+      document.getElementById('auth-login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value.trim();
         const pw = document.getElementById('login-password').value;
         if (!email || !pw) { Utils.showToast('Please fill all fields', 'warning'); return; }
-        const r = Auth.signIn(email, pw);
+        const loginBtn = e.target.querySelector('button[type="submit"]');
+        if (loginBtn) { loginBtn.disabled = true; loginBtn.textContent = 'Signing in…'; }
+        const r = await Auth.signIn(email, pw);
+        if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; }
         if (!r.success) { Utils.showToast(r.error, 'error'); return; }
         Utils.showToast('Welcome back!', 'success');
       });
 
-      document.getElementById('auth-signup-form').addEventListener('submit', (e) => {
+      document.getElementById('auth-signup-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('signup-name').value.trim();
         const email = document.getElementById('signup-email').value.trim();
         const pw = document.getElementById('signup-password').value;
         if (!name || !email || !pw) { Utils.showToast('Please fill all fields', 'warning'); return; }
         if (pw.length < 6) { Utils.showToast('Password must be at least 6 characters', 'warning'); return; }
-        const r = Auth.signUp(name, email, pw);
+        const signupBtn = e.target.querySelector('button[type="submit"]');
+        if (signupBtn) { signupBtn.disabled = true; signupBtn.textContent = 'Creating account…'; }
+        const r = await Auth.signUp(name, email, pw);
+        if (signupBtn) { signupBtn.disabled = false; signupBtn.textContent = 'Sign Up'; }
         if (!r.success) { Utils.showToast(r.error, 'error'); return; }
         Utils.showToast('Welcome! 🎉', 'success');
       });

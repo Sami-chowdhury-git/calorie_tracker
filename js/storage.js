@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════ */
-/* STORAGE — localStorage abstraction layer    */
+/* STORAGE — localStorage + MySQL sync layer   */
 /* ═══════════════════════════════════════════ */
 
 window.Store = {
@@ -7,20 +7,24 @@ window.Store = {
   _get(n) { try { return JSON.parse(localStorage.getItem(this._key(n))); } catch { return null; } },
   _set(n, v, skipSync = false) { 
     localStorage.setItem(this._key(n), JSON.stringify(v)); 
-    if (!skipSync && !n.startsWith('session')) this.triggerSync();
+    if (!skipSync && !n.startsWith('session') && !n.startsWith('users')) this.triggerSync();
   },
+  _remove(n) { localStorage.removeItem(this._key(n)); },
 
+  /* ── Sync Engine ── */
   _syncTimeout: null,
+  _syncing: false,
+
   triggerSync() {
     if (this._syncTimeout) clearTimeout(this._syncTimeout);
-    this._syncTimeout = setTimeout(() => this.syncToServer(), 2000); // Debounce 2s
+    this._syncTimeout = setTimeout(() => this.syncToServer(), 2000);
   },
-  
+
   async syncToServer() {
     const s = this.getSession();
-    if (!s) return;
-    
-    // Gather all local data
+    if (!s || this._syncing) return;
+    this._syncing = true;
+
     const payload = {
       profile: this.getProfile(),
       diary: [],
@@ -28,12 +32,17 @@ window.Store = {
       stats: {
         streaks: this.getStreakData(),
         achievements: this.getAchievements(),
-        counters: { nlp: this.getNlpCount(), meals: this.getTotalMeals() },
+        counters: {
+          nlp: this.getNlpCount(),
+          meals: this.getTotalMeals(),
+          proteinStreak: this.getProteinStreakData(),
+          weightLogStreak: this.getWeightLogStreak()
+        },
         food_freq: this.getFoodFrequency()
-      }
+      },
+      coach: this.getCoachData()
     };
-    
-    // Gather diary entries
+
     const dates = this.getLoggedDates();
     for (const d of dates) {
       payload.diary.push({ date_str: d, data: this.getDiary(d) });
@@ -42,15 +51,17 @@ window.Store = {
     try {
       await fetch('/api/data/sync', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + s.id
         },
         body: JSON.stringify(payload)
       });
-      console.log('Data synced to MySQL database successfully');
+      console.log('[Sync] Data synced to MySQL');
     } catch (e) {
-      console.error('Failed to sync to server', e);
+      console.warn('[Sync] Failed to sync to server:', e.message);
+    } finally {
+      this._syncing = false;
     }
   },
 
@@ -61,48 +72,80 @@ window.Store = {
       const res = await fetch('/api/data/sync', {
         headers: { 'Authorization': 'Bearer ' + s.id }
       });
+      if (!res.ok) { console.warn('[Sync] Server returned', res.status); return; }
       const data = await res.json();
-      
+
       if (data.profile) this._set('profile_' + s.id, data.profile, true);
-      if (data.weight) this._set('weight_' + s.id, data.weight.map(w => ({date: w.date_str, weight: w.weight})), true);
-      
-      if (data.diary) {
+
+      if (data.weight && Array.isArray(data.weight)) {
+        this._set('weight_' + s.id, data.weight.map(w => ({ date: w.date_str, weight: parseFloat(w.weight) })), true);
+      }
+
+      if (data.diary && Array.isArray(data.diary)) {
         data.diary.forEach(d => {
-          this._set('diary_' + s.id + '_' + d.date_str, d.data, true);
+          const parsed = typeof d.data === 'string' ? JSON.parse(d.data) : d.data;
+          this._set('diary_' + s.id + '_' + d.date_str, parsed, true);
         });
       }
-      
+
       if (data.stats) {
-        if (data.stats.streaks) this._set('streak_' + s.id, data.stats.streaks, true);
-        if (data.stats.achievements) this._set('ach_' + s.id, data.stats.achievements, true);
-        if (data.stats.food_freq) this._set('freq_' + s.id, data.stats.food_freq, true);
-        if (data.stats.counters) {
-          this._set('nlpc_' + s.id, data.stats.counters.nlp, true);
-          this._set('tm_' + s.id, data.stats.counters.meals, true);
+        const st = data.stats;
+        if (st.streaks) {
+          const streaks = typeof st.streaks === 'string' ? JSON.parse(st.streaks) : st.streaks;
+          this._set('streak_' + s.id, streaks, true);
+        }
+        if (st.achievements) {
+          const ach = typeof st.achievements === 'string' ? JSON.parse(st.achievements) : st.achievements;
+          this._set('ach_' + s.id, ach, true);
+        }
+        if (st.food_freq) {
+          const freq = typeof st.food_freq === 'string' ? JSON.parse(st.food_freq) : st.food_freq;
+          this._set('freq_' + s.id, freq, true);
+        }
+        if (st.counters) {
+          const c = typeof st.counters === 'string' ? JSON.parse(st.counters) : st.counters;
+          if (c.nlp != null) this._set('nlpc_' + s.id, c.nlp, true);
+          if (c.meals != null) this._set('tm_' + s.id, c.meals, true);
+          if (c.proteinStreak) this._set('ps_' + s.id, c.proteinStreak, true);
+          if (c.weightLogStreak) this._set('ws_' + s.id, c.weightLogStreak, true);
         }
       }
-      console.log('Data synced from MySQL database successfully');
+
+      if (data.coach) {
+        const coach = typeof data.coach === 'string' ? JSON.parse(data.coach) : data.coach;
+        this._set('coach_convs_' + s.id, coach, true);
+      }
+
+      console.log('[Sync] Data synced from MySQL');
     } catch (e) {
-      console.error('Failed to sync from server', e);
+      console.warn('[Sync] Failed to sync from server:', e.message);
     }
   },
 
-  _remove(n) { localStorage.removeItem(this._key(n)); },
+  /* ── Coach Conversations ── */
+  getCoachData() {
+    const s = this.getSession();
+    if (!s) return null;
+    try {
+      const raw = localStorage.getItem('caltrack_coach_convs_' + s.id);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  },
 
-  // Users
+  /* ── Users (kept local for backward compat) ── */
   getUsers() { return this._get('users') || {}; },
-  saveUser(email, data) { const u = this.getUsers(); u[email] = data; this._set('users', u); },
+  saveUser(email, data) { const u = this.getUsers(); u[email] = data; this._set('users', u, true); },
 
-  // Session
-  setSession(u) { this._set('session', u); },
+  /* ── Session ── */
+  setSession(u) { this._set('session', u, true); },
   getSession() { return this._get('session'); },
   clearSession() { this._remove('session'); },
 
-  // Profile
+  /* ── Profile ── */
   getProfile() { const s = this.getSession(); return s ? this._get('profile_' + s.id) : null; },
   saveProfile(p) { const s = this.getSession(); if (s) this._set('profile_' + s.id, p); },
 
-  // Diary
+  /* ── Diary ── */
   _emptyDay() { return { breakfast: [], lunch: [], dinner: [], snacks: [] }; },
   getDiary(dateStr) {
     const s = this.getSession();
@@ -139,11 +182,11 @@ window.Store = {
     return dates.sort();
   },
 
-  // Weight
+  /* ── Weight ── */
   getWeightLog() { const s = this.getSession(); return s ? (this._get('weight_' + s.id) || []) : []; },
   saveWeightLog(l) { const s = this.getSession(); if (s) this._set('weight_' + s.id, l); },
 
-  // Streak
+  /* ── Streak ── */
   getStreakData() {
     const s = this.getSession();
     return s ? (this._get('streak_' + s.id) || { currentStreak: 0, lastLogDate: null, longestStreak: 0 }) :
@@ -151,11 +194,11 @@ window.Store = {
   },
   saveStreakData(d) { const s = this.getSession(); if (s) this._set('streak_' + s.id, d); },
 
-  // Achievements
+  /* ── Achievements ── */
   getAchievements() { const s = this.getSession(); return s ? (this._get('ach_' + s.id) || {}) : {}; },
   saveAchievements(d) { const s = this.getSession(); if (s) this._set('ach_' + s.id, d); },
 
-  // Food frequency
+  /* ── Food frequency ── */
   getFoodFrequency() { const s = this.getSession(); return s ? (this._get('freq_' + s.id) || {}) : {}; },
   incrementFoodFreq(name) {
     const f = this.getFoodFrequency(); f[name] = (f[name] || 0) + 1;
@@ -185,28 +228,28 @@ window.Store = {
     return items.slice(0, limit);
   },
 
-  // Counters
+  /* ── Counters ── */
   getNlpCount() { const s = this.getSession(); return s ? (this._get('nlpc_' + s.id) || 0) : 0; },
   incrementNlpCount() { const s = this.getSession(); if (s) this._set('nlpc_' + s.id, this.getNlpCount() + 1); },
 
   getTotalMeals() { const s = this.getSession(); return s ? (this._get('tm_' + s.id) || 0) : 0; },
   incrementTotalMeals(c = 1) { const s = this.getSession(); if (s) this._set('tm_' + s.id, this.getTotalMeals() + c); },
 
-  // Protein streak
+  /* ── Protein streak ── */
   getProteinStreakData() {
     const s = this.getSession();
     return s ? (this._get('ps_' + s.id) || { streak: 0, lastDate: null }) : { streak: 0, lastDate: null };
   },
   saveProteinStreakData(d) { const s = this.getSession(); if (s) this._set('ps_' + s.id, d); },
 
-  // Weight log streak
+  /* ── Weight log streak ── */
   getWeightLogStreak() {
     const s = this.getSession();
     return s ? (this._get('ws_' + s.id) || { streak: 0, lastDate: null }) : { streak: 0, lastDate: null };
   },
   saveWeightLogStreak(d) { const s = this.getSession(); if (s) this._set('ws_' + s.id, d); },
 
-  // Reset all user data
+  /* ── Reset all user data ── */
   resetAllData() {
     const s = this.getSession();
     if (!s) return;
@@ -219,10 +262,14 @@ window.Store = {
         keysToRemove.push(key);
       }
     }
-    // Also remove coach conversations
     keysToRemove.push(`caltrack_coach_convs_${userId}`);
     keysToRemove.forEach(k => localStorage.removeItem(k));
-    // Remove profile
     this._remove('profile_' + userId);
+
+    // Also clear from the MySQL database
+    fetch('/api/data/reset', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + userId }
+    }).catch(() => {});
   },
 };

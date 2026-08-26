@@ -54,9 +54,8 @@ window.AICoach = (() => {
     const session = Store.getSession();
     if (!session) return;
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEY}_${session.id}`);
-      if (saved) {
-        const data = JSON.parse(saved);
+      const data = Store._get('coach_convs_' + session.id);
+      if (data) {
         conversations = data.conversations || [];
         activeConvId = data.activeConvId || null;
       }
@@ -66,13 +65,13 @@ window.AICoach = (() => {
   function saveConversations() {
     const session = Store.getSession();
     if (!session) return;
-    localStorage.setItem(`${STORAGE_KEY}_${session.id}`, JSON.stringify({
+    Store._set('coach_convs_' + session.id, {
       conversations: conversations.map(c => ({
         ...c,
         messages: c.messages.slice(-MAX_HISTORY * 2)
       })),
       activeConvId
-    }));
+    });
   }
 
   function createNewConversation() {
