@@ -105,4 +105,76 @@ window.Utils = {
   isToday(dateStr) { return dateStr === this.todayStr(); },
 
   isYesterday(dateStr) { return dateStr === this.addDays(this.todayStr(), -1); },
+
+  calculateNutritionTargets(profile) {
+    if (!profile) return {
+      tdee: 2000, protein: 150, carbs: 220, fat: 73,
+      water: 2500, fiber: 28, sugar: 50, sodium: 2300
+    };
+
+    const age = parseInt(profile.age) || 25;
+    const gender = profile.gender || 'male';
+    let weightKg = parseFloat(profile.weight) || 70;
+    if (profile.weightUnit === 'lbs') weightKg = weightKg * 0.453592;
+
+    let heightCm = parseFloat(profile.height) || 175;
+    if (profile.heightUnit === 'ft') {
+      const ft = parseFloat(profile.heightFt || profile.height) || 5;
+      const inch = parseFloat(profile.heightIn || profile.heightInches) || 9;
+      heightCm = (ft * 30.48) + (inch * 2.54);
+    }
+
+    const activity = parseFloat(profile.activityLevel) || 1.55;
+    const goal = profile.goal || 'maintain';
+    const tdee = profile.tdee || 2000;
+
+    // 1. Water Intake (ml) — tailored to weight, sex, activity, and goals
+    let waterBasePerKg = gender === 'male' ? 35 : 31;
+    let activityWaterAdd = 0;
+    if (activity >= 1.9) activityWaterAdd = 1200;
+    else if (activity >= 1.725) activityWaterAdd = 800;
+    else if (activity >= 1.55) activityWaterAdd = 500;
+    else if (activity >= 1.375) activityWaterAdd = 250;
+
+    let water = Math.round((weightKg * waterBasePerKg) + activityWaterAdd);
+    if (goal === 'cut') water += 300;
+    else if (goal === 'bulk') water += 400;
+
+    water = Math.round(water / 50) * 50;
+    water = Math.max(1800, Math.min(5000, water));
+
+    // 2. Fiber Target (g) — based on energy intake, age, gender & goal
+    let fiberFromCals = (tdee / 1000) * 14;
+    let genderAgeFiber = (gender === 'male') ? (age <= 50 ? 38 : 30) : (age <= 50 ? 25 : 21);
+    let fiber = Math.round((fiberFromCals * 0.65) + (genderAgeFiber * 0.35));
+    if (goal === 'cut') fiber += 3;
+    fiber = Math.max(20, Math.min(50, fiber));
+
+    // 3. Sugar Limit (g) — WHO: max 10% (cut: 8%) of total energy (1g = 4 kcal)
+    let sugarPct = (goal === 'cut') ? 0.08 : 0.10;
+    let sugar = Math.round((tdee * sugarPct) / 4);
+    if (gender === 'female') sugar = Math.min(sugar, Math.round((tdee * 0.09) / 4));
+    sugar = Math.max(25, Math.min(85, sugar));
+
+    // 4. Sodium Limit (mg) — tailored to activity sweat loss & weight
+    let sodium = 2300;
+    if (activity >= 1.9) sodium = 3200;
+    else if (activity >= 1.725) sodium = 2800;
+    else if (activity >= 1.55) sodium = 2500;
+    else if (activity <= 1.2) sodium = 2000;
+
+    if (weightKg > 90) sodium += 200;
+    if (goal === 'cut') sodium = Math.max(1800, sodium - 200);
+
+    return {
+      tdee,
+      protein: profile.protein || Math.round((tdee * 0.30) / 4),
+      carbs: profile.carbs || Math.round((tdee * 0.40) / 4),
+      fat: profile.fat || Math.round((tdee * 0.30) / 9),
+      water,
+      fiber,
+      sugar,
+      sodium
+    };
+  },
 };

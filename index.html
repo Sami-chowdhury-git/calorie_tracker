@@ -107,9 +107,51 @@
         </div>
       </div>
 
-      <!-- Slide 4: AI Coach -->
+      <!-- Slide 4: Smart Hydration Tracker -->
       <div class="landing-slide" data-slide="4">
         <div class="feature-icon-wrapper feature-icon-4">
+          <i data-lucide="droplets"></i>
+        </div>
+        <h2>Smart Hydration Tracker</h2>
+        <p class="feature-desc">Dynamic daily water targets calculated automatically based on your body weight, activity sweat rate, and fitness goals with one-tap quick logging.</p>
+        <div class="feature-highlights">
+          <span class="feature-pill">💧 Dynamic Goal (ml)</span>
+          <span class="feature-pill">⚡ 1-Tap Quick Add</span>
+          <span class="feature-pill">🌊 Visual Progress</span>
+        </div>
+      </div>
+
+      <!-- Slide 5: Barcode Food Scanner -->
+      <div class="landing-slide" data-slide="5">
+        <div class="feature-icon-wrapper feature-icon-5">
+          <i data-lucide="scan-barcode"></i>
+        </div>
+        <h2>Barcode Food Scanner</h2>
+        <p class="feature-desc">Point your camera at any packaged item to scan its barcode. Powered by Open Food Facts to automatically pull exact calories, macros, and micronutrients.</p>
+        <div class="feature-highlights">
+          <span class="feature-pill">📷 Live Camera Scanner</span>
+          <span class="feature-pill">🌐 Open Food Facts API</span>
+          <span class="feature-pill">⚡ Instant Macros</span>
+        </div>
+      </div>
+
+      <!-- Slide 6: Micronutrients & Clinical Reports -->
+      <div class="landing-slide" data-slide="6">
+        <div class="feature-icon-wrapper feature-icon-6">
+          <i data-lucide="file-text"></i>
+        </div>
+        <h2>Micronutrients & Reports</h2>
+        <p class="feature-desc">Monitor essential Fiber, Sugar, and Sodium limits personalized to your TDEE and health goals. Export clean, printable PDF and Excel CSV reports anytime.</p>
+        <div class="feature-highlights">
+          <span class="feature-pill">🥗 Fiber & Sodium</span>
+          <span class="feature-pill">📄 PDF Export</span>
+          <span class="feature-pill">📊 CSV Spreadsheets</span>
+        </div>
+      </div>
+
+      <!-- Slide 7: AI Coach -->
+      <div class="landing-slide" data-slide="7">
+        <div class="feature-icon-wrapper feature-icon-7">
           <i data-lucide="bot"></i>
         </div>
         <h2>Personal AI Coach</h2>
@@ -121,9 +163,9 @@
         </div>
       </div>
 
-      <!-- Slide 5: Analytics & Badges -->
-      <div class="landing-slide" data-slide="5">
-        <div class="feature-icon-wrapper feature-icon-5">
+      <!-- Slide 8: Analytics & Badges -->
+      <div class="landing-slide" data-slide="8">
+        <div class="feature-icon-wrapper feature-icon-8">
           <i data-lucide="trophy"></i>
         </div>
         <h2>Analytics & Achievements</h2>
@@ -135,8 +177,8 @@
         </div>
       </div>
 
-      <!-- Slide 6: Auth Forms (final) -->
-      <div class="landing-slide" data-slide="6">
+      <!-- Slide 9: Auth Forms (final) -->
+      <div class="landing-slide" data-slide="9">
         <div class="landing-auth-card">
           <div class="auth-brand">
             <div class="auth-logo">
@@ -513,21 +555,21 @@
             <div class="micro-item">
               <div class="micro-info">
                 <span class="micro-label">Fiber</span>
-                <span class="micro-val"><span id="fiber-consumed">0</span>g <span class="micro-target">/ 28g</span></span>
+                <span class="micro-val"><span id="fiber-consumed">0</span>g <span class="micro-target">/ <span id="fiber-target">28g</span></span></span>
               </div>
               <div class="micro-bar-bg"><div class="micro-bar-fill fiber" id="fiber-bar-fill" style="width: 0%;"></div></div>
             </div>
             <div class="micro-item">
               <div class="micro-info">
                 <span class="micro-label">Sugar</span>
-                <span class="micro-val"><span id="sugar-consumed">0</span>g <span class="micro-target">/ &lt;50g</span></span>
+                <span class="micro-val"><span id="sugar-consumed">0</span>g <span class="micro-target">/ <span id="sugar-target">&lt;50g</span></span></span>
               </div>
               <div class="micro-bar-bg"><div class="micro-bar-fill sugar" id="sugar-bar-fill" style="width: 0%;"></div></div>
             </div>
             <div class="micro-item">
               <div class="micro-info">
                 <span class="micro-label">Sodium</span>
-                <span class="micro-val"><span id="sodium-consumed">0</span>mg <span class="micro-target">/ &lt;2300mg</span></span>
+                <span class="micro-val"><span id="sodium-consumed">0</span>mg <span class="micro-target">/ <span id="sodium-target">&lt;2300mg</span></span></span>
               </div>
               <div class="micro-bar-bg"><div class="micro-bar-fill sodium" id="sodium-bar-fill" style="width: 0%;"></div></div>
             </div>

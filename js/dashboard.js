@@ -121,11 +121,10 @@ window.Dashboard = {
     this.updateMacro('carbs', t.carbs, profile.carbs);
     this.updateMacro('fat', t.fat, profile.fat);
 
-    // Micronutrients
-    this.renderMicronutrients(t);
-
-    // Water Tracker
-    this.renderWaterTracker();
+    // Micronutrients & Water (personalized based on sex, age, weight, height, activity & goals)
+    const targets = Utils.calculateNutritionTargets(profile);
+    this.renderMicronutrients(t, targets);
+    this.renderWaterTracker(targets);
 
     // Stats
     document.getElementById('meals-logged-count').textContent = t.meals;
@@ -137,10 +136,17 @@ window.Dashboard = {
     this.renderMealsPreview();
   },
 
-  renderMicronutrients(totals) {
+  renderMicronutrients(totals, targets) {
+    const profile = Store.getProfile();
+    const t = targets || Utils.calculateNutritionTargets(profile);
+
     const fiberEl = document.getElementById('fiber-consumed');
     const sugarEl = document.getElementById('sugar-consumed');
     const sodiumEl = document.getElementById('sodium-consumed');
+
+    const fiberTargetEl = document.getElementById('fiber-target');
+    const sugarTargetEl = document.getElementById('sugar-target');
+    const sodiumTargetEl = document.getElementById('sodium-target');
 
     const fiberBar = document.getElementById('fiber-bar-fill');
     const sugarBar = document.getElementById('sugar-bar-fill');
@@ -150,33 +156,42 @@ window.Dashboard = {
     const sugar = Math.round((totals.sugar || 0) * 10) / 10;
     const sodium = Math.round(totals.sodium || 0);
 
+    const fiberTarget = t.fiber || 28;
+    const sugarLimit = t.sugar || 50;
+    const sodiumLimit = t.sodium || 2300;
+
     if (fiberEl) fiberEl.textContent = fiber;
     if (sugarEl) sugarEl.textContent = sugar;
     if (sodiumEl) sodiumEl.textContent = sodium;
 
-    // Daily recommendations: Fiber 28g, Sugar <50g, Sodium <2300mg
+    if (fiberTargetEl) fiberTargetEl.textContent = `${fiberTarget}g`;
+    if (sugarTargetEl) sugarTargetEl.textContent = `<${sugarLimit}g`;
+    if (sodiumTargetEl) sodiumTargetEl.textContent = `<${sodiumLimit}mg`;
+
     if (fiberBar) {
-      const pct = Math.min(100, Math.round((fiber / 28) * 100));
+      const pct = Math.min(100, Math.round((fiber / fiberTarget) * 100));
       fiberBar.style.width = `${pct}%`;
     }
     if (sugarBar) {
-      const pct = Math.min(100, Math.round((sugar / 50) * 100));
+      const pct = Math.min(100, Math.round((sugar / sugarLimit) * 100));
       sugarBar.style.width = `${pct}%`;
-      if (sugar > 50) sugarBar.classList.add('exceeded');
+      if (sugar > sugarLimit) sugarBar.classList.add('exceeded');
       else sugarBar.classList.remove('exceeded');
     }
     if (sodiumBar) {
-      const pct = Math.min(100, Math.round((sodium / 2300) * 100));
+      const pct = Math.min(100, Math.round((sodium / sodiumLimit) * 100));
       sodiumBar.style.width = `${pct}%`;
-      if (sodium > 2300) sodiumBar.classList.add('exceeded');
+      if (sodium > sodiumLimit) sodiumBar.classList.add('exceeded');
       else sodiumBar.classList.remove('exceeded');
     }
   },
 
-  renderWaterTracker() {
+  renderWaterTracker(targets) {
     const today = Utils.todayStr();
     const water = Store.getWaterLog(today);
-    const goal = water.goal || Store.getWaterGoal() || 2500;
+    const profile = Store.getProfile();
+    const t = targets || Utils.calculateNutritionTargets(profile);
+    const goal = t.water || water.goal || Store.getWaterGoal() || 2500;
     const total = water.total || 0;
 
     const currentEl = document.getElementById('water-current');

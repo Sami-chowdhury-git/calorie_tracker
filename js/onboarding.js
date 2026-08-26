@@ -201,6 +201,10 @@ window.Onboarding = {
     const profile = { ...this.data, tdee: r.tdee, protein: r.protein, carbs: r.carbs, fat: r.fat,
                       completedAt: new Date().toISOString() };
     Store.saveProfile(profile);
+    const targets = Utils.calculateNutritionTargets(profile);
+    if (targets && targets.water) {
+      Store.setWaterGoal(targets.water);
+    }
     document.dispatchEvent(new CustomEvent('onboarding-complete', { detail: profile }));
   },
 };

@@ -192,6 +192,10 @@ window.Goals = (() => {
     profile.goal = document.getElementById('goal-type').value || profile.goal;
 
     Store.saveProfile(profile);
+    const targets = Utils.calculateNutritionTargets(profile);
+    if (targets && targets.water) {
+      Store.setWaterGoal(targets.water);
+    }
     Utils.showToast(`Goals updated! New target: ${calculatedTDEE} kcal`, 'success');
 
     if (window.Dashboard && typeof window.Dashboard.refresh === 'function') {

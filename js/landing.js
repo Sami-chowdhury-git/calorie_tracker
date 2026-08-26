@@ -3,7 +3,7 @@
 /* ═══════════════════════════════════════════ */
 
 window.Landing = {
-  totalSlides: 7,
+  totalSlides: 10,
   currentSlide: 0,
   isTransitioning: false,
   touchStartY: 0,
@@ -11,6 +11,8 @@ window.Landing = {
   init() {
     const screen = document.getElementById('auth-screen');
     if (!screen) return;
+
+    this.totalSlides = document.querySelectorAll('.landing-slide').length || 10;
 
     // Wheel event (PC/Mac trackpad)
     screen.addEventListener('wheel', (e) => this.onWheel(e), { passive: false });

@@ -63,9 +63,12 @@ window.Report = {
       water: Math.round(rows.reduce((s, r) => s + r.water, 0) / count)
     };
 
+    const targets = Utils.calculateNutritionTargets(profile);
+
     return {
       user: { name: user.name || profile.name || 'MacroLens User', email: user.email || '' },
       profile,
+      targets,
       generatedAt: new Date().toLocaleString(),
       range: days === 'all' ? 'All Time' : `Past ${days} Days`,
       rows,
@@ -95,7 +98,7 @@ window.Report = {
       `"User: ${data.user.name.replace(/"/g, '""')}"`,
       `"Generated: ${data.generatedAt}"`,
       `"Period: ${data.range}"`,
-      `"Calorie Target: ${data.profile.tdee || 2000} kcal | Protein Target: ${data.profile.protein || 150}g"`,
+      `"Personalized Daily Targets: Calories: ${data.targets.tdee} kcal | Protein: ${data.targets.protein}g | Carbs: ${data.targets.carbs}g | Fat: ${data.targets.fat}g | Fiber: ${data.targets.fiber}g | Sugar: <${data.targets.sugar}g | Sodium: <${data.targets.sodium}mg | Water: ${data.targets.water}ml"`,
       '',
       headers.join(',')
     ];
@@ -188,7 +191,8 @@ window.Report = {
         </div>
         <div class="p-meta">
           <div><strong>Period:</strong> ${data.range}</div>
-          <div><strong>Target:</strong> ${data.profile.tdee || 2000} kcal/day</div>
+          <div><strong>Targets:</strong> ${data.targets.tdee} kcal · P:${data.targets.protein}g · C:${data.targets.carbs}g · F:${data.targets.fat}g</div>
+          <div><strong>Hydration Target:</strong> ${data.targets.water} ml · <strong>Fiber:</strong> ${data.targets.fiber}g</div>
           <div><strong>Generated:</strong> ${data.generatedAt}</div>
         </div>
       </div>
