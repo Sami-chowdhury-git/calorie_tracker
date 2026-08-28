@@ -1,7 +1,3 @@
-
-
-
-
 :root {
   --bg-primary: #0a0a0f;
   --bg-secondary: #12121a;
@@ -75,7 +71,6 @@ button { font-family: 'Inter', sans-serif; cursor: pointer; }
 input, select, textarea { font-family: 'Inter', sans-serif; }
 img { max-width: 100%; display: block; }
 
-
 .screen { display: none; min-height: 100vh; }
 .screen.active { display: block; }
 
@@ -88,11 +83,9 @@ img { max-width: 100%; display: block; }
   padding: 0 20px 24px;
 }
 
-
 .hidden { display: none !important; }
 .accent { color: var(--accent-primary); }
 .text-center { text-align: center; }
-
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
@@ -100,7 +93,6 @@ img { max-width: 100%; display: block; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-secondary); }
 
 ::selection { background: var(--accent-primary); color: white; }
-
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -167,7 +159,6 @@ img { max-width: 100%; display: block; }
   50% { transform: rotate(180deg) scale(0.8); }
   100% { transform: rotate(360deg) scale(1); }
 }
-
 
 .stagger-1 { animation-delay: 0.05s; }
 .stagger-2 { animation-delay: 0.1s; }

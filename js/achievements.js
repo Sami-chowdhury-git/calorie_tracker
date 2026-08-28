@@ -1,7 +1,3 @@
-
-
-
-
 const BADGES = [
   { id:'first_log', name:'First Log', icon:'🍽️', desc:'Log your first meal' },
   { id:'streak_3', name:'3-Day Streak', icon:'🔥', desc:'3 consecutive days logged' },

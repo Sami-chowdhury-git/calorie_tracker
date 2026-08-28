@@ -1,7 +1,3 @@
-
-
-
-
 window.Report = {
   getReportData(days = 7) {
     const profile = Store.getProfile() || {};

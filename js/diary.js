@@ -1,7 +1,3 @@
-
-
-
-
 window.Diary = {
   currentDate: null,
 

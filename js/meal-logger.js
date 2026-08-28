@@ -1,7 +1,3 @@
-
-
-
-
 window.MealLogger = {
   selectedMealType: 'breakfast',
   targetDate: null,

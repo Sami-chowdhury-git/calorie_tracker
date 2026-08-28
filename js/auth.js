@@ -1,7 +1,3 @@
-
-
-
-
 window.Auth = {
   _listeners: [],
 

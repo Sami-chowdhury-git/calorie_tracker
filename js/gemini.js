@@ -1,7 +1,3 @@
-
-
-
-
 window.Gemini = {
   
   async _fetch(body) {

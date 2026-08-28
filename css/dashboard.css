@@ -1,11 +1,6 @@
-
-
-
-
 .dash-greeting { padding: 72px 0 8px; }
 .dash-greeting h2 { font-size: 1.5rem; }
 .dash-greeting p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px; }
-
 
 .calorie-ring-container {
   position: relative; width: 220px; height: 220px;
@@ -36,7 +31,6 @@
   margin-top: 6px; display: flex; gap: 6px; justify-content: center;
 }
 .ring-sep { opacity: 0.5; }
-
 
 .macro-rings-row {
   display: flex; justify-content: center; gap: 24px; margin: 24px 0;
@@ -72,7 +66,6 @@
 .macro-ring-label { color: var(--text-secondary); font-size: 0.62rem; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin: 1px 0; line-height: 1; }
 .macro-ring-target { color: var(--text-muted); font-size: 0.6rem; line-height: 1.1; }
 
-
 .dash-stats-row {
   display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 12px; margin: 16px 0;
@@ -88,10 +81,8 @@
 }
 .stat-label { color: var(--text-secondary); font-size: 0.72rem; }
 
-
 .dash-meals-preview { margin-top: 20px; }
 .dash-meals-list { display: flex; flex-direction: column; gap: 8px; }
-
 
 .calorie-ring-container { animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 .macro-ring-card { animation: staggerFadeIn 0.5s ease both; }
@@ -103,7 +94,6 @@
 .dash-stat-card:nth-child(2) { animation-delay: 0.25s; }
 .dash-stat-card:nth-child(3) { animation-delay: 0.35s; }
 .meal-preview-item { animation: staggerFadeIn 0.4s ease both; }
-
 
 .dash-custom-macros-section {
   margin-top: 16px;
@@ -117,7 +107,6 @@
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 12px; margin-bottom: 12px;
 }
-
 
 .dash-micros-card {
   background: var(--bg-card);
@@ -182,7 +171,6 @@
 .micro-bar-fill.sugar.exceeded { background: linear-gradient(90deg, #f87171, #ef4444); }
 .micro-bar-fill.sodium { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
 .micro-bar-fill.sodium.exceeded { background: linear-gradient(90deg, #f87171, #ef4444); }
-
 
 .dash-water-card {
   background: var(--bg-card);

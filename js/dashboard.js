@@ -1,7 +1,3 @@
-
-
-
-
 window.Dashboard = {
   init() {
     document.getElementById('quick-add-btn').addEventListener('click', () => {

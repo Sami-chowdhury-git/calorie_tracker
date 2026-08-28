@@ -1,13 +1,8 @@
-
-
-
-
 .diary-header {
   display: flex; align-items: center; justify-content: center;
   gap: 16px; padding: 72px 0 16px;
 }
 .diary-header h2 { font-size: 1.1rem; min-width: 180px; text-align: center; }
-
 
 .diary-totals {
   display: flex; justify-content: center; gap: 16px;
@@ -25,7 +20,6 @@
 .diary-total-item.fiber .dt-value { color: #10b981; }
 .diary-total-item.sugar .dt-value { color: #f59e0b; }
 .diary-total-item.sodium .dt-value { color: #3b82f6; }
-
 
 .diary-meals { display: flex; flex-direction: column; gap: 16px; }
 .meal-group {
@@ -49,7 +43,6 @@
   font-size: 0.82rem; font-style: italic;
 }
 
-
 .meal-item {
   display: flex; align-items: center; padding: 12px 16px;
   border-bottom: 1px solid rgba(99,102,241,0.05);
@@ -72,7 +65,6 @@
   width: 30px; height: 30px; flex-shrink: 0;
 }
 .meal-item-delete:hover { color: var(--danger) !important; }
-
 
 .frequent-section { margin-top: 28px; }
 .frequent-foods-grid {

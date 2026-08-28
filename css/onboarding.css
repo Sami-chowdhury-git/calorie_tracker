@@ -1,12 +1,7 @@
-
-
-
-
 .onboarding-container {
   max-width: 500px; margin: 0 auto; padding: 40px 20px;
   min-height: 100vh; display: flex; flex-direction: column;
 }
-
 
 .ob-progress { margin-bottom: 40px; }
 .ob-progress-track {
@@ -35,7 +30,6 @@
 }
 .ob-dot.completed { background: var(--success); color: #fff; }
 
-
 .onboarding-step { display: none; flex-direction: column; flex: 1; }
 .onboarding-step.active { display: flex; animation: fadeIn 0.4s ease; }
 
@@ -44,10 +38,8 @@
 .ob-step-header h2 { font-size: 1.6rem; margin-bottom: 8px; }
 .ob-step-header p { color: var(--text-secondary); font-size: 0.9rem; }
 
-
 .ob-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .ob-form-grid .full-width { grid-column: span 2; }
-
 
 .ob-toggle-group { display: flex; gap: 8px; }
 .ob-toggle {
@@ -63,7 +55,6 @@
   color: var(--accent-secondary);
 }
 .ob-toggle:hover:not(.active) { border-color: var(--text-muted); }
-
 
 .ob-card-grid { display: grid; gap: 12px; }
 .ob-selection-card {
@@ -94,7 +85,6 @@
   background: rgba(99,102,241,0.12); color: var(--accent-secondary);
   font-size: 0.75rem; font-weight: 600; border-radius: var(--radius-full);
 }
-
 
 .ob-results { text-align: center; }
 .ob-result-hero {
@@ -131,12 +121,10 @@
 .ob-macro-card.carbs i, .ob-macro-card.carbs .macro-value { color: var(--carbs-color); }
 .ob-macro-card.fats i, .ob-macro-card.fats .macro-value { color: var(--fats-color); }
 
-
 .ob-nav {
   display: flex; gap: 12px; margin-top: auto; padding-top: 24px;
 }
 .ob-nav .btn { flex: 1; }
-
 
 @media (max-width: 480px) {
   .ob-form-grid { grid-template-columns: 1fr; }

@@ -1,7 +1,3 @@
-
-
-
-
 window.FoodDB = {
   items: [
     

@@ -1,7 +1,3 @@
-
-
-
-
 window.Store = {
   _key(n) { return 'caltrack_' + n; },
   _get(n) { try { return JSON.parse(localStorage.getItem(this._key(n))); } catch { return null; } },

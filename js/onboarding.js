@@ -1,7 +1,3 @@
-
-
-
-
 window.Onboarding = {
   currentStep: 1,
   totalSteps: 5,

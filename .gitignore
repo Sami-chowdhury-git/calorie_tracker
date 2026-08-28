@@ -1,23 +1,17 @@
-# Dependencies
 node_modules/
 
-# Environment variables — NEVER commit
 .env
 .env.local
 .env.production
 .env*.local
 
-# Vercel
 .vercel/
 
-# OS files
 .DS_Store
 Thumbs.db
 
-# Archives
 *.zip
 
-# Editor
 .vscode/
 .idea/
 

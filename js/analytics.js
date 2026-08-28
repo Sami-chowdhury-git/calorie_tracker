@@ -1,7 +1,3 @@
-
-
-
-
 window.Analytics = {
   calorieChart: null,
   weightChart: null,

@@ -1,12 +1,6 @@
-
-
-
-
-
 .coach-header {
   padding: 64px 0 12px;
 }
-
 
 .coach-chat {
   display: flex;
@@ -17,7 +11,6 @@
   padding: 12px 0;
   max-height: calc(100vh - 220px);
 }
-
 
 .chat-message {
   max-width: 85%;
@@ -45,7 +38,6 @@
 .chat-message.ai .msg-text {
   white-space: pre-wrap;
 }
-
 
 .coach-input-bar {
   position: fixed;
@@ -94,7 +86,6 @@
   cursor: not-allowed;
 }
 
-
 .typing-indicator {
   display: flex;
   gap: 4px;
@@ -123,7 +114,6 @@
   40% { transform: translateY(-8px); }
 }
 
-
 .coach-welcome {
   text-align: center;
   padding: 60px 20px;
@@ -148,7 +138,6 @@
   font-size: 0.85rem;
 }
 
-
 .coach-suggestion-chips {
   display: flex;
   flex-wrap: wrap;
@@ -172,7 +161,6 @@
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
-
 
 .coach-tabs-bar {
   display: flex;
@@ -231,7 +219,6 @@
 .coach-tab.active .coach-tab-close:hover {
   opacity: 1;
 }
-
 
 .chat-message.ai .msg-text strong {
   color: var(--accent-primary);

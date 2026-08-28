@@ -1,7 +1,3 @@
-
-
-
-
 window.Landing = {
   totalSlides: 10,
   currentSlide: 0,

@@ -1,7 +1,3 @@
-
-
-
-
 window.Goals = (() => {
   let calculatedTDEE = 0;
   let calculatedMacros = { protein: 0, carbs: 0, fat: 0 };

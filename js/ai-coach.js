@@ -1,7 +1,3 @@
-
-
-
-
 window.AICoach = (() => {
   let conversations = []; 
   let activeConvId = null;
