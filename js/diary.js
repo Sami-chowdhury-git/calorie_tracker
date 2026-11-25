@@ -1,5 +1,6 @@
 window.Diary = {
   currentDate: null,
+  _recentItems: [],
 
   init() {
     this.currentDate = Utils.todayStr();
@@ -17,15 +18,17 @@ window.Diary = {
 
     document.querySelectorAll('.meal-add-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.dispatchEvent(new CustomEvent('open-meal-log', { detail: { mealType: btn.dataset.meal, date: this.currentDate } }));
+        document.dispatchEvent(new CustomEvent('open-meal-log', {
+          detail: { mealType: btn.dataset.meal, date: this.currentDate }
+        }));
       });
     });
 
-    
     document.addEventListener('meal-logged', () => this.render());
   },
 
   render() {
+    if (!this.currentDate) this.currentDate = Utils.todayStr();
     document.getElementById('diary-date').textContent = Utils.formatDiaryDate(this.currentDate);
     document.getElementById('diary-next-btn').disabled = this.currentDate >= Utils.todayStr();
 
@@ -36,7 +39,7 @@ window.Diary = {
     document.getElementById('diary-total-protein').textContent = Math.round(t.protein);
     document.getElementById('diary-total-carbs').textContent = Math.round(t.carbs);
     document.getElementById('diary-total-fat').textContent = Math.round(t.fat);
-    
+
     const fiberEl = document.getElementById('diary-total-fiber');
     const sugarEl = document.getElementById('diary-total-sugar');
     const sodiumEl = document.getElementById('diary-total-sodium');
@@ -44,32 +47,62 @@ window.Diary = {
     if (sugarEl) sugarEl.textContent = `${Math.round(t.sugar * 10) / 10}g`;
     if (sodiumEl) sodiumEl.textContent = `${Math.round(t.sodium)}mg`;
 
-    ['breakfast','lunch','dinner','snacks'].forEach(meal => {
+    ['breakfast', 'lunch', 'dinner', 'snacks'].forEach(meal => {
       const container = document.querySelector(`.meal-group-items[data-meal="${meal}"]`);
+      container.textContent = '';
       const items = diary[meal];
       if (items.length === 0) {
-        container.innerHTML = '<p class="meal-empty">No items logged</p>';
+        const emptyP = document.createElement('p');
+        emptyP.className = 'meal-empty';
+        emptyP.textContent = 'No items logged';
+        container.appendChild(emptyP);
         return;
       }
-      container.innerHTML = items.map(item => {
+
+      items.forEach(item => {
         const microParts = [];
         if (item.fiber) microParts.push(`Fib:${Math.round(item.fiber * 10) / 10}g`);
         if (item.sugar) microParts.push(`Sug:${Math.round(item.sugar * 10) / 10}g`);
         if (item.sodium) microParts.push(`Sod:${Math.round(item.sodium)}mg`);
         const microStr = microParts.length ? ` · ${microParts.join(' ')}` : '';
 
-        return `
-        <div class="meal-item" data-id="${item.id}">
-          <div class="meal-item-info">
-            <span class="meal-item-name">${item.name}</span>
-            <span class="meal-item-serving">${item.serving || ''} · P:${Math.round(item.protein)}g C:${Math.round(item.carbs)}g F:${Math.round(item.fat)}g${microStr}</span>
-          </div>
-          <span class="meal-item-cals">${item.calories}</span>
-          <button class="meal-item-delete icon-btn" onclick="Diary.deleteItem('${this.currentDate}','${meal}','${item.id}')" title="Remove">
-            <i data-lucide="trash-2"></i>
-          </button>
-        </div>
-      `}).join('');
+        const row = document.createElement('div');
+        row.className = 'meal-item';
+        row.dataset.id = item.id;
+
+        const info = document.createElement('div');
+        info.className = 'meal-item-info';
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'meal-item-name';
+        nameEl.textContent = item.name || 'Food item';
+
+        const servEl = document.createElement('span');
+        servEl.className = 'meal-item-serving';
+        servEl.textContent = `${item.serving || ''} · P:${Math.round(item.protein || 0)}g C:${Math.round(item.carbs || 0)}g F:${Math.round(item.fat || 0)}g${microStr}`;
+
+        info.appendChild(nameEl);
+        info.appendChild(servEl);
+
+        const calsEl = document.createElement('span');
+        calsEl.className = 'meal-item-cals';
+        calsEl.textContent = String(Math.round(item.calories || 0));
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'meal-item-delete icon-btn';
+        delBtn.title = 'Remove';
+        delBtn.setAttribute('aria-label', `Remove ${item.name || 'item'}`);
+        delBtn.addEventListener('click', () => this.deleteItem(this.currentDate, meal, item.id));
+
+        const delIcon = document.createElement('i');
+        delIcon.setAttribute('data-lucide', 'trash-2');
+        delBtn.appendChild(delIcon);
+
+        row.appendChild(info);
+        row.appendChild(calsEl);
+        row.appendChild(delBtn);
+        container.appendChild(row);
+      });
     });
 
     this.renderRecentFoods();
@@ -77,9 +110,7 @@ window.Diary = {
   },
 
   deleteItem(dateStr, mealType, itemId) {
-    const diary = Store.getDiary(dateStr);
-    diary[mealType] = diary[mealType].filter(i => i.id !== itemId);
-    Store.saveDiary(dateStr, diary);
+    Store.deleteDiaryItem(dateStr, mealType, itemId);
     this.render();
     if (dateStr === Utils.todayStr()) Dashboard.refresh();
     Utils.showToast('Item removed', 'info');
@@ -88,86 +119,134 @@ window.Diary = {
   renderRecentFoods() {
     const container = document.getElementById('recent-foods');
     if (!container) return;
+    container.textContent = '';
+
     const recent = Store.getRecentFoods(8);
+    this._recentItems = recent;
+
     if (recent.length === 0) {
-      container.innerHTML = '<p class="empty-hint">Your recently logged foods will appear here.</p>';
+      const p = document.createElement('p');
+      p.className = 'empty-hint';
+      p.textContent = 'Your recently logged foods will appear here.';
+      container.appendChild(p);
       return;
     }
-    container.innerHTML = recent.map((item, i) => {
-      const dateLabel = item.date === Utils.todayStr() ? 'Today' : Utils.formatShortDate(item.date);
-      return `<div class="frequent-food-card" onclick="Diary.showRecentDetail(${i})">
-        <span class="ff-name">${item.name}</span>
-        <span class="ff-cal">${item.calories} kcal · ${dateLabel}</span>
-      </div>`;
-    }).join('');
-    this._recentItems = recent;
-  },
 
-  _recentItems: [],
+    recent.forEach((item, i) => {
+      const dateLabel = item.date === Utils.todayStr() ? 'Today' : Utils.formatShortDate(item.date);
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'frequent-food-card';
+      card.style.textAlign = 'left';
+      card.addEventListener('click', () => this.showRecentDetail(i));
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'ff-name';
+      nameEl.textContent = item.name || 'Food item';
+
+      const calEl = document.createElement('span');
+      calEl.className = 'ff-cal';
+      calEl.textContent = `${Math.round(item.calories || 0)} kcal · ${dateLabel}`;
+
+      card.appendChild(nameEl);
+      card.appendChild(calEl);
+      container.appendChild(card);
+    });
+  },
 
   showRecentDetail(index) {
     const item = this._recentItems[index];
     if (!item) return;
 
     const modal = document.getElementById('recent-detail-modal');
-    document.getElementById('recent-detail-title').textContent = item.name;
+    document.getElementById('recent-detail-title').textContent = item.name || 'Food Details';
 
-    
     const imgSection = document.getElementById('recent-detail-image');
     const imgEl = document.getElementById('recent-detail-img');
-    if (item.imageDataUrl) {
+    if (item.imageDataUrl && Utils.isValidImageUrl(item.imageDataUrl)) {
       imgEl.src = item.imageDataUrl;
       imgSection.classList.remove('hidden');
     } else {
+      imgEl.removeAttribute('src');
       imgSection.classList.add('hidden');
     }
 
-    
-    document.getElementById('recent-detail-macros').innerHTML = `
-      <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center;">
-        <div style="background:var(--bg-tertiary); padding:10px 6px; border-radius:10px;">
-          <div style="font-size:1.1rem; font-weight:700; color:var(--primary);">${item.calories}</div>
-          <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">kcal</div>
-        </div>
-        <div style="background:var(--bg-tertiary); padding:10px 6px; border-radius:10px;">
-          <div style="font-size:1.1rem; font-weight:700; color:#ef4444;">${parseFloat((item.protein || 0).toFixed(1))}g</div>
-          <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">Protein</div>
-        </div>
-        <div style="background:var(--bg-tertiary); padding:10px 6px; border-radius:10px;">
-          <div style="font-size:1.1rem; font-weight:700; color:#f59e0b;">${parseFloat((item.carbs || 0).toFixed(1))}g</div>
-          <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">Carbs</div>
-        </div>
-        <div style="background:var(--bg-tertiary); padding:10px 6px; border-radius:10px;">
-          <div style="font-size:1.1rem; font-weight:700; color:#3b82f6;">${parseFloat((item.fat || 0).toFixed(1))}g</div>
-          <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">Fat</div>
-        </div>
-      </div>
-      <div style="margin-top:8px; font-size:0.78rem; color:var(--text-secondary); text-align:center;">
-        ${item.serving || ''} · ${item.mealType ? item.mealType.charAt(0).toUpperCase() + item.mealType.slice(1) : ''} · ${item.date === Utils.todayStr() ? 'Today' : Utils.formatShortDate(item.date)}
-      </div>
-    `;
+    const macrosContainer = document.getElementById('recent-detail-macros');
+    macrosContainer.textContent = '';
 
-    
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center;';
+
+    const boxes = [
+      { value: String(Math.round(item.calories || 0)), label: 'kcal', color: 'var(--accent-primary)' },
+      { value: `${parseFloat((item.protein || 0).toFixed(1))}g`, label: 'Protein', color: '#ef4444' },
+      { value: `${parseFloat((item.carbs || 0).toFixed(1))}g`, label: 'Carbs', color: '#f59e0b' },
+      { value: `${parseFloat((item.fat || 0).toFixed(1))}g`, label: 'Fat', color: '#3b82f6' }
+    ];
+
+    boxes.forEach(b => {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--bg-tertiary); padding:10px 6px; border-radius:10px;';
+      const valEl = document.createElement('div');
+      valEl.style.cssText = `font-size:1.1rem; font-weight:700; color:${b.color};`;
+      valEl.textContent = b.value;
+      const lblEl = document.createElement('div');
+      lblEl.style.cssText = 'font-size:0.7rem; color:var(--text-secondary); margin-top:2px;';
+      lblEl.textContent = b.label;
+      card.appendChild(valEl);
+      card.appendChild(lblEl);
+      grid.appendChild(card);
+    });
+
+    const metaEl = document.createElement('div');
+    metaEl.style.cssText = 'margin-top:8px; font-size:0.78rem; color:var(--text-secondary); text-align:center;';
+    const mealName = item.mealType ? item.mealType.charAt(0).toUpperCase() + item.mealType.slice(1) : '';
+    const dateName = item.date === Utils.todayStr() ? 'Today' : Utils.formatShortDate(item.date);
+    metaEl.textContent = `${item.serving || ''} · ${mealName} · ${dateName}`;
+
+    macrosContainer.appendChild(grid);
+    macrosContainer.appendChild(metaEl);
+
     const ingContainer = document.getElementById('recent-detail-ingredients');
+    ingContainer.textContent = '';
+
     if (item.ingredients && item.ingredients.length > 0) {
-      ingContainer.innerHTML = `
-        <div style="font-weight:500; font-size:0.85rem; color:var(--text-primary); margin-bottom:8px;">Ingredients</div>
-        ${item.ingredients.map(ing => `
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color); font-size:0.8rem;">
-            <span style="color:var(--text-primary);">• ${ing.name}</span>
-            <span style="color:var(--text-secondary); font-size:0.75rem;">${ing.serving || (ing.weight_grams ? ing.weight_grams + 'g' : '')} · ${ing.calories || 0} kcal · P:${(ing.protein || 0).toFixed?.(1) || ing.protein || 0}g C:${(ing.carbs || 0).toFixed?.(1) || ing.carbs || 0}g F:${(ing.fat || 0).toFixed?.(1) || ing.fat || 0}g</span>
-          </div>
-        `).join('')}
-      `;
+      const heading = document.createElement('div');
+      heading.style.cssText = 'font-weight:500; font-size:0.85rem; color:var(--text-primary); margin-bottom:8px;';
+      heading.textContent = 'Ingredients';
+      ingContainer.appendChild(heading);
+
+      item.ingredients.forEach(ing => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color); font-size:0.8rem;';
+
+        const left = document.createElement('span');
+        left.style.color = 'var(--text-primary)';
+        left.textContent = `• ${ing.name || 'Ingredient'}`;
+
+        const right = document.createElement('span');
+        right.style.cssText = 'color:var(--text-secondary); font-size:0.75rem;';
+        const w = ing.serving || (ing.weight_grams ? `${ing.weight_grams}g` : '');
+        const p = Number(ing.protein || 0).toFixed(1);
+        const c = Number(ing.carbs || 0).toFixed(1);
+        const f = Number(ing.fat || 0).toFixed(1);
+        right.textContent = `${w} · ${ing.calories || 0} kcal · P:${p}g C:${c}g F:${f}g`;
+
+        row.appendChild(left);
+        row.appendChild(right);
+        ingContainer.appendChild(row);
+      });
     } else {
-      ingContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-secondary); text-align:center;">No ingredient breakdown available.</p>';
+      const empty = document.createElement('p');
+      empty.style.cssText = 'font-size:0.8rem; color:var(--text-secondary); text-align:center;';
+      empty.textContent = 'No ingredient breakdown available.';
+      ingContainer.appendChild(empty);
     }
 
     modal.classList.remove('hidden');
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
-    
     document.getElementById('recent-detail-close').onclick = () => modal.classList.add('hidden');
     modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
-  },
+  }
 };

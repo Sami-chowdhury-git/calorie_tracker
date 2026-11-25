@@ -16,7 +16,7 @@ window.Report = {
         }
       }
     } else {
-      const numDays = parseInt(days) || 7;
+      const numDays = parseInt(days, 10) || 7;
       for (let i = numDays - 1; i >= 0; i--) {
         dates.push(Utils.addDays(today, -i));
       }
@@ -26,7 +26,7 @@ window.Report = {
       const totals = Store.getDayTotals(dateStr);
       const water = Store.getWaterLog(dateStr);
       const diary = Store.getDiary(dateStr);
-      const d = new Date(dateStr + 'T00:00:00');
+      const d = new Date(dateStr + 'T12:00:00');
       const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
       return {
         date: dateStr,
@@ -75,21 +75,12 @@ window.Report = {
   exportCSV(days = 7) {
     const data = this.getReportData(days);
     const headers = [
-      'Date',
-      'Day',
-      'Calories (kcal)',
-      'Protein (g)',
-      'Carbs (g)',
-      'Fat (g)',
-      'Fiber (g)',
-      'Sugar (g)',
-      'Sodium (mg)',
-      'Water (ml)',
-      'Meals Count'
+      'Date', 'Day', 'Calories (kcal)', 'Protein (g)', 'Carbs (g)',
+      'Fat (g)', 'Fiber (g)', 'Sugar (g)', 'Sodium (mg)', 'Water (ml)', 'Meals Count'
     ];
 
     const lines = [
-      `"MacroLens Nutrition Summary Report"`,
+      '"MacroLens Nutrition Summary Report"',
       `"User: ${data.user.name.replace(/"/g, '""')}"`,
       `"Generated: ${data.generatedAt}"`,
       `"Period: ${data.range}"`,
@@ -100,33 +91,16 @@ window.Report = {
 
     data.rows.forEach(r => {
       lines.push([
-        r.date,
-        r.day,
-        r.calories,
-        r.protein,
-        r.carbs,
-        r.fat,
-        r.fiber,
-        r.sugar,
-        r.sodium,
-        r.water,
-        r.meals
+        r.date, r.day, r.calories, r.protein, r.carbs,
+        r.fat, r.fiber, r.sugar, r.sodium, r.water, r.meals
       ].join(','));
     });
 
     lines.push('');
     lines.push([
-      'AVERAGE',
-      '-',
-      data.averages.calories,
-      data.averages.protein,
-      data.averages.carbs,
-      data.averages.fat,
-      data.averages.fiber,
-      data.averages.sugar,
-      data.averages.sodium,
-      data.averages.water,
-      '-'
+      'AVERAGE', '-', data.averages.calories, data.averages.protein,
+      data.averages.carbs, data.averages.fat, data.averages.fiber,
+      data.averages.sugar, data.averages.sodium, data.averages.water, '-'
     ].join(','));
 
     const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(lines.join('\n'));
@@ -143,7 +117,6 @@ window.Report = {
   async exportPDF(days = 7) {
     const data = this.getReportData(days);
 
-    
     let jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
 
     if (!jsPDFClass) {
@@ -157,25 +130,18 @@ window.Report = {
     }
 
     if (!jsPDFClass) {
-      this._exportPDFFallback(data, days);
+      this._exportPDFFallback(data);
       return;
     }
 
     try {
-      const doc = new jsPDFClass({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: 'a4'
-      });
-
+      const doc = new jsPDFClass({ orientation: 'portrait', unit: 'pt', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
 
-      
       doc.setFillColor(79, 70, 229);
       doc.rect(0, 0, pageWidth, 6, 'F');
 
-      
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(22);
       doc.setTextColor(79, 70, 229);
@@ -185,7 +151,6 @@ window.Report = {
       doc.setTextColor(31, 41, 55);
       doc.text('Nutrition & Hydration Progress Report', 40, 58);
 
-      
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor(107, 114, 128);
@@ -193,7 +158,6 @@ window.Report = {
       doc.text(`Generated: ${data.generatedAt}`, pageWidth - 40, 50, { align: 'right' });
       doc.text(`User: ${data.user.name}`, pageWidth - 40, 64, { align: 'right' });
 
-      
       doc.setFillColor(243, 244, 246);
       doc.roundedRect(40, 78, pageWidth - 80, 48, 6, 6, 'F');
       doc.setDrawColor(229, 231, 235);
@@ -210,7 +174,6 @@ window.Report = {
       doc.text(`Calories: ${data.targets.tdee} kcal   |   Protein: ${data.targets.protein}g   |   Carbs: ${data.targets.carbs}g   |   Fat: ${data.targets.fat}g`, 52, 108);
       doc.text(`Hydration Goal: ${data.targets.water} ml   |   Fiber: ${data.targets.fiber}g   |   Sugar Limit: <${data.targets.sugar}g   |   Sodium Limit: <${data.targets.sodium}mg`, 52, 120);
 
-      
       const cardWidth = (pageWidth - 80 - 36) / 4;
       const cardY = 134;
       const cardH = 44;
@@ -239,38 +202,19 @@ window.Report = {
         doc.text(m.value, x + cardWidth / 2, cardY + 32, { align: 'center' });
       });
 
-      
       const tableHeaders = [
         ['Date', 'Day', 'Calories', 'Protein', 'Carbs', 'Fat', 'Fiber', 'Sugar', 'Sodium', 'Water', 'Meals']
       ];
 
       const tableRows = data.rows.map(r => [
-        r.date,
-        r.day,
-        `${r.calories}`,
-        `${r.protein}g`,
-        `${r.carbs}g`,
-        `${r.fat}g`,
-        `${r.fiber}g`,
-        `${r.sugar}g`,
-        `${r.sodium}mg`,
-        `${r.water}ml`,
-        r.meals
+        r.date, r.day, `${r.calories}`, `${r.protein}g`, `${r.carbs}g`,
+        `${r.fat}g`, `${r.fiber}g`, `${r.sugar}g`, `${r.sodium}mg`, `${r.water}ml`, r.meals
       ]);
 
-      
       tableRows.push([
-        'DAILY AVG',
-        '-',
-        `${data.averages.calories}`,
-        `${data.averages.protein}g`,
-        `${data.averages.carbs}g`,
-        `${data.averages.fat}g`,
-        `${data.averages.fiber}g`,
-        `${data.averages.sugar}g`,
-        `${data.averages.sodium}mg`,
-        `${data.averages.water}ml`,
-        '-'
+        'DAILY AVG', '-', `${data.averages.calories}`, `${data.averages.protein}g`,
+        `${data.averages.carbs}g`, `${data.averages.fat}g`, `${data.averages.fiber}g`,
+        `${data.averages.sugar}g`, `${data.averages.sodium}mg`, `${data.averages.water}ml`, '-'
       ]);
 
       if (typeof doc.autoTable === 'function') {
@@ -280,25 +224,10 @@ window.Report = {
           head: tableHeaders,
           body: tableRows,
           theme: 'striped',
-          headStyles: {
-            fillColor: [79, 70, 229],
-            textColor: 255,
-            fontStyle: 'bold',
-            fontSize: 7.5,
-            halign: 'center'
-          },
-          bodyStyles: {
-            fontSize: 7,
-            textColor: [31, 41, 55],
-            halign: 'center'
-          },
-          alternateRowStyles: {
-            fillColor: [249, 250, 251]
-          },
-          columnStyles: {
-            0: { halign: 'left', fontStyle: 'bold' },
-            1: { halign: 'left' }
-          },
+          headStyles: { fillColor: [79, 70, 229], textColor: 255, fontStyle: 'bold', fontSize: 7.5, halign: 'center' },
+          bodyStyles: { fontSize: 7, textColor: [31, 41, 55], halign: 'center' },
+          alternateRowStyles: { fillColor: [249, 250, 251] },
+          columnStyles: { 0: { halign: 'left', fontStyle: 'bold' }, 1: { halign: 'left' } },
           didParseCell: function(cellData) {
             if (cellData.row.index === tableRows.length - 1) {
               cellData.cell.styles.fontStyle = 'bold';
@@ -316,14 +245,12 @@ window.Report = {
         });
       }
 
-      
       const fileName = `MacroLens_Report_${Utils.todayStr()}_${days}D.pdf`;
       doc.save(fileName);
-
       Utils.showToast(`📄 PDF downloaded automatically (${fileName})`, 'success', 3500);
     } catch (err) {
       console.error('PDF generation error:', err);
-      this._exportPDFFallback(data, days);
+      this._exportPDFFallback(data);
     }
   },
 
@@ -338,62 +265,57 @@ window.Report = {
     });
   },
 
-  _exportPDFFallback(data, days) {
-    
+  _exportPDFFallback(data) {
     const printContainer = document.createElement('div');
     printContainer.id = 'macrolens-print-report';
-    printContainer.innerHTML = `
-      <style>
-        @media screen { #macrolens-print-report { display: none; } }
-        @media print {
-          body > *:not(#macrolens-print-report) { display: none !important; }
-          #macrolens-print-report {
-            display: block !important;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: #111827; padding: 24px; max-width: 900px; margin: 0 auto; background: #fff !important;
-          }
-        }
-      </style>
-      <div style="border-bottom: 2px solid #6366f1; padding-bottom: 12px; margin-bottom: 16px;">
-        <h1 style="color:#4f46e5; margin:0;">MacroLens</h1>
-        <p style="margin:4px 0; color:#6b7280;">Nutrition & Hydration Progress Report</p>
-        <p style="margin:4px 0; font-size:12px;"><strong>User:</strong> ${data.user.name} | <strong>Period:</strong> ${data.range} | <strong>Generated:</strong> ${data.generatedAt}</p>
-      </div>
-      <table style="width:100%; border-collapse:collapse; font-size:12px;">
-        <thead>
-          <tr style="background:#eef2ff; color:#4338ca;">
-            <th style="padding:6px; border:1px solid #e0e7ff;">Date</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Day</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Calories</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Protein</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Carbs</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Fat</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Fiber</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Sugar</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Sodium</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Water</th>
-            <th style="padding:6px; border:1px solid #e0e7ff;">Meals</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${data.rows.map(r => `
-            <tr>
-              <td style="padding:6px; border:1px solid #e5e7eb;">${r.date}</td>
-              <td style="padding:6px; border:1px solid #e5e7eb;">${r.day}</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.calories}</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.protein}g</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.carbs}g</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.fat}g</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.fiber}g</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.sugar}g</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.sodium}mg</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.water}ml</td>
-              <td style="padding:6px; border:1px solid #e5e7eb; text-align:right;">${r.meals}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
+
+    const header = document.createElement('div');
+    header.style.cssText = 'border-bottom: 2px solid #6366f1; padding-bottom: 12px; margin-bottom: 16px;';
+    const title = document.createElement('h1');
+    title.style.cssText = 'color:#4f46e5; margin:0;';
+    title.textContent = 'MacroLens';
+    const sub = document.createElement('p');
+    sub.style.cssText = 'margin:4px 0; color:#6b7280;';
+    sub.textContent = 'Nutrition & Hydration Progress Report';
+    const meta = document.createElement('p');
+    meta.style.cssText = 'margin:4px 0; font-size:12px;';
+    meta.textContent = `User: ${data.user.name} | Period: ${data.range} | Generated: ${data.generatedAt}`;
+
+    header.appendChild(title);
+    header.appendChild(sub);
+    header.appendChild(meta);
+    printContainer.appendChild(header);
+
+    const table = document.createElement('table');
+    table.style.cssText = 'width:100%; border-collapse:collapse; font-size:12px;';
+
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    headRow.style.cssText = 'background:#eef2ff; color:#4338ca;';
+    ['Date', 'Day', 'Calories', 'Protein', 'Carbs', 'Fat', 'Fiber', 'Sugar', 'Sodium', 'Water', 'Meals'].forEach(col => {
+      const th = document.createElement('th');
+      th.style.cssText = 'padding:6px; border:1px solid #e0e7ff;';
+      th.textContent = col;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    data.rows.forEach(r => {
+      const tr = document.createElement('tr');
+      const cells = [r.date, r.day, String(r.calories), `${r.protein}g`, `${r.carbs}g`, `${r.fat}g`, `${r.fiber}g`, `${r.sugar}g`, `${r.sodium}mg`, `${r.water}ml`, String(r.meals)];
+      cells.forEach((val, idx) => {
+        const td = document.createElement('td');
+        td.style.cssText = idx >= 2 ? 'padding:6px; border:1px solid #e5e7eb; text-align:right;' : 'padding:6px; border:1px solid #e5e7eb;';
+        td.textContent = val;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    printContainer.appendChild(table);
+
     document.body.appendChild(printContainer);
     window.print();
     setTimeout(() => {

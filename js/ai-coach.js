@@ -1,8 +1,7 @@
 window.AICoach = (() => {
-  let conversations = []; 
+  let conversations = [];
   let activeConvId = null;
   const MAX_HISTORY = 30;
-  const STORAGE_KEY = 'caltrack_coach_convs';
 
   function init() {
     const input = document.getElementById('coach-input');
@@ -21,12 +20,10 @@ window.AICoach = (() => {
 
     sendBtn.addEventListener('click', sendMessage);
 
-    
     document.getElementById('coach-new-chat-btn')?.addEventListener('click', () => {
       createNewConversation();
     });
 
-    
     document.querySelectorAll('.suggestion-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         input.value = chip.dataset.q;
@@ -35,132 +32,189 @@ window.AICoach = (() => {
       });
     });
 
-    
-    loadConversations();
-    renderTabBar();
+    reload();
+  }
 
-    if (conversations.length === 0) {
+  function reload() {
+    const session = Store.getSession();
+    if (!session) {
+      resetMemory();
+      return;
+    }
+    loadConversations();
+    const visible = conversations.filter(c => !c.deleted);
+    if (visible.length === 0) {
       createNewConversation();
     } else {
-      switchToConversation(activeConvId || conversations[0].id);
+      if (!activeConvId || !visible.some(c => c.id === activeConvId)) {
+        activeConvId = visible[0].id;
+      }
+      renderTabBar();
+      renderChat();
     }
   }
 
-  function loadConversations() {
-    const session = Store.getSession();
-    if (!session) return;
-    try {
-      const data = Store._get('coach_convs_' + session.id);
-      if (data) {
-        conversations = data.conversations || [];
-        activeConvId = data.activeConvId || null;
-      }
-    } catch (e) { conversations = []; }
+  function resetMemory() {
+    conversations = [];
+    activeConvId = null;
+    const tabBar = document.getElementById('coach-tabs-bar');
+    if (tabBar) tabBar.textContent = '';
+    renderChat();
   }
 
-  function saveConversations() {
+  function loadConversations() {
+    const data = Store.getCoachData();
+    if (data) {
+      conversations = Array.isArray(data.conversations) ? data.conversations : [];
+      activeConvId = data.activeConvId || null;
+    } else {
+      conversations = [];
+      activeConvId = null;
+    }
+  }
+
+  function saveConversations(changedIds = []) {
     const session = Store.getSession();
     if (!session) return;
-    Store._set('coach_convs_' + session.id, {
-      conversations: conversations.map(c => ({
-        ...c,
-        messages: c.messages.slice(-MAX_HISTORY * 2)
-      })),
-      activeConvId
-    });
+    const payload = conversations.map(c => ({
+      ...c,
+      messages: (c.messages || []).slice(-MAX_HISTORY * 2)
+    }));
+    Store.saveCoachData(payload, activeConvId, changedIds);
   }
 
   function createNewConversation() {
-    const id = 'conv_' + Date.now();
+    const id = 'conv_' + Utils.uuid().slice(0, 12);
+    const now = Date.now();
     const conv = {
       id,
       title: 'New Chat',
-      messages: []
+      messages: [],
+      updated_at: now,
+      deleted: false
     };
     conversations.unshift(conv);
     activeConvId = id;
-    saveConversations();
+    saveConversations([id]);
     renderTabBar();
     renderChat();
   }
 
   function switchToConversation(id) {
     activeConvId = id;
-    saveConversations();
+    saveConversations([]);
     renderTabBar();
     renderChat();
   }
 
   function deleteConversation(id) {
-    conversations = conversations.filter(c => c.id !== id);
-    if (activeConvId === id) {
-      activeConvId = conversations.length > 0 ? conversations[0].id : null;
+    const target = conversations.find(c => c.id === id);
+    if (target) {
+      target.deleted = true;
+      target.updated_at = Date.now();
     }
-    if (conversations.length === 0) {
+    const visible = conversations.filter(c => !c.deleted);
+    if (activeConvId === id) {
+      activeConvId = visible.length > 0 ? visible[0].id : null;
+    }
+    if (visible.length === 0) {
+      saveConversations([id]);
       createNewConversation();
       return;
     }
-    saveConversations();
+    saveConversations([id]);
     renderTabBar();
     renderChat();
   }
 
   function getActiveConversation() {
-    return conversations.find(c => c.id === activeConvId);
+    return conversations.find(c => c.id === activeConvId && !c.deleted);
   }
 
   function renderTabBar() {
     const tabBar = document.getElementById('coach-tabs-bar');
     if (!tabBar) return;
+    tabBar.textContent = '';
 
-    tabBar.innerHTML = conversations.map(conv => `
-      <button class="coach-tab ${conv.id === activeConvId ? 'active' : ''}" 
-              data-conv-id="${conv.id}" title="${conv.title}">
-        <span class="coach-tab-title">${conv.title}</span>
-        ${conversations.length > 1 ? `<span class="coach-tab-close" data-close-id="${conv.id}">&times;</span>` : ''}
-      </button>
-    `).join('');
+    const visible = conversations.filter(c => !c.deleted);
+    visible.forEach(conv => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `coach-tab ${conv.id === activeConvId ? 'active' : ''}`;
+      btn.dataset.convId = conv.id;
+      btn.title = conv.title || 'Chat';
 
-    
-    tabBar.querySelectorAll('.coach-tab').forEach(tab => {
-      tab.addEventListener('click', (e) => {
-        if (e.target.classList.contains('coach-tab-close')) {
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'coach-tab-title';
+      titleSpan.textContent = conv.title || 'New Chat';
+      btn.appendChild(titleSpan);
+
+      if (visible.length > 1) {
+        const closeSpan = document.createElement('span');
+        closeSpan.className = 'coach-tab-close';
+        closeSpan.textContent = '×';
+        closeSpan.setAttribute('aria-label', `Close ${conv.title || 'chat'}`);
+        closeSpan.addEventListener('click', (e) => {
           e.stopPropagation();
-          deleteConversation(e.target.dataset.closeId);
-          return;
-        }
-        switchToConversation(tab.dataset.convId);
-      });
+          deleteConversation(conv.id);
+        });
+        btn.appendChild(closeSpan);
+      }
+
+      btn.addEventListener('click', () => switchToConversation(conv.id));
+      tabBar.appendChild(btn);
     });
   }
 
   function renderChat() {
     const chatEl = document.getElementById('coach-chat');
-    chatEl.innerHTML = '';
+    if (!chatEl) return;
+    chatEl.textContent = '';
 
     const conv = getActiveConversation();
     if (!conv || conv.messages.length === 0) {
-      chatEl.innerHTML = `
-        <div class="coach-welcome">
-          <i data-lucide="bot"></i>
-          <h3>Hey! I'm your AI fitness coach 💪</h3>
-          <p>I have full access to your MacroLens data — your meals, macros, calories, water intake, weight history, and progress. Ask me anything!</p>
-          <div class="coach-suggestion-chips">
-            <button class="suggestion-chip" data-q="How am I doing today? Analyze my meals and macros.">📊 Today's progress</button>
-            <button class="suggestion-chip" data-q="What should I eat for my next meal to hit my remaining macros?">🍽️ What to eat next</button>
-            <button class="suggestion-chip" data-q="Analyze my eating patterns from the past week. Am I on track?">📈 Weekly analysis</button>
-            <button class="suggestion-chip" data-q="Am I drinking enough water today? How's my hydration?">💧 Hydration check</button>
-          </div>
-        </div>
-      `;
-      
-      chatEl.querySelectorAll('.suggestion-chip').forEach(chip => {
+      const welcome = document.createElement('div');
+      welcome.className = 'coach-welcome';
+
+      const botIcon = document.createElement('i');
+      botIcon.setAttribute('data-lucide', 'bot');
+
+      const h3 = document.createElement('h3');
+      h3.textContent = "Hey! I'm your AI fitness coach 💪";
+
+      const p = document.createElement('p');
+      p.textContent = 'I have full access to your MacroLens data — your meals, macros, calories, water intake, weight history, and progress. Ask me anything!';
+
+      const chipsDiv = document.createElement('div');
+      chipsDiv.className = 'coach-suggestion-chips';
+
+      const suggestions = [
+        ['📊 Today\'s progress', 'How am I doing today? Analyze my meals and macros.'],
+        ['🍽️ What to eat next', 'What should I eat for my next meal to hit my remaining macros?'],
+        ['📈 Weekly analysis', 'Analyze my eating patterns from the past week. Am I on track?'],
+        ['💧 Hydration check', 'Am I drinking enough water today? How\'s my hydration?']
+      ];
+
+      suggestions.forEach(([label, q]) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'suggestion-chip';
+        chip.dataset.q = q;
+        chip.textContent = label;
         chip.addEventListener('click', () => {
-          document.getElementById('coach-input').value = chip.dataset.q;
+          document.getElementById('coach-input').value = q;
           document.getElementById('coach-send-btn').disabled = false;
           sendMessage();
         });
+        chipsDiv.appendChild(chip);
       });
+
+      welcome.appendChild(botIcon);
+      welcome.appendChild(h3);
+      welcome.appendChild(p);
+      welcome.appendChild(chipsDiv);
+      chatEl.appendChild(welcome);
+
       if (typeof lucide !== 'undefined') lucide.createIcons();
       return;
     }
@@ -182,7 +236,6 @@ window.AICoach = (() => {
     if (role === 'ai') {
       const msgText = document.createElement('div');
       msgText.className = 'msg-text';
-      
       msgText.innerHTML = formatCoachResponse(text);
       bubble.appendChild(msgText);
     } else {
@@ -195,10 +248,12 @@ window.AICoach = (() => {
   }
 
   function formatCoachResponse(text) {
-    return text
+    const escaped = Utils.escapeHtml(String(text ?? ''));
+    const formatted = escaped
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
       .replace(/\n/g, '<br>');
+    return Utils.sanitizeHtml(formatted, ['strong', 'em', 'br']);
   }
 
   function showTyping() {
@@ -206,7 +261,11 @@ window.AICoach = (() => {
     const indicator = document.createElement('div');
     indicator.className = 'typing-indicator';
     indicator.id = 'typing-indicator';
-    indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    for (let i = 0; i < 3; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'typing-dot';
+      indicator.appendChild(dot);
+    }
     chatEl.appendChild(indicator);
     chatEl.scrollTop = chatEl.scrollHeight;
   }
@@ -221,26 +280,31 @@ window.AICoach = (() => {
     const today = Utils.todayStr();
     const todayTotals = Store.getDayTotals(today);
     const diary = Store.getDiary(today);
-    const streak = Store.getStreakData();
+    const streak = Store.getComputedStreaks();
     const weightLog = Store.getWeightLog();
     const freqFoods = Store.getFrequentFoods(15);
     const achievements = Store.getAchievements();
     const targets = Utils.calculateNutritionTargets(profile);
     const waterLog = Store.getWaterLog(today);
-    const waterGoal = Store.getWaterGoal();
+    const waterGoal = targets.water || Store.getWaterGoal();
 
-    let ctx = `\n\nUSER DATA CONTEXT (from MacroLens app — use this to give personalized, data-driven advice):\n`;
-    ctx += `=== IMPORTANT: This is REAL logged data from the user's app. Reference specific numbers, food names, and trends when the user asks about their progress. ===\n`;
+    let ctx = '\n\nUSER DATA CONTEXT (from MacroLens app — use this to give personalized, data-driven advice):\n';
+    ctx += '=== IMPORTANT: This is REAL logged data from the user\'s app. Reference specific numbers, food names, and trends when the user asks about their progress. ===\n';
+
+    const weightUnit = profile?.weightUnit === 'lbs' ? 'lbs' : 'kg';
 
     if (profile) {
-      ctx += `\n--- USER PROFILE ---\n`;
+      const heightDisplay = profile.heightUnit === 'ft'
+        ? `${profile.heightFt ?? '?'}ft ${profile.heightIn ?? 0}in (${Math.round(profile.heightCm || 0)}cm)`
+        : `${Math.round(profile.heightCm || profile.height || 0)}cm`;
+      ctx += '\n--- USER PROFILE ---\n';
       ctx += `Name: ${profile.name || 'User'}\n`;
       ctx += `Age: ${profile.age || '?'} years | Gender: ${profile.gender || '?'}\n`;
-      ctx += `Weight: ${profile.weight || '?'}${profile.weightUnit === 'lbs' ? 'lbs' : 'kg'} | Height: ${Math.round(profile.height || 0)}${profile.heightUnit === 'ft' ? 'ft' : 'cm'}\n`;
+      ctx += `Weight: ${profile.weight || '?'}${weightUnit} | Height: ${heightDisplay}\n`;
       ctx += `Goal: ${profile.goal || 'maintain'} | Activity multiplier: ${profile.activityLevel || '?'}x\n`;
     }
 
-    ctx += `\n--- DAILY TARGETS (personalized to this user) ---\n`;
+    ctx += '\n--- DAILY TARGETS (personalized to this user) ---\n';
     ctx += `Calories: ${targets.tdee} kcal\n`;
     ctx += `Protein: ${targets.protein}g | Carbs: ${targets.carbs}g | Fat: ${targets.fat}g\n`;
     ctx += `Water: ${targets.water}ml | Fiber: ${targets.fiber}g | Sugar limit: ${targets.sugar}g | Sodium limit: ${targets.sodium}mg\n`;
@@ -273,12 +337,12 @@ window.AICoach = (() => {
           if (item.fiber) ctx += ` | Fiber:${Math.round(item.fiber)}g`;
           if (item.sugar) ctx += ` | Sugar:${Math.round(item.sugar)}g`;
           if (item.sodium) ctx += ` | Sodium:${Math.round(item.sodium)}mg`;
-          ctx += `\n`;
+          ctx += '\n';
         });
       }
     });
     if (!hasMeals) {
-      ctx += `\nNo meals logged yet today.\n`;
+      ctx += '\nNo meals logged yet today.\n';
     }
 
     const loggedDates = Store.getLoggedDates().slice(-7);
@@ -308,40 +372,41 @@ window.AICoach = (() => {
         const avgVsTarget = Math.round(weekCals / daysCount) - targets.tdee;
         if (avgVsTarget > 100) ctx += `  ⚠️ Averaging ${avgVsTarget} kcal ABOVE target per day\n`;
         else if (avgVsTarget < -100) ctx += `  ⚠️ Averaging ${Math.abs(avgVsTarget)} kcal BELOW target per day\n`;
-        else ctx += `  ✅ On track — averaging within 100 kcal of target\n`;
+        else ctx += '  ✅ On track — averaging within 100 kcal of target\n';
       }
     }
 
-    ctx += `\n--- STREAKS & CONSISTENCY ---\n`;
+    ctx += '\n--- STREAKS & CONSISTENCY ---\n';
     ctx += `Current logging streak: ${streak.currentStreak} days | Longest ever: ${streak.longestStreak} days\n`;
     ctx += `Total meals logged: ${Store.getTotalMeals()}\n`;
     ctx += `AI scans used: ${Store.getNlpCount()}\n`;
 
     if (weightLog.length > 0) {
-      ctx += `\n--- WEIGHT HISTORY ---\n`;
+      ctx += '\n--- WEIGHT HISTORY ---\n';
+      const toDisplay = (kg) => (weightUnit === 'lbs' ? window.Nutrition.kgToLbs(kg) : kg);
       const recent = weightLog.slice(-10);
       recent.forEach(w => {
-        ctx += `  ${w.date}: ${w.weight}kg\n`;
+        ctx += `  ${w.date}: ${toDisplay(w.weight)}${weightUnit}\n`;
       });
       if (weightLog.length >= 2) {
-        const first = weightLog[0];
-        const last = weightLog[weightLog.length - 1];
-        const diff = (last.weight - first.weight).toFixed(1);
-        ctx += `  Total change: ${diff > 0 ? '+' : ''}${diff}kg (from ${first.weight}kg to ${last.weight}kg over ${weightLog.length} entries)\n`;
+        const first = toDisplay(weightLog[0].weight);
+        const last = toDisplay(weightLog[weightLog.length - 1].weight);
+        const diff = (last - first).toFixed(1);
+        ctx += `  Total change: ${diff > 0 ? '+' : ''}${diff}${weightUnit} (from ${first}${weightUnit} to ${last}${weightUnit} over ${weightLog.length} entries)\n`;
       }
     }
 
     if (freqFoods.length > 0) {
-      ctx += `\n--- MOST EATEN FOODS ---\n`;
+      ctx += '\n--- MOST EATEN FOODS ---\n';
       freqFoods.forEach(f => {
         ctx += `  ${f.name}: logged ${f.count} times\n`;
       });
     }
 
     if (achievements && Object.keys(achievements).length > 0) {
-      ctx += `\n--- UNLOCKED ACHIEVEMENTS ---\n`;
-      const achNames = Object.keys(achievements);
-      ctx += `  ${achNames.join(', ')}\n`;
+      ctx += '\n--- UNLOCKED ACHIEVEMENTS ---\n';
+      const achNames = Object.keys(achievements).filter(k => achievements[k]?.unlocked);
+      if (achNames.length) ctx += `  ${achNames.join(', ')}\n`;
     }
 
     return ctx;
@@ -356,10 +421,17 @@ window.AICoach = (() => {
     const conv = getActiveConversation();
     if (!conv) return;
 
-    appendBubble(text, 'user');
-    conv.messages.push({ role: 'user', text });
+    const userMsg = {
+      id: Utils.uuid(),
+      role: 'user',
+      text,
+      createdAt: Date.now()
+    };
 
-    
+    appendBubble(text, 'user');
+    conv.messages.push(userMsg);
+    conv.updated_at = Date.now();
+
     if (conv.messages.length === 1) {
       conv.title = text.length > 30 ? text.substring(0, 30) + '…' : text;
       renderTabBar();
@@ -374,8 +446,14 @@ window.AICoach = (() => {
       const reply = await Gemini.askCoach(text, conv.messages.slice(-MAX_HISTORY), context);
       hideTyping();
       appendBubble(reply, 'ai');
-      conv.messages.push({ role: 'ai', text: reply });
-      saveConversations();
+      conv.messages.push({
+        id: Utils.uuid(),
+        role: 'ai',
+        text: reply,
+        createdAt: Date.now()
+      });
+      conv.updated_at = Date.now();
+      saveConversations([conv.id]);
     } catch (err) {
       hideTyping();
       appendBubble('Sorry, I couldn\'t process that. Please try again.', 'ai');
@@ -384,8 +462,9 @@ window.AICoach = (() => {
   }
 
   function refresh() {
+    reload();
     if (window.lucide) lucide.createIcons();
   }
 
-  return { init, refresh };
+  return { init, reload, resetMemory, refresh };
 })();

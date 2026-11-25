@@ -1,10 +1,10 @@
 window.Gemini = {
-  
   async _fetch(body) {
     const res = await fetch('/api/gemini', {
       method: 'POST',
+      credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     });
     return res;
   },
@@ -25,7 +25,7 @@ window.Gemini = {
         sodium: Math.round((item.sodium || item.sodium_mg || 0) / qty),
         serving: item.serving || (item.weight_grams ? `${item.weight_grams}g` : '1 serving'),
         weight_grams: item.weight_grams || null,
-        unit: 'serving',
+        unit: 'serving'
       },
       ingredients: Array.isArray(item.ingredients)
         ? item.ingredients.map(ing => ({
@@ -39,7 +39,7 @@ window.Gemini = {
             sugar: parseFloat((ing.sugar || ing.sugar_g || 0).toFixed(1)),
             sodium: Math.round(ing.sodium || ing.sodium_mg || 0),
             serving: ing.serving || (ing.weight_grams ? `${ing.weight_grams}g` : '1 serving'),
-            weight_grams: ing.weight_grams || null,
+            weight_grams: ing.weight_grams || null
           }))
         : [],
       quantity: qty,
@@ -49,30 +49,34 @@ window.Gemini = {
       totalFat: parseFloat((item.fat || 0).toFixed(1)),
       totalFiber: parseFloat(((item.fiber || item.fiber_g || 0)).toFixed(1)),
       totalSugar: parseFloat(((item.sugar || item.sugar_g || 0)).toFixed(1)),
-      totalSodium: Math.round(item.sodium || item.sodium_mg || 0),
+      totalSodium: Math.round(item.sodium || item.sodium_mg || 0)
     };
   },
 
   _parseJSON(text) {
     if (!text) return null;
     const trimmed = text.trim();
-    
     const cleaned = trimmed.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
     try {
       return JSON.parse(cleaned);
     } catch (e) {
-      
       const braceMatch = trimmed.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
       if (braceMatch) {
         try {
           return JSON.parse(braceMatch[0]);
         } catch (e2) {
-          console.error("Failed to parse extracted JSON brace match:", braceMatch[0], e2);
+          console.error('Failed to parse extracted JSON brace match:', braceMatch[0], e2);
         }
       }
-      console.error("JSON parsing completely failed for text:", text, e);
+      console.error('JSON parsing failed for text:', text, e);
       throw e;
     }
+  },
+
+  _handleHttpError(status) {
+    if (status === 401) Utils.showToast('Please sign in again to use AI features.', 'warning', 4000);
+    else if (status === 413) Utils.showToast('Image payload too large — try a smaller photo.', 'warning', 4000);
+    else if (status === 429) Utils.showToast('⚠️ Rate limit reached. Please wait a moment and try again.', 'error', 5000);
   },
 
   async analyzeText(mealDescription) {
@@ -109,12 +113,12 @@ Rules:
     try {
       const res = await this._fetch({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 2048, responseMimeType: "application/json" },
+        generationConfig: { temperature: 0.1, maxOutputTokens: 2048, responseMimeType: 'application/json' }
       });
 
       if (!res.ok) {
         console.error('Gemini text error:', res.status, await res.text());
-        if (res.status === 429) Utils.showToast('⚠️ API quota exceeded. Try again later.', 'error', 5000);
+        this._handleHttpError(res.status);
         return null;
       }
 
@@ -137,10 +141,17 @@ Rules:
     }
   },
 
-  async analyzeImage(file, description) {
+  async analyzeImage(fileOrCompressed, description) {
     try {
-      const base64 = await this._fileToBase64(file);
-      const mimeType = file.type || 'image/jpeg';
+      let base64, mimeType;
+      if (fileOrCompressed && fileOrCompressed.base64) {
+        base64 = fileOrCompressed.base64;
+        mimeType = fileOrCompressed.mimeType || 'image/jpeg';
+      } else {
+        const compressed = await Utils.compressImage(fileOrCompressed, 1024, 0.8);
+        base64 = compressed.base64;
+        mimeType = compressed.mimeType;
+      }
 
       const descPart = description && description.trim()
         ? `\n\nUSER DESCRIPTION (ingredients the camera can't see): "${description.trim()}"
@@ -216,15 +227,15 @@ Rules:
         contents: [{
           parts: [
             { text: prompt },
-            { inlineData: { mimeType, data: base64 } },
-          ],
+            { inlineData: { mimeType, data: base64 } }
+          ]
         }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 4096, responseMimeType: "application/json" },
+        generationConfig: { temperature: 0.2, maxOutputTokens: 4096, responseMimeType: 'application/json' }
       });
 
       if (!res.ok) {
         console.error('Gemini Vision error:', res.status, await res.text());
-        if (res.status === 429) Utils.showToast('⚠️ API quota exceeded. Try again later.', 'error', 5000);
+        this._handleHttpError(res.status);
         return null;
       }
 
@@ -249,42 +260,10 @@ Rules:
     }
   },
 
-  async validateMacros({ tdee, protein, carbs, fat, totalCals, goal, weight, age, gender }) {
-    const prompt = `You are a certified sports nutritionist. A user wants to set these daily macro targets:
-
-- TDEE calculated: ${tdee} kcal
-- Custom macros: Protein ${protein}g, Carbs ${carbs}g, Fat ${fat}g (total: ${totalCals} kcal)
-- Goal: ${goal}
-- Stats: ${gender}, ${age} years old, ${weight}kg
-
-Evaluate if these macros are healthy and appropriate for their goal. Consider:
-1. Is protein adequate for their weight? (min 1.6g/kg for muscle, 2.2g/kg ideal for cut)
-2. Is fat sufficient? (minimum ~0.3g per lb or 20% of calories)
-3. Is the calorie deficit/surplus appropriate for their goal?
-4. Are carbs reasonable for energy needs?
-
-Return ONLY valid JSON (no markdown):
-{"isGood": true/false, "feedback": "2-3 sentence assessment with specific advice"}`;
-
-    try {
-      const res = await this._fetch({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 500, responseMimeType: "application/json" },
-      });
-      if (!res.ok) throw new Error(`API error ${res.status}`);
-      const data = await res.json();
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      return this._parseJSON(text);
-    } catch (err) {
-      console.error('Macro validation failed:', err);
-      throw err;
-    }
-  },
-
   async askCoach(question, history, userContext) {
     const contextMsgs = (history || []).slice(-16).map(m => ({
       role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.text }],
+      parts: [{ text: m.text }]
     }));
 
     const systemPrompt = `You are a friendly, knowledgeable AI fitness and nutrition coach inside a calorie tracking app called MacroLens. You have FULL ACCESS to the user's real tracking data provided below.
@@ -309,7 +288,7 @@ ${userContext || ''}`;
     const contents = [
       { role: 'user', parts: [{ text: systemPrompt }] },
       { role: 'model', parts: [{ text: 'Got it! I\'m your MacroLens AI fitness coach with access to your tracking data. I\'ll give you personalized advice based on your meals, macros, and progress. How can I help? 💪' }] },
-      ...contextMsgs,
+      ...contextMsgs
     ];
 
     if (!contextMsgs.length || contextMsgs[contextMsgs.length - 1]?.parts?.[0]?.text !== question) {
@@ -319,23 +298,17 @@ ${userContext || ''}`;
     try {
       const res = await this._fetch({
         contents,
-        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
+        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
       });
-      if (!res.ok) throw new Error(`API error ${res.status}`);
+      if (!res.ok) {
+        this._handleHttpError(res.status);
+        throw new Error(`API error ${res.status}`);
+      }
       const data = await res.json();
       return data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I couldn\'t generate a response.';
     } catch (err) {
       console.error('Coach query failed:', err);
       throw err;
     }
-  },
-
-  _fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result.split(',')[1]);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  },
+  }
 };

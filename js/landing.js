@@ -4,25 +4,31 @@ window.Landing = {
   isTransitioning: false,
   touchStartY: 0,
 
+  _isEditableTarget(target) {
+    if (!target) return false;
+    const tag = target.tagName;
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable;
+  },
+
   init() {
     const screen = document.getElementById('auth-screen');
     if (!screen) return;
 
     this.totalSlides = document.querySelectorAll('.landing-slide').length || 10;
 
-    
     screen.addEventListener('wheel', (e) => this.onWheel(e), { passive: false });
 
-    
     screen.addEventListener('touchstart', (e) => {
       this.touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     screen.addEventListener('touchmove', (e) => {
-      e.preventDefault(); 
+      if (this._isEditableTarget(e.target) || e.target?.closest?.('.landing-auth-card')) return;
+      e.preventDefault();
     }, { passive: false });
 
     screen.addEventListener('touchend', (e) => {
+      if (this._isEditableTarget(e.target) || e.target?.closest?.('.landing-auth-card')) return;
       const dy = this.touchStartY - e.changedTouches[0].clientY;
       if (Math.abs(dy) > 40) {
         if (dy > 0) this.next();
@@ -30,15 +36,15 @@ window.Landing = {
       }
     }, { passive: true });
 
-    
     document.addEventListener('keydown', (e) => {
-      const screen = document.getElementById('auth-screen');
-      if (!screen || !screen.classList.contains('active')) return;
+      const authScreen = document.getElementById('auth-screen');
+      if (!authScreen || !authScreen.classList.contains('active')) return;
+      if (this._isEditableTarget(e.target)) return;
+      if (e.key === ' ' && e.target?.closest?.('button, a')) return;
       if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); this.next(); }
       if (e.key === 'ArrowUp') { e.preventDefault(); this.prev(); }
     });
 
-    
     this.setSlide(0);
     if (typeof lucide !== 'undefined') lucide.createIcons();
   },
@@ -47,11 +53,10 @@ window.Landing = {
     const screen = document.getElementById('auth-screen');
     if (!screen || !screen.classList.contains('active')) return;
 
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (this.isTransitioning) return;
 
-    
     if (e.deltaY > 20) this.next();
     else if (e.deltaY < -20) this.prev();
   },
@@ -72,7 +77,7 @@ window.Landing = {
     if (this.isTransitioning || index === this.currentSlide) return;
     this.isTransitioning = true;
     this.setSlide(index);
-    
+
     setTimeout(() => { this.isTransitioning = false; }, 700);
   },
 
@@ -81,14 +86,13 @@ window.Landing = {
 
     const slides = document.querySelectorAll('.landing-slide');
     slides.forEach(slide => {
-      const num = parseInt(slide.dataset.slide);
+      const num = parseInt(slide.dataset.slide, 10);
       slide.classList.remove('active', 'exit-up');
       if (num === index) {
         slide.classList.add('active');
       } else if (num < index) {
         slide.classList.add('exit-up');
       }
-      
     });
   }
 };

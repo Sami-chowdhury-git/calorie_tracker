@@ -4,7 +4,7 @@
   const App = {
     currentView: 'dashboard',
 
-    init() {
+    async init() {
       Landing.init();
       Onboarding.init();
       Dashboard.init();
@@ -21,12 +21,27 @@
       this.initTheme();
 
       Auth.onAuthStateChanged((user) => this.onAuthChanged(user));
+      await Auth.initSession();
 
       if (typeof lucide !== 'undefined') lucide.createIcons();
     },
 
     onAuthChanged(user) {
-      if (!user) { this.showScreen('auth'); return; }
+      if (!user) {
+        if (window.AICoach && typeof window.AICoach.resetMemory === 'function') {
+          window.AICoach.resetMemory();
+        }
+        this.showScreen('auth');
+        return;
+      }
+
+      if (window.AICoach && typeof window.AICoach.reload === 'function') {
+        window.AICoach.reload();
+      }
+      if (window.Goals && typeof window.Goals.init === 'function') {
+        window.Goals.init();
+      }
+
       const profile = Store.getProfile();
       if (!profile) {
         this.showScreen('onboarding');
@@ -41,7 +56,7 @@
 
     showScreen(screen) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      const map = { auth:'auth-screen', onboarding:'onboarding-screen', app:'app-shell' };
+      const map = { auth: 'auth-screen', onboarding: 'onboarding-screen', app: 'app-shell' };
       const el = document.getElementById(map[screen]);
       if (el) el.classList.add('active');
       if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -82,14 +97,14 @@
         const signupBtn = e.target.querySelector('button[type="submit"]');
         if (signupBtn) { signupBtn.disabled = true; signupBtn.textContent = 'Creating account…'; }
         const r = await Auth.signUp(name, email, pw);
-        if (signupBtn) { signupBtn.disabled = false; signupBtn.textContent = 'Sign Up'; }
+        if (signupBtn) { signupBtn.disabled = false; signupBtn.textContent = 'Get Started'; }
         if (!r.success) { Utils.showToast(r.error, 'error'); return; }
         Utils.showToast('Welcome! 🎉', 'success');
       });
 
       document.getElementById('logout-btn').addEventListener('click', () => {
-        App._showConfirm('Sign Out', 'Are you sure you want to sign out?', () => {
-          Auth.signOut();
+        App._showConfirm('Sign Out', 'Are you sure you want to sign out?', async () => {
+          await Auth.signOut();
           Utils.showToast('Signed out', 'info');
         });
       });
@@ -97,8 +112,8 @@
       document.getElementById('reset-data-btn')?.addEventListener('click', () => {
         App._showConfirm('⚠️ Reset ALL Data',
           'This will delete all your meals, macros, weight logs, achievements, and settings. You will need to set up your profile again.\n\nThis cannot be undone!',
-          () => {
-            Store.resetAllData();
+          async () => {
+            await Store.resetAllData();
             Utils.showToast('All data has been reset', 'info');
             setTimeout(() => window.location.reload(), 500);
           },
@@ -146,7 +161,6 @@
         if (this.currentView === 'dashboard') Dashboard.refresh();
       });
 
-      
       document.addEventListener('keydown', (e) => {
         if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'number') {
           if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
@@ -184,9 +198,10 @@
     updateThemeIcon(theme) {
       const btn = document.getElementById('theme-toggle-btn');
       if (!btn) return;
-      btn.innerHTML = theme === 'dark'
-        ? '<i data-lucide="moon"></i>'
-        : '<i data-lucide="sun"></i>';
+      btn.textContent = '';
+      const icon = document.createElement('i');
+      icon.setAttribute('data-lucide', theme === 'dark' ? 'moon' : 'sun');
+      btn.appendChild(icon);
       if (typeof lucide !== 'undefined') lucide.createIcons();
     },
 
@@ -196,7 +211,7 @@
       document.getElementById('confirm-modal-msg').textContent = message;
       const okBtn = document.getElementById('confirm-modal-ok');
       okBtn.textContent = confirmText || 'Confirm';
-      
+
       if (confirmText === 'Delete Everything') {
         okBtn.style.background = 'var(--danger)';
       } else {
@@ -214,7 +229,7 @@
       okBtn.onclick = () => { cleanup(); onConfirm(); };
       document.getElementById('confirm-modal-cancel').onclick = cleanup;
       modal.onclick = (e) => { if (e.target === modal) cleanup(); };
-    },
+    }
   };
 
   document.addEventListener('DOMContentLoaded', () => App.init());

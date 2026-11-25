@@ -4,13 +4,14 @@ window.MealLogger = {
   parsedItems: [],
   _selectedImageFile: null,
   _selectedImageDataUrl: null,
+  _compressedImage: null,
   _videoStream: null,
   _barcodeInterval: null,
 
   init() {
     document.addEventListener('open-meal-log', (e) => {
       this._explicitMealType = e.detail?.mealType || null;
-      this.targetDate = e.detail?.date || null;
+      this.targetDate = e.detail?.date || Utils.todayStr();
       this.open();
     });
 
@@ -19,7 +20,6 @@ window.MealLogger = {
       if (e.target.id === 'meal-log-modal') this.close();
     });
 
-    
     document.querySelectorAll('.meal-type-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.meal-type-btn').forEach(b => b.classList.remove('active'));
@@ -28,7 +28,6 @@ window.MealLogger = {
       });
     });
 
-    
     document.querySelectorAll('#meal-log-tabs .tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#meal-log-tabs .tab-btn').forEach(b => b.classList.remove('active'));
@@ -45,33 +44,28 @@ window.MealLogger = {
       });
     });
 
-    
     document.getElementById('nlp-parse-btn').addEventListener('click', () => this.parseNLP());
     document.getElementById('nlp-confirm-btn').addEventListener('click', () => this.confirmParsed('nlp'));
 
-    
     this.initImageUpload();
     document.getElementById('image-confirm-btn').addEventListener('click', () => this.confirmParsed('image'));
 
-    
     this.initBarcodeScanner();
     document.getElementById('barcode-confirm-btn')?.addEventListener('click', () => this.confirmParsed('barcode'));
 
-    
     document.getElementById('manual-add-btn').addEventListener('click', () => this.addManual());
   },
 
   open() {
+    if (!this.targetDate) this.targetDate = Utils.todayStr();
     document.getElementById('meal-log-modal').classList.remove('hidden');
     this.resetTabs();
     const selectorEl = document.querySelector('.meal-type-selector');
     if (this._explicitMealType) {
-      
       this.selectedMealType = this._explicitMealType;
       document.querySelectorAll('.meal-type-btn').forEach(b => b.classList.remove('active'));
       const btn = document.querySelector(`.meal-type-btn[data-meal="${this._explicitMealType}"]`);
       if (btn) btn.classList.add('active');
-      
       if (selectorEl) selectorEl.style.display = 'none';
       this._explicitMealType = null;
     } else {
@@ -84,6 +78,7 @@ window.MealLogger = {
   close() {
     document.getElementById('meal-log-modal').classList.add('hidden');
     this.stopBarcodeCamera();
+    this.targetDate = null;
     this.resetForm();
   },
 
@@ -122,7 +117,7 @@ window.MealLogger = {
     if (descInput) descInput.value = '';
     const resultPreview = document.getElementById('image-result-preview');
     if (resultPreview) resultPreview.classList.add('hidden');
-    ['manual-food-name','manual-calories','manual-protein','manual-carbs','manual-fat','manual-fiber','manual-sugar','manual-sodium','manual-serving']
+    ['manual-food-name', 'manual-calories', 'manual-protein', 'manual-carbs', 'manual-fat', 'manual-fiber', 'manual-sugar', 'manual-sodium', 'manual-serving']
       .forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
@@ -130,11 +125,23 @@ window.MealLogger = {
     this.parsedItems = [];
     this._selectedImageFile = null;
     this._selectedImageDataUrl = null;
-    
+    this._compressedImage = null;
+
     const fi = document.getElementById('image-file-input');
     const ci = document.getElementById('camera-file-input');
     if (fi) fi.value = '';
     if (ci) ci.value = '';
+  },
+
+  _setBtnContent(btn, iconName, labelText) {
+    if (!btn) return;
+    btn.textContent = '';
+    const icon = document.createElement('i');
+    icon.setAttribute('data-lucide', iconName);
+    if (iconName === 'loader-2') icon.classList.add('spin-icon');
+    btn.appendChild(icon);
+    btn.appendChild(document.createTextNode(' ' + labelText));
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   },
 
   async parseNLP() {
@@ -143,13 +150,13 @@ window.MealLogger = {
 
     const parseBtn = document.getElementById('nlp-parse-btn');
     parseBtn.disabled = true;
-    parseBtn.innerHTML = '<i data-lucide="loader-2" class="spin-icon"></i> Analyzing with AI...';
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    this._setBtnContent(parseBtn, 'loader-2', 'Analyzing with AI...');
 
     try {
       const geminiResult = await Gemini.analyzeText(text);
       if (geminiResult && geminiResult.length > 0) {
         this.parsedItems = geminiResult;
+        Store.incrementNlpCount();
         Utils.showToast('✨ Analyzed by Gemini AI', 'success', 2000);
       } else {
         Utils.showToast('Gemini could not analyze this — try rephrasing', 'warning', 3000);
@@ -160,9 +167,7 @@ window.MealLogger = {
     }
 
     parseBtn.disabled = false;
-    parseBtn.innerHTML = '<i data-lucide="sparkles"></i> Analyze Food';
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    Store.incrementNlpCount();
+    this._setBtnContent(parseBtn, 'sparkles', 'Analyze Food');
 
     if (this.parsedItems.length === 0) return;
     this.renderParsedItems('nlp');
@@ -170,24 +175,13 @@ window.MealLogger = {
 
   editServing(index) {
     const item = this.parsedItems[index];
+    if (!item) return;
     const current = item.food.weight_grams || item.food.serving;
     const newVal = window.prompt('Edit weight (grams):', current);
     if (newVal !== null && newVal.trim() !== '') {
       const grams = parseFloat(newVal);
-      if (!isNaN(grams) && grams >= 0 && item.food.weight_grams) {
-        
-        const ratio = grams / item.food.weight_grams;
-        item.food.calories = Math.round(item.food.calories * ratio);
-        item.food.protein = parseFloat((item.food.protein * ratio).toFixed(1));
-        item.food.carbs = parseFloat((item.food.carbs * ratio).toFixed(1));
-        item.food.fat = parseFloat((item.food.fat * ratio).toFixed(1));
-        item.food.weight_grams = grams;
-        item.food.serving = `${grams}g`;
-        
-        item.totalCalories = Math.round(item.food.calories * item.quantity);
-        item.totalProtein = parseFloat((item.food.protein * item.quantity).toFixed(1));
-        item.totalCarbs = parseFloat((item.food.carbs * item.quantity).toFixed(1));
-        item.totalFat = parseFloat((item.food.fat * item.quantity).toFixed(1));
+      if (!isNaN(grams) && grams > 0 && item.food.weight_grams) {
+        window.Nutrition.scaleFoodServings(item, grams);
       } else {
         item.food.serving = newVal.trim();
       }
@@ -198,30 +192,14 @@ window.MealLogger = {
 
   editIngredientWeight(itemIndex, ingIndex) {
     const item = this.parsedItems[itemIndex];
-    const ing = item.ingredients[ingIndex];
+    const ing = item?.ingredients?.[ingIndex];
+    if (!ing) return;
     const current = ing.weight_grams || ing.serving;
     const newVal = window.prompt(`Edit weight for ${ing.name} (grams):`, current);
     if (newVal !== null && newVal.trim() !== '') {
       const grams = parseFloat(newVal);
-      if (!isNaN(grams) && grams >= 0 && ing.weight_grams) {
-        const ratio = grams / ing.weight_grams;
-        const oldCals = ing.calories;
-        ing.calories = Math.round(ing.calories * ratio);
-        ing.protein = parseFloat((ing.protein * ratio).toFixed(1));
-        ing.carbs = parseFloat((ing.carbs * ratio).toFixed(1));
-        ing.fat = parseFloat((ing.fat * ratio).toFixed(1));
-        ing.weight_grams = grams;
-        ing.serving = `${grams}g`;
-        
-        const calDiff = ing.calories - oldCals;
-        item.food.calories += Math.round(calDiff / item.quantity);
-        item.totalCalories = Math.round(item.food.calories * item.quantity);
-        item.food.protein = parseFloat(item.ingredients.reduce((s, i) => s + i.protein, 0).toFixed(1));
-        item.food.carbs = parseFloat(item.ingredients.reduce((s, i) => s + i.carbs, 0).toFixed(1));
-        item.food.fat = parseFloat(item.ingredients.reduce((s, i) => s + i.fat, 0).toFixed(1));
-        item.totalProtein = parseFloat((item.food.protein * item.quantity).toFixed(1));
-        item.totalCarbs = parseFloat((item.food.carbs * item.quantity).toFixed(1));
-        item.totalFat = parseFloat((item.food.fat * item.quantity).toFixed(1));
+      if (!isNaN(grams) && grams > 0 && ing.weight_grams) {
+        window.Nutrition.scaleIngredientWeight(item, ingIndex, grams);
       } else {
         ing.serving = newVal.trim();
       }
@@ -232,23 +210,10 @@ window.MealLogger = {
 
   removeIngredient(itemIndex, ingIndex) {
     const item = this.parsedItems[itemIndex];
-    if (!item.ingredients || item.ingredients.length === 0) return;
-    
-    const ing = item.ingredients[ingIndex];
-    const oldCals = ing.calories;
-    
+    if (!item?.ingredients?.length) return;
     item.ingredients.splice(ingIndex, 1);
-    
-    const calDiff = 0 - oldCals;
-    item.food.calories += Math.round(calDiff / item.quantity);
-    item.totalCalories = Math.round(item.food.calories * item.quantity);
-    item.food.protein = parseFloat(item.ingredients.reduce((s, i) => s + i.protein, 0).toFixed(1));
-    item.food.carbs = parseFloat(item.ingredients.reduce((s, i) => s + i.carbs, 0).toFixed(1));
-    item.food.fat = parseFloat(item.ingredients.reduce((s, i) => s + i.fat, 0).toFixed(1));
-    item.totalProtein = parseFloat((item.food.protein * item.quantity).toFixed(1));
-    item.totalCarbs = parseFloat((item.food.carbs * item.quantity).toFixed(1));
-    item.totalFat = parseFloat((item.food.fat * item.quantity).toFixed(1));
-    
+    window.Nutrition.syncItemFromIngredients(item);
+
     const activeTab = document.querySelector('.tab-panel.active');
     this.renderParsedItems(activeTab.id.replace('-tab', ''));
     Utils.showToast('Ingredient removed', 'info');
@@ -257,28 +222,27 @@ window.MealLogger = {
   async submitNewIngredient(itemIndex) {
     const item = this.parsedItems[itemIndex];
     if (!item) return;
-    
+
     const nameEl = document.getElementById(`add-ing-name-${itemIndex}`);
     const weightEl = document.getElementById(`add-ing-weight-${itemIndex}`);
     const btnEl = document.getElementById(`add-ing-btn-${itemIndex}`);
-    
+
     const name = nameEl.value.trim();
     const weight = parseFloat(weightEl.value);
-    
+
     if (!name) { Utils.showToast('Please enter an ingredient name', 'warning'); return; }
     if (!weight || weight <= 0) { Utils.showToast('Please enter a valid weight in grams', 'warning'); return; }
-    
+
     btnEl.disabled = true;
-    btnEl.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width:14px;height:14px;"></i>';
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    
+    btnEl.textContent = '...';
+
     try {
       const prompt = `Calculate exact nutritional values for ${weight}g of ${name}. Ensure name is "${name}" and weight is ${weight}g.`;
       const result = await Gemini.analyzeText(prompt);
-      
+
       if (result && result.length > 0 && !result[0].error) {
         const analyzedFood = result[0].food;
-        
+
         const newIng = {
           name: analyzedFood.name || name,
           quantity: 1,
@@ -286,22 +250,17 @@ window.MealLogger = {
           protein: parseFloat((analyzedFood.protein || 0).toFixed(1)),
           carbs: parseFloat((analyzedFood.carbs || 0).toFixed(1)),
           fat: parseFloat((analyzedFood.fat || 0).toFixed(1)),
+          fiber: parseFloat((analyzedFood.fiber || 0).toFixed(1)),
+          sugar: parseFloat((analyzedFood.sugar || 0).toFixed(1)),
+          sodium: Math.round(analyzedFood.sodium || 0),
           weight_grams: weight,
-          serving: `${weight}g`,
+          serving: `${weight}g`
         };
-        
+
         if (!item.ingredients) item.ingredients = [];
         item.ingredients.push(newIng);
-        
-        item.food.calories += Math.round(newIng.calories / item.quantity);
-        item.totalCalories = Math.round(item.food.calories * item.quantity);
-        item.food.protein = parseFloat(item.ingredients.reduce((s, i) => s + i.protein, 0).toFixed(1));
-        item.food.carbs = parseFloat(item.ingredients.reduce((s, i) => s + i.carbs, 0).toFixed(1));
-        item.food.fat = parseFloat(item.ingredients.reduce((s, i) => s + i.fat, 0).toFixed(1));
-        item.totalProtein = parseFloat((item.food.protein * item.quantity).toFixed(1));
-        item.totalCarbs = parseFloat((item.food.carbs * item.quantity).toFixed(1));
-        item.totalFat = parseFloat((item.food.fat * item.quantity).toFixed(1));
-        
+        window.Nutrition.syncItemFromIngredients(item);
+
         const activeTab = document.querySelector('.tab-panel.active');
         this.renderParsedItems(activeTab.id.replace('-tab', ''));
         Utils.showToast(`${newIng.name} added`, 'success');
@@ -312,7 +271,7 @@ window.MealLogger = {
       console.error('Failed to add ingredient:', err);
       Utils.showToast('Analysis failed. Try again.', 'error');
     }
-    
+
     if (btnEl) {
       btnEl.disabled = false;
       btnEl.textContent = 'Add';
@@ -323,90 +282,261 @@ window.MealLogger = {
     const listEl = document.getElementById(source + '-items-list');
     const totalEl = document.getElementById(source + '-total');
     const resultsEl = document.getElementById(source + '-results');
+    listEl.textContent = '';
 
-    listEl.innerHTML = this.parsedItems.map((item, i) => {
-      let ingHtml = '';
+    this.parsedItems.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = `parsed-item${item.unknown ? ' unknown' : ''}`;
+      card.style.animation = 'staggerFadeIn 0.3s ease both';
+      card.style.animationDelay = `${i * 0.08}s`;
+
+      const top = document.createElement('div');
+      top.className = 'parsed-item-top';
+
+      const info = document.createElement('div');
+      info.className = 'parsed-item-info';
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'parsed-item-name';
+      nameEl.textContent = `${item.food.name}${item.unknown ? ' ⚠️' : ''}`;
+
+      const detailEl = document.createElement('span');
+      detailEl.className = 'parsed-item-detail';
+      detailEl.appendChild(document.createTextNode(String(item.food.serving || '1 serving') + ' '));
+
+      const editServBtn = document.createElement('button');
+      editServBtn.type = 'button';
+      editServBtn.className = 'weight-edit-btn';
+      editServBtn.title = 'Edit weight';
+      editServBtn.setAttribute('aria-label', `Edit weight for ${item.food.name}`);
+      editServBtn.textContent = '✏️';
+      editServBtn.addEventListener('click', () => this.editServing(i));
+      detailEl.appendChild(editServBtn);
+
+      info.appendChild(nameEl);
+      info.appendChild(detailEl);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'parsed-item-remove-btn';
+      removeBtn.title = 'Remove item';
+      removeBtn.setAttribute('aria-label', `Remove ${item.food.name}`);
+      removeBtn.addEventListener('click', () => this.removeItem(i));
+      const trashIcon = document.createElement('i');
+      trashIcon.setAttribute('data-lucide', 'trash-2');
+      trashIcon.style.cssText = 'width: 14px; height: 14px;';
+      removeBtn.appendChild(trashIcon);
+
+      top.appendChild(info);
+      top.appendChild(removeBtn);
+
+      const bottom = document.createElement('div');
+      bottom.className = 'parsed-item-bottom';
+
+      const qtyDiv = document.createElement('div');
+      qtyDiv.className = 'parsed-item-qty';
+
+      const decBtn = document.createElement('button');
+      decBtn.type = 'button';
+      decBtn.className = 'qty-btn';
+      decBtn.setAttribute('aria-label', 'Decrease quantity');
+      decBtn.textContent = '−';
+      decBtn.addEventListener('click', () => this.updateQty(i, -1));
+
+      const qtyVal = document.createElement('span');
+      qtyVal.className = 'qty-value';
+      qtyVal.textContent = String(item.quantity);
+
+      const incBtn = document.createElement('button');
+      incBtn.type = 'button';
+      incBtn.className = 'qty-btn';
+      incBtn.setAttribute('aria-label', 'Increase quantity');
+      incBtn.textContent = '+';
+      incBtn.addEventListener('click', () => this.updateQty(i, 1));
+
+      qtyDiv.appendChild(decBtn);
+      qtyDiv.appendChild(qtyVal);
+      qtyDiv.appendChild(incBtn);
+
+      const macrosDiv = document.createElement('div');
+      macrosDiv.className = 'parsed-item-macros';
+      const calsEl = document.createElement('span');
+      calsEl.className = 'parsed-item-cals';
+      calsEl.textContent = `${item.totalCalories} kcal`;
+
+      const macroRow = document.createElement('div');
+      macroRow.className = 'parsed-item-macro-row';
+      [
+        ['P:', `${item.totalProtein}g`],
+        ['C:', `${item.totalCarbs}g`],
+        ['F:', `${item.totalFat}g`]
+      ].forEach(([prefix, val]) => {
+        const span = document.createElement('span');
+        span.appendChild(document.createTextNode(prefix));
+        const strong = document.createElement('strong');
+        strong.textContent = val;
+        span.appendChild(strong);
+        macroRow.appendChild(span);
+      });
+
+      macrosDiv.appendChild(calsEl);
+      macrosDiv.appendChild(macroRow);
+
+      bottom.appendChild(qtyDiv);
+      bottom.appendChild(macrosDiv);
+
+      const ingWrap = document.createElement('div');
+      ingWrap.className = 'parsed-item-ingredients';
+      ingWrap.style.cssText = 'margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--border-color); width: 100%;';
+
       const hasIngredients = item.ingredients && item.ingredients.length > 0;
-      ingHtml = `<div class="parsed-item-ingredients" style="margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--border-color); width: 100%;">
-          ${hasIngredients ? `<div style="margin-bottom: 6px; font-weight: 500; color: var(--text-primary); font-size: 0.8rem;">Ingredients:</div>` : ''}
-          ${hasIngredients ? item.ingredients.map((ing, j) => `
-            <div class="ingredient-row">
-              <span class="ingredient-name" style="word-break: break-word; white-space: normal;">• ${ing.name}</span>
-              <span class="ingredient-weight">
-                ${ing.serving || '—'}
-                <button class="weight-edit-btn" onclick="MealLogger.editIngredientWeight(${i}, ${j})" title="Edit weight">✏️</button>
-              </span>
-              <span class="ingredient-macros">
-                <span>${ing.calories} kcal</span>
-                <span>P:${ing.protein}g</span>
-                <span>C:${ing.carbs}g</span>
-                <span>F:${ing.fat}g</span>
-                <button class="parsed-item-remove-btn" style="position:static; margin-left:8px; padding:2px; color:var(--danger);" onclick="MealLogger.removeIngredient(${i}, ${j})" title="Remove ingredient">
-                  <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
-                </button>
-              </span>
-            </div>
-          `).join('') : ''}
-          <button id="add-ing-show-btn-${i}" class="btn btn-ghost btn-sm" onclick="document.getElementById('add-ing-form-${i}').style.display='flex'; this.style.display='none';" style="margin-top:6px; font-size:0.76rem; color: var(--accent-primary); padding: 4px 8px;">
-            <i data-lucide="plus-circle" style="width:13px;height:13px;"></i> Add Ingredient
-          </button>
-          <div id="add-ing-form-${i}" style="display:none; margin-top:8px; gap:8px; align-items:center; width:100%; flex-wrap:wrap;">
-            <input type="text" id="add-ing-name-${i}" placeholder="Name (e.g. Cheese)" class="input-field" style="flex:1; min-width:120px; padding:6px 8px; font-size:0.8rem; background: var(--bg-primary);">
-            <input type="number" id="add-ing-weight-${i}" placeholder="Weight (g)" class="input-field" style="width:80px; padding:6px 8px; font-size:0.8rem; background: var(--bg-primary);">
-            <button class="btn btn-primary btn-sm" id="add-ing-btn-${i}" onclick="MealLogger.submitNewIngredient(${i})" style="padding:6px 12px; font-size:0.8rem;">Add</button>
-            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-ing-form-${i}').style.display='none'; document.getElementById('add-ing-show-btn-${i}').style.display='flex';" style="padding:6px; font-size:0.8rem;"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
-          </div>
-        </div>`;
+      if (hasIngredients) {
+        const ingHeader = document.createElement('div');
+        ingHeader.style.cssText = 'margin-bottom: 6px; font-weight: 500; color: var(--text-primary); font-size: 0.8rem;';
+        ingHeader.textContent = 'Ingredients:';
+        ingWrap.appendChild(ingHeader);
 
-      return `
-      <div class="parsed-item ${item.unknown ? 'unknown' : ''}" style="animation: staggerFadeIn 0.3s ease both; animation-delay: ${i * 0.08}s;">
-        <div class="parsed-item-top">
-          <div class="parsed-item-info">
-            <span class="parsed-item-name">${item.food.name}${item.unknown ? ' ⚠️' : ''}</span>
-            <span class="parsed-item-detail">
-              ${item.food.serving}
-              <button class="weight-edit-btn" onclick="MealLogger.editServing(${i})" title="Edit weight">✏️</button>
-            </span>
-          </div>
-          <button class="parsed-item-remove-btn" onclick="MealLogger.removeItem(${i})" title="Remove item">
-            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
-          </button>
-        </div>
-        <div class="parsed-item-bottom">
-          <div class="parsed-item-qty">
-            <button class="qty-btn" onclick="MealLogger.updateQty(${i}, -1)">−</button>
-            <span class="qty-value">${item.quantity}</span>
-            <button class="qty-btn" onclick="MealLogger.updateQty(${i}, 1)">+</button>
-          </div>
-          <div class="parsed-item-macros">
-            <span class="parsed-item-cals">${item.totalCalories} kcal</span>
-            <div class="parsed-item-macro-row">
-              <span>P:<strong>${item.totalProtein}g</strong></span>
-              <span>C:<strong>${item.totalCarbs}g</strong></span>
-              <span>F:<strong>${item.totalFat}g</strong></span>
-            </div>
-          </div>
-        </div>
-        ${ingHtml}
-      </div>
-    `}).join('');
+        item.ingredients.forEach((ing, j) => {
+          const row = document.createElement('div');
+          row.className = 'ingredient-row';
+
+          const ingName = document.createElement('span');
+          ingName.className = 'ingredient-name';
+          ingName.style.cssText = 'word-break: break-word; white-space: normal;';
+          ingName.textContent = `• ${ing.name || 'Ingredient'}`;
+
+          const ingWeight = document.createElement('span');
+          ingWeight.className = 'ingredient-weight';
+          ingWeight.appendChild(document.createTextNode((ing.serving || '—') + ' '));
+          const editIngBtn = document.createElement('button');
+          editIngBtn.type = 'button';
+          editIngBtn.className = 'weight-edit-btn';
+          editIngBtn.title = 'Edit weight';
+          editIngBtn.setAttribute('aria-label', `Edit weight for ${ing.name}`);
+          editIngBtn.textContent = '✏️';
+          editIngBtn.addEventListener('click', () => this.editIngredientWeight(i, j));
+          ingWeight.appendChild(editIngBtn);
+
+          const ingMacros = document.createElement('span');
+          ingMacros.className = 'ingredient-macros';
+          [`${ing.calories} kcal`, `P:${ing.protein}g`, `C:${ing.carbs}g`, `F:${ing.fat}g`].forEach(txt => {
+            const sp = document.createElement('span');
+            sp.textContent = txt;
+            ingMacros.appendChild(sp);
+          });
+
+          const rmIngBtn = document.createElement('button');
+          rmIngBtn.type = 'button';
+          rmIngBtn.className = 'parsed-item-remove-btn';
+          rmIngBtn.style.cssText = 'position:static; margin-left:8px; padding:2px; color:var(--danger);';
+          rmIngBtn.title = 'Remove ingredient';
+          rmIngBtn.setAttribute('aria-label', `Remove ${ing.name}`);
+          rmIngBtn.addEventListener('click', () => this.removeIngredient(i, j));
+          const rmIcon = document.createElement('i');
+          rmIcon.setAttribute('data-lucide', 'trash-2');
+          rmIcon.style.cssText = 'width: 12px; height: 12px;';
+          rmIngBtn.appendChild(rmIcon);
+          ingMacros.appendChild(rmIngBtn);
+
+          row.appendChild(ingName);
+          row.appendChild(ingWeight);
+          row.appendChild(ingMacros);
+          ingWrap.appendChild(row);
+        });
+      }
+
+      const showAddBtn = document.createElement('button');
+      showAddBtn.type = 'button';
+      showAddBtn.id = `add-ing-show-btn-${i}`;
+      showAddBtn.className = 'btn btn-ghost btn-sm';
+      showAddBtn.style.cssText = 'margin-top:6px; font-size:0.76rem; color: var(--accent-primary); padding: 4px 8px;';
+      const plusIcon = document.createElement('i');
+      plusIcon.setAttribute('data-lucide', 'plus-circle');
+      plusIcon.style.cssText = 'width:13px;height:13px;';
+      showAddBtn.appendChild(plusIcon);
+      showAddBtn.appendChild(document.createTextNode(' Add Ingredient'));
+
+      const addForm = document.createElement('div');
+      addForm.id = `add-ing-form-${i}`;
+      addForm.style.cssText = 'display:none; margin-top:8px; gap:8px; align-items:center; width:100%; flex-wrap:wrap;';
+
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.id = `add-ing-name-${i}`;
+      nameInput.placeholder = 'Name (e.g. Cheese)';
+      nameInput.className = 'input-field';
+      nameInput.style.cssText = 'flex:1; min-width:120px; padding:6px 8px; font-size:0.8rem; background: var(--bg-primary);';
+
+      const weightInput = document.createElement('input');
+      weightInput.type = 'number';
+      weightInput.id = `add-ing-weight-${i}`;
+      weightInput.placeholder = 'Weight (g)';
+      weightInput.className = 'input-field';
+      weightInput.style.cssText = 'width:80px; padding:6px 8px; font-size:0.8rem; background: var(--bg-primary);';
+
+      const submitIngBtn = document.createElement('button');
+      submitIngBtn.type = 'button';
+      submitIngBtn.className = 'btn btn-primary btn-sm';
+      submitIngBtn.id = `add-ing-btn-${i}`;
+      submitIngBtn.style.cssText = 'padding:6px 12px; font-size:0.8rem;';
+      submitIngBtn.textContent = 'Add';
+      submitIngBtn.addEventListener('click', () => this.submitNewIngredient(i));
+
+      const cancelIngBtn = document.createElement('button');
+      cancelIngBtn.type = 'button';
+      cancelIngBtn.className = 'btn btn-ghost btn-sm';
+      cancelIngBtn.style.cssText = 'padding:6px; font-size:0.8rem;';
+      cancelIngBtn.setAttribute('aria-label', 'Cancel add ingredient');
+      const xIcon = document.createElement('i');
+      xIcon.setAttribute('data-lucide', 'x');
+      xIcon.style.cssText = 'width:14px;height:14px;';
+      cancelIngBtn.appendChild(xIcon);
+
+      showAddBtn.addEventListener('click', () => {
+        addForm.style.display = 'flex';
+        showAddBtn.style.display = 'none';
+      });
+      cancelIngBtn.addEventListener('click', () => {
+        addForm.style.display = 'none';
+        showAddBtn.style.display = 'flex';
+      });
+
+      addForm.appendChild(nameInput);
+      addForm.appendChild(weightInput);
+      addForm.appendChild(submitIngBtn);
+      addForm.appendChild(cancelIngBtn);
+
+      ingWrap.appendChild(showAddBtn);
+      ingWrap.appendChild(addForm);
+
+      card.appendChild(top);
+      card.appendChild(bottom);
+      card.appendChild(ingWrap);
+      listEl.appendChild(card);
+    });
 
     const tc = this.parsedItems.reduce((s, i) => s + i.totalCalories, 0);
     const tp = this.parsedItems.reduce((s, i) => s + i.totalProtein, 0);
     const tca = this.parsedItems.reduce((s, i) => s + i.totalCarbs, 0);
     const tf = this.parsedItems.reduce((s, i) => s + i.totalFat, 0);
-    totalEl.innerHTML = `<span>Total: ${tc} kcal</span><span>P:${parseFloat(tp.toFixed(1))}g · C:${parseFloat(tca.toFixed(1))}g · F:${parseFloat(tf.toFixed(1))}g</span>`;
+
+    totalEl.textContent = '';
+    const leftTotal = document.createElement('span');
+    leftTotal.textContent = `Total: ${tc} kcal`;
+    const rightTotal = document.createElement('span');
+    rightTotal.textContent = `P:${parseFloat(tp.toFixed(1))}g · C:${parseFloat(tca.toFixed(1))}g · F:${parseFloat(tf.toFixed(1))}g`;
+    totalEl.appendChild(leftTotal);
+    totalEl.appendChild(rightTotal);
+
     resultsEl.classList.remove('hidden');
     if (typeof lucide !== 'undefined') lucide.createIcons();
   },
 
   updateQty(index, delta) {
     const item = this.parsedItems[index];
+    if (!item) return;
     item.quantity = Math.max(0.5, item.quantity + delta * 0.5);
-    item.totalCalories = Math.round(item.food.calories * item.quantity);
-    item.totalProtein = Math.round(item.food.protein * item.quantity * 10) / 10;
-    item.totalCarbs = Math.round(item.food.carbs * item.quantity * 10) / 10;
-    item.totalFat = Math.round(item.food.fat * item.quantity * 10) / 10;
+    window.Nutrition.recalcParsedItemTotals(item);
     const activeTab = document.querySelector('.tab-panel.active');
     this.renderParsedItems(activeTab.id.replace('-tab', ''));
   },
@@ -429,41 +559,46 @@ window.MealLogger = {
     const dz = document.getElementById('image-drop-zone');
     const fi = document.getElementById('image-file-input');
     const ci = document.getElementById('camera-file-input');
-    
+
+    document.getElementById('camera-upload-btn')?.addEventListener('click', () => ci?.click());
+    document.getElementById('gallery-upload-btn')?.addEventListener('click', () => fi?.click());
+
     dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('dragover'); });
     dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
     dz.addEventListener('drop', (e) => {
-      e.preventDefault(); dz.classList.remove('dragover');
+      e.preventDefault();
+      dz.classList.remove('dragover');
       const files = e.dataTransfer?.files;
       if (files && files.length > 0) this.showImagePreview(files[0]);
     });
-    
+
     const fileChangeHandler = (e) => {
       if (e.target.files && e.target.files.length > 0) {
         this.showImagePreview(e.target.files[0]);
-        
         e.target.value = '';
       }
     };
-    
+
     if (fi) fi.addEventListener('change', fileChangeHandler);
     if (ci) ci.addEventListener('change', fileChangeHandler);
 
-    
     document.getElementById('image-analyze-btn')?.addEventListener('click', () => this.processImage());
   },
 
-  showImagePreview(file) {
+  async showImagePreview(file) {
     this._selectedImageFile = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this._selectedImageDataUrl = e.target.result;
-      
-      document.getElementById('image-preview-img').src = e.target.result;
+    try {
+      const compressed = await Utils.compressImage(file, 1024, 0.8);
+      this._compressedImage = compressed;
+      const thumb = await Utils.createThumbnailDataUrl(file, 320, 0.6);
+      this._selectedImageDataUrl = thumb || compressed.dataUrl;
+
+      document.getElementById('image-preview-img').src = compressed.dataUrl;
       document.getElementById('image-preview-section').classList.remove('hidden');
       document.getElementById('image-drop-zone').style.display = 'none';
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      Utils.showToast('Could not read selected image', 'error');
+    }
   },
 
   async processImage() {
@@ -481,13 +616,15 @@ window.MealLogger = {
     proc.classList.remove('hidden');
 
     try {
-      const geminiResult = await Gemini.analyzeImage(file, description);
+      const input = this._compressedImage || file;
+      const geminiResult = await Gemini.analyzeImage(input, description);
       proc.classList.add('hidden');
-      
+
       if (geminiResult && geminiResult.length > 0 && !geminiResult[0].error) {
         this.parsedItems = geminiResult;
-        
-        if (this._selectedImageDataUrl) {
+        Store.incrementNlpCount();
+
+        if (this._selectedImageDataUrl && Utils.isValidImageUrl(this._selectedImageDataUrl)) {
           const resultPreview = document.getElementById('image-result-preview');
           document.getElementById('image-result-img').src = this._selectedImageDataUrl;
           resultPreview.classList.remove('hidden');
@@ -499,16 +636,15 @@ window.MealLogger = {
         document.getElementById('image-drop-zone').style.display = '';
         this._selectedImageFile = null;
         this._selectedImageDataUrl = null;
-        document.getElementById('image-file-input').value = '';
-        document.getElementById('camera-file-input').value = '';
+        this._compressedImage = null;
       } else {
-        
         if (description && description.trim()) {
           Utils.showToast('Image unclear — analyzing from your description...', 'info', 3000);
           const textResult = await Gemini.analyzeText(description.trim());
           if (textResult && textResult.length > 0) {
             this.parsedItems = textResult;
-            if (this._selectedImageDataUrl) {
+            Store.incrementNlpCount();
+            if (this._selectedImageDataUrl && Utils.isValidImageUrl(this._selectedImageDataUrl)) {
               const resultPreview = document.getElementById('image-result-preview');
               document.getElementById('image-result-img').src = this._selectedImageDataUrl;
               resultPreview.classList.remove('hidden');
@@ -519,7 +655,6 @@ window.MealLogger = {
           }
         }
         Utils.showToast('Could not identify food. Try adding a description and retry.', 'warning', 4000);
-        
         document.getElementById('image-preview-section').classList.remove('hidden');
         document.getElementById('image-drop-zone').style.display = 'none';
       }
@@ -530,8 +665,7 @@ window.MealLogger = {
       document.getElementById('image-drop-zone').style.display = '';
       this._selectedImageFile = null;
       this._selectedImageDataUrl = null;
-      document.getElementById('image-file-input').value = '';
-      document.getElementById('camera-file-input').value = '';
+      this._compressedImage = null;
     }
   },
 
@@ -554,15 +688,13 @@ window.MealLogger = {
     cameraToggleBtn?.addEventListener('click', () => {
       if (this._videoStream) {
         this.stopBarcodeCamera();
-        cameraToggleBtn.innerHTML = '<i data-lucide="camera"></i> Start Camera Scan';
+        this._setBtnContent(cameraToggleBtn, 'camera', 'Start Camera Scan');
       } else {
         this.startBarcodeCamera();
-        cameraToggleBtn.innerHTML = '<i data-lucide="camera-off"></i> Stop Camera';
+        this._setBtnContent(cameraToggleBtn, 'camera-off', 'Stop Camera');
       }
-      if (typeof lucide !== 'undefined') lucide.createIcons();
     });
 
-    
     document.querySelectorAll('.barcode-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         const code = chip.dataset.code;
@@ -592,8 +724,7 @@ window.MealLogger = {
       await video.play();
       if (container) container.classList.add('active');
       if (toggleBtn) {
-        toggleBtn.innerHTML = '<i data-lucide="camera-off"></i> Stop Camera';
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        this._setBtnContent(toggleBtn, 'camera-off', 'Stop Camera');
       }
 
       if ('BarcodeDetector' in window) {
@@ -612,8 +743,8 @@ window.MealLogger = {
                 if (inp) inp.value = code;
                 this.lookupBarcode(code);
               }
-            } catch (e) {
-              
+            } catch {
+              // Ignore transient frame decode failure
             }
           }
         }, 350);
@@ -637,8 +768,7 @@ window.MealLogger = {
     if (container) container.classList.remove('active');
     const toggleBtn = document.getElementById('barcode-camera-toggle-btn');
     if (toggleBtn) {
-      toggleBtn.innerHTML = '<i data-lucide="camera"></i> Start Camera Scan';
-      if (typeof lucide !== 'undefined') lucide.createIcons();
+      this._setBtnContent(toggleBtn, 'camera', 'Start Camera Scan');
     }
   },
 
@@ -652,8 +782,7 @@ window.MealLogger = {
     const searchBtn = document.getElementById('barcode-search-btn');
     if (searchBtn) {
       searchBtn.disabled = true;
-      searchBtn.innerHTML = '<i data-lucide="loader-2" class="spin-icon"></i> Searching...';
-      if (typeof lucide !== 'undefined') lucide.createIcons();
+      this._setBtnContent(searchBtn, 'loader-2', 'Searching...');
     }
 
     try {
@@ -664,51 +793,13 @@ window.MealLogger = {
 
       if (data.status === 1 && data.product) {
         const p = data.product;
-        const nut = p.nutriments || {};
-        const name = p.product_name || p.product_name_en || p.generic_name || 'Packaged Item';
-        const brand = p.brands ? ` (${p.brands})` : '';
-        const serving = p.serving_size || '100g';
+        const parsed = window.Nutrition.computeBarcodeNutrition(p);
+        this.parsedItems = [parsed];
 
-        let cal = Math.round(nut['energy-kcal_100g'] || nut['energy-kcal_value'] || (nut['energy-kj_100g'] ? nut['energy-kj_100g'] / 4.184 : 0));
-        let prot = parseFloat((nut.proteins_100g || nut.proteins_value || 0).toFixed(1));
-        let carbs = parseFloat((nut.carbohydrates_100g || nut.carbohydrates_value || 0).toFixed(1));
-        let fat = parseFloat((nut.fat_100g || nut.fat_value || 0).toFixed(1));
-        let fiber = parseFloat((nut.fiber_100g || nut.fiber_value || 0).toFixed(1));
-        let sugar = parseFloat((nut.sugars_100g || nut.sugars_value || 0).toFixed(1));
-        let sodium = Math.round((nut.sodium_100g || (nut.salt_100g ? nut.salt_100g / 2.5 : 0)) * 1000);
+        const imgUrl = p.image_front_url || p.image_url;
+        this._selectedImageDataUrl = Utils.isValidImageUrl(imgUrl) ? imgUrl : null;
 
-        this.parsedItems = [{
-          food: {
-            name: name + brand,
-            aliases: [],
-            category: 'packaged',
-            calories: cal,
-            protein: prot,
-            carbs: carbs,
-            fat: fat,
-            fiber: fiber,
-            sugar: sugar,
-            sodium: sodium,
-            serving: serving,
-            weight_grams: 100,
-            unit: 'serving'
-          },
-          ingredients: [],
-          quantity: 1,
-          totalCalories: cal,
-          totalProtein: prot,
-          totalCarbs: carbs,
-          totalFat: fat,
-          totalFiber: fiber,
-          totalSugar: sugar,
-          totalSodium: sodium
-        }];
-
-        if (p.image_front_url || p.image_url) {
-          this._selectedImageDataUrl = p.image_front_url || p.image_url;
-        }
-
-        Utils.showToast(`📦 Found: ${name}`, 'success', 2500);
+        Utils.showToast(`📦 Found: ${parsed.food.name}`, 'success', 2500);
         this.renderParsedItems('barcode');
         this.stopBarcodeCamera();
       } else {
@@ -720,37 +811,37 @@ window.MealLogger = {
     } finally {
       if (searchBtn) {
         searchBtn.disabled = false;
-        searchBtn.innerHTML = '<i data-lucide="search"></i> Lookup';
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        this._setBtnContent(searchBtn, 'search', 'Lookup');
       }
     }
   },
 
-  confirmParsed(source) {
+  confirmParsed() {
     if (this.parsedItems.length === 0) return;
-    const dateStr = this.targetDate || (Diary.currentDate ? Diary.currentDate : Utils.todayStr());
-    const diary = Store.getDiary(dateStr);
+    const dateStr = this.targetDate || Utils.todayStr();
+    const safeThumb = (this._selectedImageDataUrl && Utils.isValidImageUrl(this._selectedImageDataUrl) && this._selectedImageDataUrl.length <= 70000)
+      ? this._selectedImageDataUrl
+      : null;
 
     this.parsedItems.forEach(item => {
-      diary[this.selectedMealType].push({
+      Store.addDiaryItem(dateStr, this.selectedMealType, {
         id: Utils.uuid(),
         name: item.food.name,
         calories: item.totalCalories,
         protein: item.totalProtein,
         carbs: item.totalCarbs,
         fat: item.totalFat,
-        fiber: item.totalFiber != null ? item.totalFiber : (item.food.fiber ? Math.round(item.food.fiber * item.quantity * 10) / 10 : 0),
-        sugar: item.totalSugar != null ? item.totalSugar : (item.food.sugar ? Math.round(item.food.sugar * item.quantity * 10) / 10 : 0),
-        sodium: item.totalSodium != null ? item.totalSodium : (item.food.sodium ? Math.round(item.food.sodium * item.quantity) : 0),
+        fiber: item.totalFiber != null ? item.totalFiber : Math.round((item.food.fiber || 0) * item.quantity * 10) / 10,
+        sugar: item.totalSugar != null ? item.totalSugar : Math.round((item.food.sugar || 0) * item.quantity * 10) / 10,
+        sodium: item.totalSodium != null ? item.totalSodium : Math.round((item.food.sodium || 0) * item.quantity),
         serving: `${item.quantity} × ${item.food.serving}`,
         timestamp: new Date().toISOString(),
         ingredients: item.ingredients || [],
-        imageDataUrl: this._selectedImageDataUrl || null,
+        imageDataUrl: safeThumb
       });
       Store.incrementFoodFreq(item.food.name);
     });
 
-    Store.saveDiary(dateStr, diary);
     Store.incrementTotalMeals(this.parsedItems.length);
     document.dispatchEvent(new CustomEvent('meal-logged', { detail: { date: dateStr, meal: this.selectedMealType } }));
 
@@ -761,7 +852,7 @@ window.MealLogger = {
 
   addManual() {
     const name = document.getElementById('manual-food-name').value.trim();
-    const calories = parseInt(document.getElementById('manual-calories').value);
+    const calories = parseInt(document.getElementById('manual-calories').value, 10);
     const protein = parseFloat(document.getElementById('manual-protein').value) || 0;
     const carbs = parseFloat(document.getElementById('manual-carbs').value) || 0;
     const fat = parseFloat(document.getElementById('manual-fat').value) || 0;
@@ -779,9 +870,8 @@ window.MealLogger = {
     if (isNaN(sugar) || sugar < 0 || sugar > 1000) { Utils.showToast('Sugar cannot be negative or exceed 1000g', 'warning'); return; }
     if (isNaN(sodium) || sodium < 0 || sodium > 50000) { Utils.showToast('Sodium cannot be negative or exceed 50,000mg', 'warning'); return; }
 
-    const dateStr = this.targetDate || (Diary.currentDate ? Diary.currentDate : Utils.todayStr());
-    const diary = Store.getDiary(dateStr);
-    diary[this.selectedMealType].push({
+    const dateStr = this.targetDate || Utils.todayStr();
+    Store.addDiaryItem(dateStr, this.selectedMealType, {
       id: Utils.uuid(),
       name,
       calories,
@@ -792,14 +882,13 @@ window.MealLogger = {
       sugar,
       sodium,
       serving,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     });
 
-    Store.saveDiary(dateStr, diary);
     Store.incrementTotalMeals(1);
     Store.incrementFoodFreq(name);
     document.dispatchEvent(new CustomEvent('meal-logged', { detail: { date: dateStr, meal: this.selectedMealType } }));
     Utils.showToast(`${name} added (${calories} kcal)`, 'success');
     this.close();
-  },
+  }
 };

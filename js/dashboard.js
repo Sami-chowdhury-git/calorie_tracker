@@ -1,19 +1,17 @@
 window.Dashboard = {
   init() {
     document.getElementById('quick-add-btn').addEventListener('click', () => {
-      document.dispatchEvent(new CustomEvent('open-meal-log'));
+      document.dispatchEvent(new CustomEvent('open-meal-log', { detail: { date: Utils.todayStr() } }));
     });
     document.getElementById('dash-view-diary-btn').addEventListener('click', () => {
       document.dispatchEvent(new CustomEvent('navigate', { detail: { view: 'diary' } }));
     });
 
-    
     document.getElementById('dash-edit-macros-btn')?.addEventListener('click', () => {
       const form = document.getElementById('custom-macros-form');
       const isHidden = form.classList.contains('hidden');
       form.classList.toggle('hidden');
       if (isHidden) {
-        
         const profile = Store.getProfile();
         if (profile) {
           document.getElementById('custom-calories').value = profile.tdee || '';
@@ -25,12 +23,11 @@ window.Dashboard = {
       }
     });
 
-    
     document.getElementById('custom-macros-save-btn')?.addEventListener('click', () => {
-      const calories = parseInt(document.getElementById('custom-calories').value);
-      const protein = parseInt(document.getElementById('custom-protein').value);
-      const carbs = parseInt(document.getElementById('custom-carbs').value);
-      const fat = parseInt(document.getElementById('custom-fat').value);
+      const calories = parseInt(document.getElementById('custom-calories').value, 10);
+      const protein = parseInt(document.getElementById('custom-protein').value, 10);
+      const carbs = parseInt(document.getElementById('custom-carbs').value, 10);
+      const fat = parseInt(document.getElementById('custom-fat').value, 10);
 
       if (!calories || calories < 800) {
         Utils.showToast('Please enter valid calories (min 800)', 'warning');
@@ -51,10 +48,9 @@ window.Dashboard = {
       this.refresh();
     });
 
-    
     document.querySelectorAll('.water-btn[data-ml]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const ml = parseInt(btn.dataset.ml);
+        const ml = parseInt(btn.dataset.ml, 10);
         const today = Utils.todayStr();
         Store.addWater(today, ml);
         this.renderWaterTracker();
@@ -65,7 +61,7 @@ window.Dashboard = {
     document.getElementById('water-custom-btn')?.addEventListener('click', () => {
       const input = window.prompt('Enter water amount in ml (e.g. 350):', '250');
       if (input !== null && input.trim() !== '') {
-        const ml = parseInt(input);
+        const ml = parseInt(input, 10);
         if (!isNaN(ml) && ml > 0 && ml <= 5000) {
           const today = Utils.todayStr();
           Store.addWater(today, ml);
@@ -79,7 +75,7 @@ window.Dashboard = {
 
     document.getElementById('water-reset-btn')?.addEventListener('click', () => {
       const today = Utils.todayStr();
-      Store.saveWaterLog(today, { total: 0, goal: Store.getWaterGoal(), entries: [] });
+      Store.resetWaterForDate(today);
       this.renderWaterTracker();
       Utils.showToast('Water reset for today', 'info', 2000);
     });
@@ -90,45 +86,38 @@ window.Dashboard = {
     if (!profile) return;
     const session = Auth.getCurrentUser();
 
-    
     const firstName = (session?.name || profile.name || 'there').split(' ')[0];
     document.getElementById('greeting-text').textContent = `${Utils.getGreeting()}, ${firstName}`;
     document.getElementById('current-date').textContent = Utils.formatDate(Utils.todayStr());
 
-    
     const t = Store.getDayTotals(Utils.todayStr());
     const target = profile.tdee;
     const remaining = Math.max(0, target - t.calories);
 
-    
     this.updateRing('calorie-ring-fill', 85, t.calories / target);
     document.getElementById('calories-remaining').textContent = Utils.formatNum(remaining);
     document.getElementById('calories-consumed').textContent = Utils.formatNum(t.calories);
     document.getElementById('calories-target').textContent = Utils.formatNum(target);
 
-    
     const rf = document.getElementById('calorie-ring-fill');
     rf.classList.remove('warning', 'danger');
     if (t.calories / target > 1) rf.classList.add('danger');
     else if (t.calories / target > 0.8) rf.classList.add('warning');
 
-    
     this.updateMacro('protein', t.protein, profile.protein);
     this.updateMacro('carbs', t.carbs, profile.carbs);
     this.updateMacro('fat', t.fat, profile.fat);
 
-    
     const targets = Utils.calculateNutritionTargets(profile);
     this.renderMicronutrients(t, targets);
     this.renderWaterTracker(targets);
 
-    
+    const streaks = Store.getComputedStreaks();
     document.getElementById('meals-logged-count').textContent = t.meals;
-    document.getElementById('dash-streak-count').textContent = Store.getStreakData().currentStreak;
+    document.getElementById('dash-streak-count').textContent = streaks.currentStreak;
     const ach = Store.getAchievements();
     document.getElementById('dash-badges-count').textContent = Object.values(ach).filter(b => b.unlocked).length;
 
-    
     this.renderMealsPreview();
   },
 
@@ -229,25 +218,52 @@ window.Dashboard = {
   renderMealsPreview() {
     const diary = Store.getDiary(Utils.todayStr());
     const container = document.getElementById('dash-meals-list');
+    container.textContent = '';
+
     const all = [];
-    ['breakfast','lunch','dinner','snacks'].forEach(m => {
+    ['breakfast', 'lunch', 'dinner', 'snacks'].forEach(m => {
       diary[m].forEach(item => all.push({ ...item, meal: m }));
     });
 
     if (all.length === 0) {
-      container.innerHTML = '<div class="empty-state-mini"><i data-lucide="plus-circle"></i><p>No meals logged yet. Tap + to add your first meal!</p></div>';
+      const empty = document.createElement('div');
+      empty.className = 'empty-state-mini';
+      const icon = document.createElement('i');
+      icon.setAttribute('data-lucide', 'plus-circle');
+      const msg = document.createElement('p');
+      msg.textContent = 'No meals logged yet. Tap + to add your first meal!';
+      empty.appendChild(icon);
+      empty.appendChild(msg);
+      container.appendChild(empty);
       if (typeof lucide !== 'undefined') lucide.createIcons();
       return;
     }
 
-    container.innerHTML = all.slice(-5).map(item => `
-      <div class="meal-preview-item">
-        <div class="meal-preview-info">
-          <span class="meal-preview-name">${item.name}</span>
-          <span class="meal-preview-meal">${item.meal}</span>
-        </div>
-        <span class="meal-preview-cals">${item.calories} kcal</span>
-      </div>
-    `).join('');
-  },
+    all.slice(-5).forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'meal-preview-item';
+
+      const info = document.createElement('div');
+      info.className = 'meal-preview-info';
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'meal-preview-name';
+      nameEl.textContent = item.name || 'Food item';
+
+      const mealEl = document.createElement('span');
+      mealEl.className = 'meal-preview-meal';
+      mealEl.textContent = item.meal;
+
+      info.appendChild(nameEl);
+      info.appendChild(mealEl);
+
+      const calsEl = document.createElement('span');
+      calsEl.className = 'meal-preview-cals';
+      calsEl.textContent = `${Math.round(item.calories || 0)} kcal`;
+
+      row.appendChild(info);
+      row.appendChild(calsEl);
+      container.appendChild(row);
+    });
+  }
 };

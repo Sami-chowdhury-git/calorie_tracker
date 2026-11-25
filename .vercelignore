@@ -1,0 +1,10 @@
+node_modules/
+tests/
+k6/
+audit-reports/
+playwright-report/
+test-results/
+coverage/
+.env
+.env.*
+!.env.example

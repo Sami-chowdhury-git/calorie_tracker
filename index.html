@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="description" content="Track your calories, macros, and fitness goals with an intelligent AI-powered food diary." />
@@ -36,9 +36,6 @@
   <link rel="stylesheet" href="css/landing.css" />
   <link rel="stylesheet" href="css/theme-light.css" />
   <link rel="stylesheet" href="css/mobile.css" />
-
-  
-  <style>.spin-icon { animation: spin 1s linear infinite; display: inline-block; }</style>
 </head>
 <body>
 
@@ -195,11 +192,11 @@
             <h2 class="auth-heading">Welcome</h2>
             <div class="input-group">
               <i data-lucide="mail" class="input-icon"></i>
-              <input type="email" id="login-email" class="input-field" placeholder="Email address" required autocomplete="email" />
+              <input type="email" id="login-email" class="input-field" placeholder="Email address" aria-label="Email address" required autocomplete="email" />
             </div>
             <div class="input-group">
               <i data-lucide="lock" class="input-icon"></i>
-              <input type="password" id="login-password" class="input-field" placeholder="Password" required autocomplete="current-password" />
+              <input type="password" id="login-password" class="input-field" placeholder="Password" aria-label="Password" required autocomplete="current-password" />
             </div>
             <button type="submit" id="login-submit-btn" class="btn btn-primary btn-full">
               <span>Sign In</span>
@@ -215,15 +212,15 @@
             <h2 class="auth-heading">Create account</h2>
             <div class="input-group">
               <i data-lucide="user" class="input-icon"></i>
-              <input type="text" id="signup-name" class="input-field" placeholder="Full name" required autocomplete="name" />
+              <input type="text" id="signup-name" class="input-field" placeholder="Full name" aria-label="Full name" required autocomplete="name" />
             </div>
             <div class="input-group">
               <i data-lucide="mail" class="input-icon"></i>
-              <input type="email" id="signup-email" class="input-field" placeholder="Email address" required autocomplete="email" />
+              <input type="email" id="signup-email" class="input-field" placeholder="Email address" aria-label="Email address" required autocomplete="email" />
             </div>
             <div class="input-group">
               <i data-lucide="lock" class="input-icon"></i>
-              <input type="password" id="signup-password" class="input-field" placeholder="Password (min 6 chars)" required minlength="6" autocomplete="new-password" />
+              <input type="password" id="signup-password" class="input-field" placeholder="Password (min 6 chars)" aria-label="Password" required minlength="6" autocomplete="new-password" />
             </div>
             <button type="submit" id="signup-submit-btn" class="btn btn-primary btn-full">
               <span>Get Started</span>
@@ -298,7 +295,7 @@
             <label for="ob-weight">Weight</label>
             <div class="input-with-unit">
               <input type="number" id="ob-weight" class="input-field" placeholder="70" min="30" max="300" step="0.1" />
-              <select id="ob-weight-unit" class="unit-select">
+              <select id="ob-weight-unit" class="unit-select" aria-label="Weight unit">
                 <option value="kg">kg</option>
                 <option value="lbs">lbs</option>
               </select>
@@ -307,8 +304,8 @@
           <div class="input-group">
             <label for="ob-height">Height</label>
             <div class="input-with-unit">
-              <input type="number" id="ob-height" class="input-field" placeholder="175" min="100" max="250" step="0.1" />
-              <select id="ob-height-unit" class="unit-select">
+              <input type="number" id="ob-height" class="input-field" placeholder="175" min="50" max="250" step="0.1" />
+              <select id="ob-height-unit" class="unit-select" aria-label="Height unit">
                 <option value="cm">cm</option>
                 <option value="ft">ft/in</option>
               </select>
@@ -369,7 +366,7 @@
             <div class="ob-card-icon"><i data-lucide="trending-down"></i></div>
             <h3>Fat Loss</h3>
             <p>Calorie deficit to lose body fat while preserving muscle</p>
-            <span class="goal-tag">-500 kcal/day</span>
+            <span class="goal-tag">Up to -500 kcal/day</span>
           </button>
           <button type="button" class="ob-selection-card goal-card" data-goal="maintain">
             <div class="ob-card-icon"><i data-lucide="equal"></i></div>
@@ -381,7 +378,7 @@
             <div class="ob-card-icon"><i data-lucide="trending-up"></i></div>
             <h3>Muscle Gain</h3>
             <p>Calorie surplus to build muscle and strength</p>
-            <span class="goal-tag">+300 kcal/day</span>
+            <span class="goal-tag">+150–300 kcal/day</span>
           </button>
         </div>
       </div>
@@ -446,18 +443,20 @@
         <h1 class="header-logo">Macro<span class="accent">Lens</span></h1>
       </div>
       <div class="header-right">
-        <button id="theme-toggle-btn" class="theme-toggle" title="Toggle theme">
+        <button id="theme-toggle-btn" class="theme-toggle" title="Toggle theme" aria-label="Toggle color theme">
           <i data-lucide="moon"></i>
         </button>
 
-        <button id="reset-data-btn" class="icon-btn" title="Reset all data" style="color: var(--danger);">
+        <button id="reset-data-btn" class="icon-btn" title="Reset all data" aria-label="Reset all data" style="color: var(--danger);">
           <i data-lucide="trash-2"></i>
         </button>
-        <button id="logout-btn" class="icon-btn" title="Sign out">
+        <button id="logout-btn" class="icon-btn" title="Sign out" aria-label="Sign out">
           <i data-lucide="log-out"></i>
         </button>
       </div>
     </header>
+
+    <main id="app-main">
 
     
     <div id="confirm-modal" class="hidden" style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); padding:20px;">
@@ -601,10 +600,10 @@
             <button class="water-btn" data-ml="750" title="Add 750ml">
               <i data-lucide="droplet"></i> +750 ml
             </button>
-            <button class="water-btn btn-icon-only" id="water-custom-btn" title="Add Custom Amount">
+            <button class="water-btn btn-icon-only" id="water-custom-btn" title="Add Custom Amount" aria-label="Add custom water amount">
               <i data-lucide="plus"></i>
             </button>
-            <button class="water-btn btn-icon-only water-reset-btn" id="water-reset-btn" title="Reset Today's Water">
+            <button class="water-btn btn-icon-only water-reset-btn" id="water-reset-btn" title="Reset Today's Water" aria-label="Reset today's water intake">
               <i data-lucide="rotate-ccw"></i>
             </button>
           </div>
@@ -676,7 +675,7 @@
       </div>
 
       
-      <button id="quick-add-btn" class="fab" title="Log a meal">
+      <button id="quick-add-btn" class="fab" title="Log a meal" aria-label="Quick add meal">
         <i data-lucide="plus"></i>
       </button>
     </div>
@@ -685,9 +684,9 @@
     <div id="diary-view" class="view">
       <div class="view-content">
         <div class="diary-header">
-          <button id="diary-prev-btn" class="icon-btn"><i data-lucide="chevron-left"></i></button>
+          <button id="diary-prev-btn" class="icon-btn" aria-label="Previous day"><i data-lucide="chevron-left"></i></button>
           <h2 id="diary-date">Today — May 22</h2>
-          <button id="diary-next-btn" class="icon-btn"><i data-lucide="chevron-right"></i></button>
+          <button id="diary-next-btn" class="icon-btn" aria-label="Next day"><i data-lucide="chevron-right"></i></button>
         </div>
 
         
@@ -732,7 +731,7 @@
                 <i data-lucide="sunrise"></i>
                 <h3>Breakfast</h3>
               </div>
-              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="breakfast">
+              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="breakfast" aria-label="Add breakfast item">
                 <i data-lucide="plus"></i>
               </button>
             </div>
@@ -745,7 +744,7 @@
                 <i data-lucide="sun"></i>
                 <h3>Lunch</h3>
               </div>
-              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="lunch">
+              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="lunch" aria-label="Add lunch item">
                 <i data-lucide="plus"></i>
               </button>
             </div>
@@ -758,7 +757,7 @@
                 <i data-lucide="moon"></i>
                 <h3>Dinner</h3>
               </div>
-              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="dinner">
+              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="dinner" aria-label="Add dinner item">
                 <i data-lucide="plus"></i>
               </button>
             </div>
@@ -771,7 +770,7 @@
                 <i data-lucide="cookie"></i>
                 <h3>Snacks</h3>
               </div>
-              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="snacks">
+              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="snacks" aria-label="Add snack item">
                 <i data-lucide="plus"></i>
               </button>
             </div>
@@ -794,7 +793,7 @@
           <div class="modal-content" style="max-width:500px; max-height:85vh; overflow-y:auto;">
             <div class="modal-header">
               <h3 id="recent-detail-title">Food Details</h3>
-              <button id="recent-detail-close" class="modal-close-btn"><i data-lucide="x"></i></button>
+              <button id="recent-detail-close" class="modal-close-btn" aria-label="Close food details"><i data-lucide="x"></i></button>
             </div>
             <div id="recent-detail-image" class="hidden" style="margin-bottom:12px; border-radius:12px; overflow:hidden;">
               <img id="recent-detail-img" src="" alt="Food" style="width:100%; display:block; border-radius:12px;" />
@@ -827,7 +826,7 @@
           <div class="modal-content" style="max-width: 440px;">
             <div class="modal-header">
               <h3><i data-lucide="file-text" style="display:inline;vertical-align:-3px;margin-right:6px;color:var(--primary);"></i> Export Report</h3>
-              <button id="export-modal-close" class="modal-close-btn"><i data-lucide="x"></i></button>
+              <button id="export-modal-close" class="modal-close-btn" aria-label="Close export modal"><i data-lucide="x"></i></button>
             </div>
             <div style="padding: 12px 0;">
               <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
@@ -893,7 +892,7 @@
           <div class="chart-card-header">
             <div>
               <h3>Weight Trend</h3>
-              <span class="chart-subtitle">Track your body weight</span>
+              <span class="chart-subtitle" id="weight-chart-subtitle">Track your body weight</span>
             </div>
             <div class="chart-period-toggle">
               <button class="period-btn active" id="weight-period-7">7D</button>
@@ -905,7 +904,7 @@
           </div>
           <div class="weight-log-form">
             <div class="input-group input-inline">
-              <input type="number" id="weight-input" class="input-field" placeholder="Enter weight (kg)" step="0.1" min="30" max="300" />
+              <input type="number" id="weight-input" class="input-field" placeholder="Enter weight (kg)" aria-label="Body weight" step="0.1" min="20" max="660" />
               <button id="weight-log-btn" class="btn btn-primary btn-sm">Log Weight</button>
             </div>
           </div>
@@ -933,28 +932,34 @@
                 </select>
               </div>
               <div class="input-group">
-                <label for="goal-weight">Weight (kg)</label>
-                <input type="number" id="goal-weight" class="input-field" placeholder="70" min="20" max="300" step="0.1" />
+                <label for="goal-weight">Weight</label>
+                <div class="input-with-unit">
+                  <input type="number" id="goal-weight" class="input-field" placeholder="70" min="20" max="660" step="0.1" />
+                  <select id="goal-weight-unit" class="unit-select" aria-label="Goal weight unit">
+                    <option value="kg">kg</option>
+                    <option value="lbs">lbs</option>
+                  </select>
+                </div>
               </div>
               <div class="input-group" id="goal-height-cm-group">
                 <label for="goal-height">Height</label>
                 <div class="input-with-unit">
                   <input type="number" id="goal-height" class="input-field" placeholder="175" min="50" max="250" step="0.1" />
-                  <select id="goal-height-unit" class="unit-select">
+                  <select id="goal-height-unit" class="unit-select" aria-label="Goal height unit">
                     <option value="cm">cm</option>
                     <option value="ft">ft/in</option>
                   </select>
                 </div>
               </div>
               <div class="input-group hidden" id="goal-height-ft-group">
-                <label>Height (ft / in)</label>
+                <label for="goal-height-ft">Height (ft / in)</label>
                 <div style="display:flex;gap:8px;">
                   <div class="input-with-unit" style="flex:1;">
-                    <input type="number" id="goal-height-ft" class="input-field" placeholder="5" min="1" max="7" />
+                    <input type="number" id="goal-height-ft" class="input-field" placeholder="5" aria-label="Height feet" min="1" max="7" />
                     <span class="unit-label">ft</span>
                   </div>
                   <div class="input-with-unit" style="flex:1;">
-                    <input type="number" id="goal-height-in" class="input-field" placeholder="6" min="0" max="11" />
+                    <input type="number" id="goal-height-in" class="input-field" placeholder="6" aria-label="Height inches" min="0" max="11" />
                     <span class="unit-label">in</span>
                   </div>
                 </div>
@@ -1057,19 +1062,20 @@
         </div>
       </div>
       <div class="coach-input-bar">
-        <input type="text" id="coach-input" class="coach-input" placeholder="Ask about your data, nutrition, fitness..." />
-        <button id="coach-send-btn" class="coach-send-btn" disabled>
+        <input type="text" id="coach-input" class="coach-input" placeholder="Ask about your data, nutrition, fitness..." aria-label="Message AI fitness coach" />
+        <button id="coach-send-btn" class="coach-send-btn" aria-label="Send message" disabled>
           <i data-lucide="send"></i>
         </button>
       </div>
     </div>
+    </main>
 
     
     <div id="meal-log-modal" class="modal-overlay hidden">
       <div class="modal">
         <div class="modal-header">
           <h2>Log a Meal</h2>
-          <button id="meal-log-close-btn" class="icon-btn"><i data-lucide="x"></i></button>
+          <button id="meal-log-close-btn" class="icon-btn" aria-label="Close meal logger"><i data-lucide="x"></i></button>
         </div>
 
         
@@ -1107,7 +1113,7 @@
         
         <div id="nlp-tab" class="tab-panel active">
           <div class="nlp-input-area">
-            <textarea id="nlp-input" class="input-field textarea" placeholder="" rows="3"></textarea>
+            <textarea id="nlp-input" class="input-field textarea" placeholder="Describe what you ate (e.g. 2 boiled eggs and 1 slice whole wheat toast)" aria-label="Meal description" rows="3"></textarea>
             <button id="nlp-parse-btn" class="btn btn-primary btn-full">
               <i data-lucide="sparkles"></i> Analyze Food
             </button>
@@ -1128,10 +1134,10 @@
             <i data-lucide="image-plus" class="drop-zone-icon"></i>
             <p>Upload or take a photo of your meal</p>
             <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; position: relative; z-index: 2;">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('camera-file-input').click()">
+              <button type="button" id="camera-upload-btn" class="btn btn-secondary btn-sm">
                 <i data-lucide="camera"></i> Camera
               </button>
-              <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('image-file-input').click()">
+              <button type="button" id="gallery-upload-btn" class="btn btn-secondary btn-sm">
                 <i data-lucide="upload"></i> Gallery
               </button>
             </div>
@@ -1277,7 +1283,7 @@
     </div>
 
     
-    <nav id="bottom-nav" class="bottom-nav">
+    <nav id="bottom-nav" class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" id="nav-dashboard" data-view="dashboard">
         <i data-lucide="home"></i>
         <span>Home</span>
@@ -1305,9 +1311,11 @@
   <div id="toast-container" class="toast-container"></div>
 
   
+  <script src="js/vendor/purify.min.js"></script>
+  <script src="js/nutrition.js"></script>
+  <script src="js/sync-merge.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
-  <script src="js/food-database.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/gemini.js"></script>
   <script src="js/onboarding.js"></script>

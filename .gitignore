@@ -6,13 +6,16 @@ node_modules/
 .env*.local
 
 .vercel/
+.vercel
 
 .DS_Store
 Thumbs.db
-
 *.zip
+
+playwright-report/
+test-results/
+coverage/
+audit-reports/
 
 .vscode/
 .idea/
-
-.vercel

@@ -4,15 +4,15 @@
   --bg-tertiary: #e8e8f0;
   --bg-card: rgba(255, 255, 255, 0.85);
 
-  --accent-primary: #6366f1;
-  --accent-secondary: #4f46e5;
+  --accent-primary: #4f46e5;
+  --accent-secondary: #4338ca;
   --accent-tertiary: #3730a3;
   --accent-glow: rgba(99, 102, 241, 0.15);
   --accent-glow-strong: rgba(99, 102, 241, 0.25);
 
   --text-primary: #1e1b3a;
-  --text-secondary: #4a4668;
-  --text-muted: #7c7a92;
+  --text-secondary: #433f5e;
+  --text-muted: #595575;
 
   --border-color: rgba(99, 102, 241, 0.12);
   --border-color-strong: rgba(99, 102, 241, 0.25);
