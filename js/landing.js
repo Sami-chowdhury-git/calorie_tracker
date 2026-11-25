@@ -21,6 +21,69 @@ window.Landing = {
         }
       });
     }
+
+    this._initFeatureInteractions();
+  },
+
+  _initFeatureInteractions() {
+    const cells = Array.from(document.querySelectorAll('.feature-cell'));
+    if (cells.length === 0) return;
+
+    const revealCell = (cell) => {
+      cell.classList.remove('reveal-pending');
+      cell.classList.add('is-visible');
+    };
+
+    cells.forEach((cell, idx) => {
+      cell.setAttribute('tabindex', '0');
+      cell.setAttribute('role', 'button');
+      cell.setAttribute('aria-pressed', 'false');
+
+      const selectCell = () => {
+        const wasSelected = cell.classList.contains('is-selected');
+        cells.forEach(c => {
+          c.classList.remove('is-selected');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        if (!wasSelected) {
+          cell.classList.add('is-selected');
+          cell.setAttribute('aria-pressed', 'true');
+        }
+        revealCell(cell);
+      };
+
+      cell.addEventListener('click', selectCell);
+      cell.addEventListener('focus', () => revealCell(cell));
+      cell.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectCell();
+        }
+      });
+
+      const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion && typeof IntersectionObserver !== 'undefined') {
+        cell.classList.add('reveal-pending');
+        cell.style.transitionDelay = `${(idx % 3) * 45}ms`;
+      }
+    });
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            revealCell(entry.target);
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.05, rootMargin: '80px 0px' });
+
+      cells.forEach(cell => {
+        if (cell.classList.contains('reveal-pending')) {
+          observer.observe(cell);
+        }
+      });
+    }
   },
 
   scrollToAuth() {

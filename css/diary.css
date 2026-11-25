@@ -100,11 +100,23 @@
   color: #FFFFFF !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 6px 11px;
+  min-width: 36px;
+  min-height: 36px;
+  touch-action: manipulation;
+  transition: background-color var(--dur-fast) var(--ease), transform 140ms var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
-.meal-add-btn:hover:not(:disabled) {
-  background: #B83E10 !important;
-  color: #FFFFFF !important;
+@media (hover: hover) and (pointer: fine) {
+  .meal-add-btn:hover:not(:disabled) {
+    background: #B83E10 !important;
+    color: #FFFFFF !important;
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
+}
+.meal-add-btn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
 .meal-group-items {
@@ -179,14 +191,20 @@
   border-radius: 4px;
   padding: 12px;
   cursor: pointer;
+  touch-action: manipulation;
   color: var(--text-primary);
-  transition: background-color var(--dur-fast) var(--ease), transform 120ms var(--ease);
+  transition: background-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), transform 150ms var(--ease);
 }
-.frequent-food-card:hover {
-  background: var(--bg-tertiary);
+@media (hover: hover) and (pointer: fine) {
+  .frequent-food-card:hover {
+    background: var(--bg-tertiary);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
 }
 .frequent-food-card:active {
-  transform: translateY(1px);
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 .ff-name {
   font-weight: 600;

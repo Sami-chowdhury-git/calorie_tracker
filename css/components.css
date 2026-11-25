@@ -9,10 +9,13 @@
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
   transition: background-color var(--dur-fast) var(--ease),
               color var(--dur-fast) var(--ease),
               border-color var(--dur-fast) var(--ease),
-              transform 120ms var(--ease);
+              box-shadow var(--dur-fast) var(--ease),
+              transform 150ms var(--ease);
   white-space: nowrap;
   text-decoration: none;
 }
@@ -21,9 +24,20 @@
   width: 17px;
   height: 17px;
   flex-shrink: 0;
+  transition: transform var(--dur-fast) var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
+  .btn:hover:not(:disabled) svg {
+    transform: translateX(1px);
+  }
 }
 .btn:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translate(1px, 1px);
+  box-shadow: 0 0 0 var(--border-color);
 }
 .btn:disabled {
   opacity: 0.5;
@@ -90,10 +104,12 @@
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   cursor: pointer;
+  user-select: none;
   transition: background-color var(--dur-fast) var(--ease),
               color var(--dur-fast) var(--ease),
               border-color var(--dur-fast) var(--ease),
-              transform 120ms var(--ease);
+              box-shadow var(--dur-fast) var(--ease),
+              transform 140ms var(--ease);
   touch-action: manipulation;
   position: relative;
   z-index: 10;
@@ -102,13 +118,19 @@
 .icon-btn svg {
   width: 18px;
   height: 18px;
+  transition: transform var(--dur-fast) var(--ease);
 }
-.icon-btn:hover:not(:disabled) {
-  background: var(--ink-btn-bg);
-  color: var(--ink-btn-fg);
+@media (hover: hover) and (pointer: fine) {
+  .icon-btn:hover:not(:disabled) {
+    background: var(--ink-btn-bg);
+    color: var(--ink-btn-fg);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
 }
 .icon-btn:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 .icon-btn:disabled {
   opacity: 0.4;
@@ -245,9 +267,10 @@
   border-radius: 4px 4px 0 0;
   width: 100%;
   max-width: 520px;
-  max-height: 88vh;
+  max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
-  padding: 22px 20px;
+  padding: 22px 20px max(22px, env(safe-area-inset-bottom));
   animation: slideUpSheet 260ms var(--ease);
   border: 1px solid var(--border-color);
   border-bottom: none;
@@ -519,19 +542,29 @@
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform 120ms var(--ease);
+  touch-action: manipulation;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), transform 140ms var(--ease);
 }
-.theme-toggle:hover {
-  background: var(--ink-btn-bg);
-  color: var(--ink-btn-fg);
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle:hover {
+    background: var(--ink-btn-bg);
+    color: var(--ink-btn-fg);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
+  .theme-toggle:hover svg {
+    transform: rotate(18deg);
+  }
 }
 .theme-toggle:active {
-  transform: translateY(1px);
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 .theme-toggle i,
 .theme-toggle svg {
   width: 18px;
   height: 18px;
+  transition: transform 240ms var(--ease);
 }
 
 .bottom-nav {
@@ -542,7 +575,7 @@
   z-index: 100;
   display: flex;
   justify-content: space-around;
-  padding: 6px 8px max(6px, env(safe-area-inset-bottom));
+  padding: 6px max(8px, calc((100% - 760px) / 2 + 12px)) max(6px, env(safe-area-inset-bottom));
   background: var(--bg-primary);
   border-top: 1px solid var(--border-color);
 }
@@ -560,11 +593,25 @@
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  transition: color var(--dur-fast) var(--ease), transform 120ms var(--ease);
+  touch-action: manipulation;
+  transition: color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), transform 140ms var(--ease);
 }
 .nav-item svg {
   width: 20px;
   height: 20px;
+  transition: transform var(--dur-fast) var(--ease);
+}
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 18%;
+  right: 18%;
+  height: 2px;
+  background: var(--accent-primary);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 220ms var(--ease);
 }
 .nav-item.active {
   color: var(--accent-text);
@@ -573,29 +620,30 @@
   color: var(--accent-primary);
 }
 .nav-item.active::before {
-  content: '';
-  position: absolute;
-  top: -6px;
-  left: 20%;
-  right: 20%;
-  height: 2px;
-  background: var(--accent-primary);
+  transform: scaleX(1);
 }
-.nav-item:hover:not(.active) {
-  color: var(--text-primary);
+@media (hover: hover) and (pointer: fine) {
+  .nav-item:hover:not(.active) {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+  }
+  .nav-item:hover svg {
+    transform: translateY(-1px);
+  }
 }
 .nav-item:active {
   transform: translateY(1px);
 }
 
 .app-footer {
-  max-width: 640px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 12px 20px 92px;
+  padding: 16px 86px calc(92px + env(safe-area-inset-bottom)) 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
   font-size: 0.76rem;
   color: var(--text-muted);
   border-top: 1px solid var(--border-subtle);
@@ -621,8 +669,8 @@
 
 .fab {
   position: fixed;
-  bottom: 84px;
-  right: 20px;
+  bottom: calc(82px + env(safe-area-inset-bottom));
+  right: max(20px, calc((100% - 760px) / 2 - 12px));
   z-index: 50;
   width: 54px;
   height: 54px;
@@ -633,20 +681,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 2px 2px 0 var(--border-color);
+  box-shadow: 3px 3px 0 var(--border-color);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), transform 120ms var(--ease), box-shadow 120ms var(--ease);
+  touch-action: manipulation;
+  transition: background-color var(--dur-fast) var(--ease), transform 150ms var(--ease), box-shadow 150ms var(--ease);
 }
 .fab svg,
 .fab i {
   width: 24px;
   height: 24px;
+  transition: transform 220ms var(--ease);
 }
-.fab:hover {
-  background: #B83E10;
+@media (hover: hover) and (pointer: fine) {
+  .fab:hover {
+    background: #B83E10;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 var(--border-color);
+  }
+  .fab:hover svg {
+    transform: rotate(90deg);
+  }
 }
 .fab:active {
-  transform: translateY(1px);
+  transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 var(--border-color);
 }
 
@@ -720,11 +777,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 11px 14px;
+  padding: 12px 14px;
   background: var(--bg-secondary);
   border-radius: 4px;
   border: 1px solid var(--border-color);
-  animation: viewEnter 200ms var(--ease);
+  animation: cardStaggerIn 240ms var(--ease) both;
+  transition: background-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .meal-preview-item:hover {
+    background: var(--bg-tertiary);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
 }
 .meal-preview-info {
   flex: 1;

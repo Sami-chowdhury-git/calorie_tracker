@@ -206,7 +206,7 @@ window.Dashboard = {
     const barEl = document.getElementById('water-progress-bar');
     const badgeEl = document.getElementById('water-percent-badge');
 
-    if (currentEl) currentEl.textContent = Utils.formatNum(total);
+    if (currentEl) Utils.animateNumber(currentEl, total, 260);
     if (goalEl) goalEl.textContent = Utils.formatNum(goal);
 
     const pct = Math.min(100, Math.round((total / goal) * 100));
@@ -215,14 +215,29 @@ window.Dashboard = {
       badgeEl.textContent = `${pct}%`;
       if (pct >= 100) badgeEl.classList.add('goal-reached');
       else badgeEl.classList.remove('goal-reached');
+      badgeEl.classList.remove('is-bumping');
+      void badgeEl.offsetWidth;
+      badgeEl.classList.add('is-bumping');
     }
   },
 
   updateRing(id, radius, progress) {
     const el = document.getElementById(id);
+    if (!el) return;
     const circ = Utils.ringCircumference(radius);
+    const targetOffset = Utils.ringOffset(radius, Math.min(progress, 1));
     el.style.strokeDasharray = circ;
-    el.style.strokeDashoffset = Utils.ringOffset(radius, Math.min(progress, 1));
+    if (!el.dataset.ringReady) {
+      el.dataset.ringReady = '1';
+      el.style.strokeDashoffset = circ;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.style.strokeDashoffset = targetOffset;
+        });
+      });
+    } else {
+      el.style.strokeDashoffset = targetOffset;
+    }
   },
 
   updateMacro(macro, consumed, target) {
@@ -258,9 +273,10 @@ window.Dashboard = {
       return;
     }
 
-    all.slice(-5).forEach(item => {
+    all.slice(-5).forEach((item, idx) => {
       const row = document.createElement('div');
       row.className = 'meal-preview-item';
+      row.style.animationDelay = `${idx * 35}ms`;
 
       const info = document.createElement('div');
       info.className = 'meal-preview-info';

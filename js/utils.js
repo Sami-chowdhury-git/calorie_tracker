@@ -222,6 +222,9 @@ window.Utils = {
   showToast(message, type = 'info', duration = 3000) {
     const container = document.getElementById('toast-container');
     if (!container) return;
+    while (container.children.length >= 2) {
+      container.firstElementChild.remove();
+    }
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
 

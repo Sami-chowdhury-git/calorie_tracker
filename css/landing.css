@@ -129,6 +129,7 @@
   background: var(--bg-secondary);
 }
 .feature-cell {
+  position: relative;
   padding: 22px 20px;
   border-right: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
@@ -136,6 +137,50 @@
   flex-direction: column;
   gap: 10px;
   background: var(--bg-secondary);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 220ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease), opacity 320ms var(--ease);
+}
+.feature-cell.reveal-pending {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.feature-cell.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.feature-cell::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: #D9541E;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 240ms var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .feature-cell:hover {
+    background: var(--bg-tertiary);
+  }
+  .feature-cell:hover::after {
+    transform: scaleX(1);
+  }
+  .feature-cell:hover .feature-svg {
+    color: #D9541E;
+    transform: translateY(-2px);
+  }
+}
+.feature-cell.is-selected {
+  background: var(--bg-tertiary);
+}
+.feature-cell.is-selected::after {
+  transform: scaleX(1);
+}
+.feature-cell.is-selected .feature-svg {
+  color: #D9541E;
 }
 .feature-cell-top {
   display: flex;
@@ -152,6 +197,7 @@
   width: 20px;
   height: 20px;
   color: var(--text-primary);
+  transition: color 200ms var(--ease), transform 200ms var(--ease);
 }
 .feature-cell h3 {
   font-size: 1.02rem;
@@ -315,13 +361,16 @@
   margin-top: 10px;
 }
 
-@media (max-width: 900px) {
-  .landing-features-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+@media (max-width: 860px) {
   .landing-auth-section {
     grid-template-columns: 1fr;
     gap: 28px;
+  }
+}
+
+@media (max-width: 739px) {
+  .landing-features-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -334,16 +383,26 @@
   .landing-nav {
     gap: 10px;
   }
+  .landing-nav a,
+  .landing-nav-link {
+    font-size: 0.8rem;
+  }
   .landing-hero {
     padding: 36px 0 32px;
   }
-  .landing-features-grid {
-    grid-template-columns: 1fr;
+  .landing-hero-actions .btn {
+    width: 100%;
   }
   .landing-auth-section {
     padding: 36px 0;
   }
   .landing-auth-card {
     padding: 22px 18px;
+  }
+}
+
+@media (max-width: 519px) {
+  .landing-features-grid {
+    grid-template-columns: 1fr;
   }
 }

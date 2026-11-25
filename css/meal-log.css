@@ -17,10 +17,11 @@
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
+  touch-action: manipulation;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform 120ms var(--ease);
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), transform 140ms var(--ease);
   color: var(--text-primary);
 }
 .meal-type-btn i,
@@ -32,11 +33,16 @@
   background: var(--ink-btn-bg);
   color: var(--ink-btn-fg);
 }
-.meal-type-btn:active {
-  transform: translateY(1px);
+@media (hover: hover) and (pointer: fine) {
+  .meal-type-btn:hover:not(.active) {
+    background: var(--bg-tertiary);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
 }
-.meal-type-btn:hover:not(.active) {
-  background: var(--bg-tertiary);
+.meal-type-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
 .nlp-input-area {
@@ -453,17 +459,23 @@
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 7px 11px;
   font-size: 0.74rem;
   font-weight: 600;
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform 120ms var(--ease);
+  touch-action: manipulation;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), transform 140ms var(--ease);
 }
-.barcode-chip:hover {
-  background: var(--ink-btn-bg);
-  color: var(--ink-btn-fg);
+@media (hover: hover) and (pointer: fine) {
+  .barcode-chip:hover {
+    background: var(--ink-btn-bg);
+    color: var(--ink-btn-fg);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
 }
 .barcode-chip:active {
-  transform: translateY(1px);
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }

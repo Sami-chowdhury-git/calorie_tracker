@@ -44,8 +44,8 @@
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 180ms;
-  --dur-mid: 240ms;
-  --dur-slow: 320ms;
+  --dur-mid: 260ms;
+  --dur-slow: 420ms;
   --transition: all 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -65,10 +65,12 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -134,6 +136,7 @@ svg.lucide,
 .screen {
   display: none;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 .screen.active {
   display: block;
@@ -141,8 +144,9 @@ svg.lucide,
 
 .view {
   display: none;
-  padding-bottom: 92px;
-  min-height: calc(100vh - 56px);
+  padding-bottom: 24px;
+  min-height: calc(100vh - 150px);
+  min-height: calc(100dvh - 150px);
 }
 .view.active {
   display: block;
@@ -153,6 +157,13 @@ svg.lucide,
   max-width: 640px;
   margin: 0 auto;
   padding: 0 20px 28px;
+}
+
+@media (min-width: 768px) {
+  .view-content {
+    max-width: 760px;
+    padding: 0 28px 36px;
+  }
 }
 
 .hidden {
@@ -254,6 +265,23 @@ svg.lucide,
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@keyframes cardStaggerIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes badgePop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 .spin-icon {

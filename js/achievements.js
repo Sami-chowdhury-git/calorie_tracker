@@ -216,10 +216,11 @@ window.Achievements = {
     const grid = document.getElementById('badges-grid');
     grid.textContent = '';
 
-    this.badges.forEach(badge => {
+    this.badges.forEach((badge, idx) => {
       const unlocked = ach[badge.id]?.unlocked;
       const card = document.createElement('div');
       card.className = `badge-card ${unlocked ? 'unlocked' : 'locked'}`;
+      card.style.animationDelay = `${idx * 30}ms`;
 
       const iconEl = document.createElement('span');
       iconEl.className = 'badge-icon';

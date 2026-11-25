@@ -107,6 +107,7 @@ window.MealLogger = {
     });
 
     window.addEventListener('resize', () => this._updateTabIndicator());
+    window.addEventListener('orientationchange', () => setTimeout(() => this._updateTabIndicator(), 120));
 
     document.getElementById('nlp-parse-btn').addEventListener('click', () => this.parseNLP());
     document.getElementById('nlp-confirm-btn').addEventListener('click', () => this.confirmParsed('nlp'));

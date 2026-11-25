@@ -77,8 +77,23 @@
   border-radius: 4px;
   padding: 18px 12px;
   text-align: center;
-  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+  animation: cardStaggerIn 260ms var(--ease) both;
+  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), transform 180ms var(--ease), box-shadow 180ms var(--ease);
   position: relative;
+}
+@media (hover: hover) and (pointer: fine) {
+  .badge-card.unlocked:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 3px 3px 0 var(--border-color);
+  }
+  .badge-card.locked:hover {
+    border-color: var(--text-primary);
+  }
+}
+@media (min-width: 768px) {
+  .badges-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 .badge-card.locked {
   opacity: 1;

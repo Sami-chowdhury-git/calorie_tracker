@@ -26,6 +26,14 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background-color 180ms var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .analytics-stat-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+    background: var(--bg-tertiary);
+  }
 }
 .analytics-stat-card > i,
 .analytics-stat-card > svg {
@@ -93,7 +101,7 @@
   padding: 3px;
 }
 .period-btn {
-  padding: 5px 12px;
+  padding: 6px 13px;
   border-radius: 3px;
   font-size: 0.75rem;
   font-weight: 700;
@@ -101,14 +109,17 @@
   border: none;
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform 120ms var(--ease);
+  touch-action: manipulation;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform 140ms var(--ease);
 }
 .period-btn.active {
   background: var(--ink-btn-bg);
   color: var(--ink-btn-fg);
 }
-.period-btn:hover:not(.active) {
-  background: var(--bg-tertiary);
+@media (hover: hover) and (pointer: fine) {
+  .period-btn:hover:not(.active) {
+    background: var(--bg-tertiary);
+  }
 }
 .period-btn:active {
   transform: translateY(1px);

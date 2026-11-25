@@ -134,13 +134,19 @@
   padding: 16px 18px;
   text-align: left;
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform 120ms var(--ease);
+  touch-action: manipulation;
+  transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), transform 150ms var(--ease);
 }
-.ob-selection-card:hover {
-  background: var(--bg-tertiary);
+@media (hover: hover) and (pointer: fine) {
+  .ob-selection-card:hover {
+    background: var(--bg-tertiary);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
 }
 .ob-selection-card:active {
-  transform: translateY(1px);
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 .ob-selection-card.active {
   background: var(--bg-secondary);
@@ -237,6 +243,22 @@
   padding: 16px 10px;
   text-align: center;
   border: 1px solid var(--border-color);
+  transition: transform 180ms var(--ease), box-shadow 180ms var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ob-macro-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--border-color);
+  }
+}
+
+@media (min-width: 720px) {
+  .onboarding-container {
+    max-width: 680px;
+  }
+  .ob-card-grid.goals {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 .ob-macro-card i,
 .ob-macro-card svg {
