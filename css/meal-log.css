@@ -13,7 +13,7 @@
 .meal-type-btn i { width: 14px; height: 14px; }
 .meal-type-btn.active {
   background: rgba(99,102,241,0.12); border-color: var(--accent-primary);
-  color: var(--accent-primary);
+  color: var(--accent-secondary);
 }
 .meal-type-btn:hover:not(.active) { border-color: var(--text-muted); }
 
@@ -59,7 +59,7 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 0.9rem; font-weight: 600; transition: var(--transition);
 }
-.qty-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+.qty-btn:hover { border-color: var(--accent-primary); color: var(--accent-secondary); }
 .qty-value { font-weight: 600; min-width: 24px; text-align: center; font-size: 0.9rem; }
 
 .parsed-item-macros { text-align: right; flex-shrink: 0; }

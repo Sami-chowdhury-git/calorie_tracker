@@ -25,7 +25,7 @@ export const options = {
   thresholds: {
     app_errors: ['rate<0.02'],
     checks: ['rate==1.0'],
-    sync_duration: ['p(95)<6000']
+    sync_duration: ['p(95)<5000']
   }
 };
 

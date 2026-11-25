@@ -84,7 +84,7 @@ img { max-width: 100%; display: block; }
 }
 
 .hidden { display: none !important; }
-.accent { color: var(--accent-primary); }
+.accent { color: var(--accent-secondary); }
 .text-center { text-align: center; }
 
 ::-webkit-scrollbar { width: 6px; }

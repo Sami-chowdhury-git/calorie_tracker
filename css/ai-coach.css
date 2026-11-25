@@ -159,7 +159,7 @@
 
 .suggestion-chip:hover {
   border-color: var(--accent-primary);
-  color: var(--accent-primary);
+  color: var(--accent-secondary);
 }
 
 .coach-tabs-bar {
@@ -221,7 +221,7 @@
 }
 
 .chat-message.ai .msg-text strong {
-  color: var(--accent-primary);
+  color: var(--accent-secondary);
   font-weight: 600;
 }
 .chat-message.ai .msg-text em {

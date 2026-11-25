@@ -217,7 +217,6 @@ async function authenticateRequest(req) {
   if (!payload) return null;
 
   try {
-    await ensureSessionsTable();
     const nowMs = Date.now();
     const [rows] = await db.query(
       `SELECT s.id AS session_id, s.user_id, s.expires_at, s.revoked, u.name, u.email
@@ -238,6 +237,10 @@ async function authenticateRequest(req) {
       sessionId: row.session_id
     };
   } catch (err) {
+    if (err.code === 'ER_NO_SUCH_TABLE') {
+      await ensureSessionsTable();
+      return null;
+    }
     console.error('Session verification error:', err);
     return null;
   }
