@@ -8,8 +8,12 @@ if (uri.includes('?')) {
 const pool = mysql.createPool({
   uri,
   waitForConnections: true,
-  connectionLimit: 5,
+  connectionLimit: 2,
+  maxIdle: 1,
+  idleTimeout: 10000,
   queueLimit: 0,
+  enableKeepAlive: true,
+  connectTimeout: 10000,
   ssl: {
     rejectUnauthorized: false
   }

@@ -90,6 +90,7 @@ test.describe('MacroLens Live Audit (E2E, Security & Axe Accessibility)', () => 
     // Accessibility check on authenticated Dashboard + Diary + Analytics + Coach + Badges
     for (const navId of ['#nav-dashboard', '#nav-diary', '#nav-analytics', '#nav-coach', '#nav-achievements']) {
       await page.click(navId);
+      await page.waitForTimeout(1000); // allow stagger fade-in animations to reach final opacity
       const axeRes = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze();
