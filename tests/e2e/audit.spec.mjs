@@ -103,6 +103,7 @@ test.describe('MacroLens Live Audit (E2E, Security & Axe Accessibility)', () => 
     await page.click('#diary-prev-btn');
     await page.click('#nav-dashboard');
     await page.click('#quick-add-btn');
+    await page.click('.meal-type-btn[data-meal="breakfast"]');
     await page.click('#meal-log-tabs .tab-btn[data-tab="manual"]');
 
     const xssFoodName = '<img src=x onerror=window.__xssFired=true> Roast Beef';
