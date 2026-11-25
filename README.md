@@ -88,6 +88,20 @@ Department of Computer Science & Engineering, Metropolitan University, Sylhet.
 
 ---
 
+## Live Production Audit Results (`https://caltrack-amber.vercel.app`)
+
+| Audit Check | Scope & Tool | Verified Result |
+| :--- | :--- | :--- |
+| **Linting & Static Checks** | `npm run lint` (ESLint) | **0 errors, 0 warnings** |
+| **Unit & Regression Tests** | `npm test` (Vitest + jsdom) | **24 / 24 passed** across 5 test files |
+| **Access Control & Proxy Guards** | `scripts/live-security-sync-audit.js` | Spoofed `Authorization` (`401`), revoked session (`401`), Gemini rate limit (`429`), oversized payload (`413`) all enforced |
+| **Multi-Device Sync Merge** | `scripts/live-security-sync-audit.js` | Concurrent meal logs & coach thread messages merged without overwrites |
+| **AI Nutrition Estimate Error** | `scripts/gemini-accuracy-audit.js` (5 weighed USDA reference meals via live `/api/gemini`) | **Calories MAE: 1.8 kcal (0.6% MAPE)** · Protein MAE: 1.0g · Carbs MAE: 0.2g · Fat MAE: 0.3g |
+| **Load & Concurrency** | `k6 run k6/load-test.js` (9 max VUs: 8 concurrent sync VUs + security probe) | **57 / 57 checks passed (100%)**, `0.00%` app/HTTP errors, sync `p(95) = 4.46s` |
+| **Cross-Browser & Accessibility** | `npx playwright test` + `@axe-core/playwright` (Chromium, Firefox, WebKit) | **6 / 6 passed**, **0 critical/serious WCAG 2.1 AA violations** across all views, 0 CSP/console errors |
+
+---
+
 ## License
 
 Licensed under the [MIT License](LICENSE).
