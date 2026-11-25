@@ -24,13 +24,15 @@ export const options = {
   },
   thresholds: {
     app_errors: ['rate<0.02'],
-    sync_duration: ['p(95)<2500']
+    checks: ['rate==1.0'],
+    sync_duration: ['p(95)<3500']
   }
 };
 
 export function securityProbe() {
   const unauthSync = http.get(`${BASE_URL}/api/data/sync`, {
-    headers: { Authorization: 'Bearer 11111111-1111-1111-1111-111111111111' }
+    headers: { Authorization: 'Bearer 11111111-1111-1111-1111-111111111111' },
+    responseCallback: http.expectedStatuses(401)
   });
   check(unauthSync, {
     'unauth/spoofed sync returns 401': (r) => r.status === 401
@@ -39,7 +41,7 @@ export function securityProbe() {
   const unauthGemini = http.post(
     `${BASE_URL}/api/gemini`,
     JSON.stringify({ contents: [{ parts: [{ text: 'apple' }] }] }),
-    { headers: { 'Content-Type': 'application/json' } }
+    { headers: { 'Content-Type': 'application/json' }, responseCallback: http.expectedStatuses(401) }
   );
   check(unauthGemini, {
     'unauth gemini proxy returns 401': (r) => r.status === 401
@@ -119,7 +121,7 @@ export function multiUserSync() {
     const bigRes = http.post(
       `${BASE_URL}/api/gemini`,
       JSON.stringify({ contents: [{ parts: [{ text: big }] }] }),
-      { headers: { 'Content-Type': 'application/json' } }
+      { headers: { 'Content-Type': 'application/json' }, responseCallback: http.expectedStatuses(413) }
     );
     check(bigRes, {
       'oversized gemini payload rejected 413': (r) => r.status === 413

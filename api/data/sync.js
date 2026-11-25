@@ -75,35 +75,21 @@ function parseJsonCol(val, fallback = null) {
 async function fetchUserSnapshot(userId, since = 0) {
   const sinceTs = Number(since) || 0;
 
-  const [profiles] = await db.query(
-    'SELECT data, updated_at_ms FROM profiles WHERE user_id = ?',
-    [userId]
-  );
-
-  const [diaryItemRows] = await db.query(
-    'SELECT item_id, date_str, meal_type, data, updated_at, deleted FROM diary_items WHERE user_id = ? AND updated_at > ?',
-    [userId, sinceTs]
-  );
-
-  const [waterRows] = await db.query(
-    'SELECT entry_id, date_str, ml, logged_at, updated_at, deleted FROM water_entries WHERE user_id = ? AND updated_at > ?',
-    [userId, sinceTs]
-  );
-
-  const [weightRows] = await db.query(
-    'SELECT date_str, weight, updated_at_ms, deleted FROM weight_logs WHERE user_id = ? AND updated_at_ms > ?',
-    [userId, sinceTs]
-  );
-
-  const [statsRows] = await db.query(
-    'SELECT streaks, achievements, counters, food_freq, updated_at_ms FROM user_stats WHERE user_id = ?',
-    [userId]
-  );
-
-  const [coachRows] = await db.query(
-    'SELECT conv_id, title, messages, active_flag, updated_at, deleted FROM coach_threads WHERE user_id = ? AND updated_at > ?',
-    [userId, sinceTs]
-  );
+  const [
+    [profiles],
+    [diaryItemRows],
+    [waterRows],
+    [weightRows],
+    [statsRows],
+    [coachRows]
+  ] = await Promise.all([
+    db.query('SELECT data, updated_at_ms FROM profiles WHERE user_id = ?', [userId]),
+    db.query('SELECT item_id, date_str, meal_type, data, updated_at, deleted FROM diary_items WHERE user_id = ? AND updated_at > ?', [userId, sinceTs]),
+    db.query('SELECT entry_id, date_str, ml, logged_at, updated_at, deleted FROM water_entries WHERE user_id = ? AND updated_at > ?', [userId, sinceTs]),
+    db.query('SELECT date_str, weight, updated_at_ms, deleted FROM weight_logs WHERE user_id = ? AND updated_at_ms > ?', [userId, sinceTs]),
+    db.query('SELECT streaks, achievements, counters, food_freq, updated_at_ms FROM user_stats WHERE user_id = ?', [userId]),
+    db.query('SELECT conv_id, title, messages, active_flag, updated_at, deleted FROM coach_threads WHERE user_id = ? AND updated_at > ?', [userId, sinceTs])
+  ]);
 
   let profile = null;
   if (profiles[0]) {

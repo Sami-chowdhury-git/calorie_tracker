@@ -72,8 +72,9 @@ test.describe('MacroLens Live Audit (E2E, Security & Axe Accessibility)', () => 
     await page.fill('#ob-height-inches', '10');
     await page.click('#ob-next-btn');
 
-    // Step 3 -> Step 4 -> Step 5
+    // Step 3 (Activity) -> Step 4 (Select Goal) -> Step 5 (Results)
     await page.click('#ob-next-btn');
+    await page.click('.goal-card[data-goal="maintain"]');
     await page.click('#ob-next-btn');
     await expect(page.locator('.onboarding-step[data-step="5"]')).toHaveClass(/active/);
 
@@ -86,11 +87,15 @@ test.describe('MacroLens Live Audit (E2E, Security & Axe Accessibility)', () => 
     expect(targetNum).toBeGreaterThan(2000);
     expect(targetNum).toBeLessThan(3100);
 
-    // Accessibility check on authenticated Dashboard
-    const dashAxe = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa'])
-      .analyze();
-    expect(dashAxe.violations.filter(v => ['critical', 'serious'].includes(v.impact))).toEqual([]);
+    // Accessibility check on authenticated Dashboard + Diary + Analytics + Coach + Badges
+    for (const navId of ['#nav-dashboard', '#nav-diary', '#nav-analytics', '#nav-coach', '#nav-achievements']) {
+      await page.click(navId);
+      const axeRes = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa'])
+        .analyze();
+      expect(axeRes.violations.filter(v => ['critical', 'serious'].includes(v.impact)), `Axe violations on ${navId}`).toEqual([]);
+    }
+    await page.click('#nav-dashboard');
 
     // Verify browsing past Diary day does NOT cause Dashboard FAB meal to save to wrong day
     await page.click('#nav-diary');

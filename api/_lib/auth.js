@@ -150,7 +150,10 @@ function clearSessionCookie(req, res) {
   res.setHeader('Set-Cookie', cookie);
 }
 
+let sessionsTableReady = false;
+
 async function ensureSessionsTable() {
+  if (sessionsTableReady) return;
   await db.query(`
     CREATE TABLE IF NOT EXISTS sessions (
       id VARCHAR(64) PRIMARY KEY,
@@ -162,6 +165,7 @@ async function ensureSessionsTable() {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
   `);
+  sessionsTableReady = true;
 }
 
 async function createSession(req, res, user) {

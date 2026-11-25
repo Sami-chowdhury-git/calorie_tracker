@@ -110,6 +110,21 @@ async function runLiveSecurityAndSyncAudit() {
     throw new Error(`Revoked session cookie was not rejected! Status: ${postLogoutRes.status}`);
   }
 
+  // S3 Rate Limit Check: 21 rapid calls to /api/gemini with empty body triggers 400 (first 20) then 429 without burning Gemini quota
+  const rlStatuses = [];
+  for (let i = 0; i < 21; i++) {
+    const r = await fetch(`${BASE_URL}/api/gemini`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Cookie: deviceACookie },
+      body: JSON.stringify({})
+    });
+    rlStatuses.push(r.status);
+  }
+  const triggered429 = rlStatuses.includes(429);
+  if (!triggered429) {
+    throw new Error(`Expected 429 rate limit to trigger after 20 requests, got: ${JSON.stringify(rlStatuses)}`);
+  }
+
   // Clean up via Device A
   await fetch(`${BASE_URL}/api/data/reset`, {
     method: 'POST',
@@ -124,7 +139,8 @@ async function runLiveSecurityAndSyncAudit() {
     s1SpoofBearerRejected: spoofSync.status === 401,
     multiDeviceDiaryItemsMerged: itemIds,
     multiDeviceCoachMsgsMerged: coachMsgs,
-    serverSessionRevocationRejected: postLogoutRes.status === 401
+    serverSessionRevocationRejected: postLogoutRes.status === 401,
+    s3RateLimitTriggered429: triggered429
   }, null, 2));
 }
 
