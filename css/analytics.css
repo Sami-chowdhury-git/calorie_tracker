@@ -58,7 +58,7 @@
   color: var(--text-muted); cursor: pointer;
   transition: var(--transition);
 }
-.period-btn.active { background: var(--accent-primary); color: #fff; }
+.period-btn.active { background: #4f46e5; color: #fff; }
 .period-btn:hover:not(.active) { color: var(--text-secondary); }
 
 .weight-log-form {

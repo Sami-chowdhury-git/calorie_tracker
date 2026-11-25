@@ -43,7 +43,8 @@
   text-align: center; transition: var(--transition);
   position: relative; overflow: hidden;
 }
-.badge-card.locked { opacity: 0.35; filter: grayscale(0.8); }
+.badge-card.locked { filter: grayscale(0.9); }
+.badge-card.locked .badge-icon { opacity: 0.4; }
 .badge-card.unlocked {
   border-color: var(--accent-primary);
   animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -64,7 +65,6 @@
 }
 .badge-date {
   font-size: 0.62rem; color: var(--accent-secondary); margin-top: 6px; display: block;
-  opacity: 0.7;
 }
 
 @media (max-width: 480px) {
