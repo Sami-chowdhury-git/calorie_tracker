@@ -166,10 +166,10 @@ window.Onboarding = {
   showResults() {
     this.collectData(this.currentStep);
     const r = this.calculateTDEE();
-    Utils.animateNumber(document.getElementById('ob-tdee-value'), r.tdee, 1500);
-    Utils.animateNumber(document.getElementById('ob-protein-value'), r.protein, 1200);
-    Utils.animateNumber(document.getElementById('ob-carbs-value'), r.carbs, 1200);
-    Utils.animateNumber(document.getElementById('ob-fat-value'), r.fat, 1200);
+    Utils.animateNumber(document.getElementById('ob-tdee-value'), r.tdee, 280);
+    Utils.animateNumber(document.getElementById('ob-protein-value'), r.protein, 240);
+    Utils.animateNumber(document.getElementById('ob-carbs-value'), r.carbs, 240);
+    Utils.animateNumber(document.getElementById('ob-fat-value'), r.fat, 240);
   },
 
   finish() {

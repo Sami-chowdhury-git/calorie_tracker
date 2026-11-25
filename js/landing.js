@@ -1,98 +1,49 @@
 window.Landing = {
-  totalSlides: 10,
-  currentSlide: 0,
-  isTransitioning: false,
-  touchStartY: 0,
-
-  _isEditableTarget(target) {
-    if (!target) return false;
-    const tag = target.tagName;
-    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable;
-  },
-
   init() {
-    const screen = document.getElementById('auth-screen');
-    if (!screen) return;
+    const ctaBtn = document.getElementById('landing-cta-btn');
+    const navSignIn = document.getElementById('landing-nav-signin');
 
-    this.totalSlides = document.querySelectorAll('.landing-slide').length || 10;
+    const scrollToAuth = (e) => {
+      if (e) e.preventDefault();
+      this.scrollToAuth();
+    };
 
-    screen.addEventListener('wheel', (e) => this.onWheel(e), { passive: false });
+    if (ctaBtn) ctaBtn.addEventListener('click', scrollToAuth);
+    if (navSignIn) navSignIn.addEventListener('click', scrollToAuth);
 
-    screen.addEventListener('touchstart', (e) => {
-      this.touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    screen.addEventListener('touchmove', (e) => {
-      if (this._isEditableTarget(e.target) || e.target?.closest?.('.landing-auth-card')) return;
-      e.preventDefault();
-    }, { passive: false });
-
-    screen.addEventListener('touchend', (e) => {
-      if (this._isEditableTarget(e.target) || e.target?.closest?.('.landing-auth-card')) return;
-      const dy = this.touchStartY - e.changedTouches[0].clientY;
-      if (Math.abs(dy) > 40) {
-        if (dy > 0) this.next();
-        else this.prev();
-      }
-    }, { passive: true });
-
-    document.addEventListener('keydown', (e) => {
-      const authScreen = document.getElementById('auth-screen');
-      if (!authScreen || !authScreen.classList.contains('active')) return;
-      if (this._isEditableTarget(e.target)) return;
-      if (e.key === ' ' && e.target?.closest?.('button, a')) return;
-      if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); this.next(); }
-      if (e.key === 'ArrowUp') { e.preventDefault(); this.prev(); }
-    });
-
-    this.setSlide(0);
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-  },
-
-  onWheel(e) {
-    const screen = document.getElementById('auth-screen');
-    if (!screen || !screen.classList.contains('active')) return;
-
-    e.preventDefault();
-
-    if (this.isTransitioning) return;
-
-    if (e.deltaY > 20) this.next();
-    else if (e.deltaY < -20) this.prev();
-  },
-
-  next() {
-    if (this.currentSlide < this.totalSlides - 1) {
-      this.goToSlide(this.currentSlide + 1);
+    const featuresLink = document.querySelector('a[href="#landing-features"]');
+    if (featuresLink) {
+      featuresLink.addEventListener('click', (e) => {
+        const target = document.getElementById('landing-features');
+        if (target && typeof target.scrollIntoView === 'function') {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
     }
   },
 
-  prev() {
-    if (this.currentSlide > 0) {
-      this.goToSlide(this.currentSlide - 1);
+  scrollToAuth() {
+    const card = document.getElementById('landing-auth-card') || document.getElementById('landing-auth-section');
+    if (card && typeof card.scrollIntoView === 'function') {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  },
-
-  goToSlide(index) {
-    if (this.isTransitioning || index === this.currentSlide) return;
-    this.isTransitioning = true;
-    this.setSlide(index);
-
-    setTimeout(() => { this.isTransitioning = false; }, 700);
+    const emailEl = document.getElementById('login-email');
+    if (emailEl && typeof emailEl.focus === 'function') {
+      emailEl.focus({ preventScroll: true });
+    }
   },
 
   setSlide(index) {
-    this.currentSlide = index;
-
-    const slides = document.querySelectorAll('.landing-slide');
-    slides.forEach(slide => {
-      const num = parseInt(slide.dataset.slide, 10);
-      slide.classList.remove('active', 'exit-up');
-      if (num === index) {
-        slide.classList.add('active');
-      } else if (num < index) {
-        slide.classList.add('exit-up');
+    if (Number(index) >= 9) {
+      this.scrollToAuth();
+    } else if (Number(index) <= 0) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const target = document.getElementById('landing-features');
+      if (target && typeof target.scrollIntoView === 'function') {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    });
+    }
   }
 };

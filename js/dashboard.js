@@ -1,4 +1,26 @@
 window.Dashboard = {
+  _emptySvg() {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '1.5');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.classList.add('svg-icon');
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', '12');
+    c.setAttribute('cy', '12');
+    c.setAttribute('r', '9');
+    const p = document.createElementNS(ns, 'path');
+    p.setAttribute('d', 'M12 8v8M8 12h8');
+    svg.appendChild(c);
+    svg.appendChild(p);
+    return svg;
+  },
+
   init() {
     document.getElementById('quick-add-btn').addEventListener('click', () => {
       document.dispatchEvent(new CustomEvent('open-meal-log', { detail: { date: Utils.todayStr() } }));
@@ -19,7 +41,6 @@ window.Dashboard = {
           document.getElementById('custom-carbs').value = profile.carbs || '';
           document.getElementById('custom-fat').value = profile.fat || '';
         }
-        if (typeof lucide !== 'undefined') lucide.createIcons();
       }
     });
 
@@ -44,7 +65,7 @@ window.Dashboard = {
 
       Store.saveProfile(profile);
       document.getElementById('custom-macros-form').classList.add('hidden');
-      Utils.showToast(`Custom macros saved! Target: ${calories} kcal`, 'success');
+      Utils.showToast(`Custom macros saved. Target: ${calories} kcal`, 'success');
       this.refresh();
     });
 
@@ -54,7 +75,7 @@ window.Dashboard = {
         const today = Utils.todayStr();
         Store.addWater(today, ml);
         this.renderWaterTracker();
-        Utils.showToast(`💧 Added +${ml}ml water`, 'success', 2000);
+        Utils.showToast(`Added +${ml}ml water`, 'success', 2000);
       });
     });
 
@@ -66,9 +87,9 @@ window.Dashboard = {
           const today = Utils.todayStr();
           Store.addWater(today, ml);
           this.renderWaterTracker();
-          Utils.showToast(`💧 Added +${ml}ml water`, 'success', 2000);
+          Utils.showToast(`Added +${ml}ml water`, 'success', 2000);
         } else {
-          Utils.showToast('Please enter a valid amount (1–5000 ml)', 'warning');
+          Utils.showToast('Please enter a valid amount (1 to 5000 ml)', 'warning');
         }
       }
     });
@@ -95,14 +116,15 @@ window.Dashboard = {
     const remaining = Math.max(0, target - t.calories);
 
     this.updateRing('calorie-ring-fill', 85, t.calories / target);
-    document.getElementById('calories-remaining').textContent = Utils.formatNum(remaining);
+    const remainEl = document.getElementById('calories-remaining');
+    if (remainEl) Utils.animateNumber(remainEl, remaining, 260);
     document.getElementById('calories-consumed').textContent = Utils.formatNum(t.calories);
     document.getElementById('calories-target').textContent = Utils.formatNum(target);
 
     const rf = document.getElementById('calorie-ring-fill');
     rf.classList.remove('warning', 'danger');
     if (t.calories / target > 1) rf.classList.add('danger');
-    else if (t.calories / target > 0.8) rf.classList.add('warning');
+    else if (t.calories / target >= 0.8) rf.classList.add('warning');
 
     this.updateMacro('protein', t.protein, profile.protein);
     this.updateMacro('carbs', t.carbs, profile.carbs);
@@ -212,7 +234,7 @@ window.Dashboard = {
     const el = document.getElementById(ringId);
     el.classList.remove('warning', 'danger');
     if (consumed / target > 1) el.classList.add('danger');
-    else if (consumed / target > 0.8) el.classList.add('warning');
+    else if (consumed / target >= 0.8) el.classList.add('warning');
   },
 
   renderMealsPreview() {
@@ -228,14 +250,11 @@ window.Dashboard = {
     if (all.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'empty-state-mini';
-      const icon = document.createElement('i');
-      icon.setAttribute('data-lucide', 'plus-circle');
+      empty.appendChild(this._emptySvg());
       const msg = document.createElement('p');
-      msg.textContent = 'No meals logged yet. Tap + to add your first meal!';
-      empty.appendChild(icon);
+      msg.textContent = 'No meals logged yet. Tap + to add your first meal.';
       empty.appendChild(msg);
       container.appendChild(empty);
-      if (typeof lucide !== 'undefined') lucide.createIcons();
       return;
     }
 

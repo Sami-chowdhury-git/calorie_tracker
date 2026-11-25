@@ -75,8 +75,8 @@ window.Gemini = {
 
   _handleHttpError(status) {
     if (status === 401) Utils.showToast('Please sign in again to use AI features.', 'warning', 4000);
-    else if (status === 413) Utils.showToast('Image payload too large — try a smaller photo.', 'warning', 4000);
-    else if (status === 429) Utils.showToast('⚠️ Rate limit reached. Please wait a moment and try again.', 'error', 5000);
+    else if (status === 413) Utils.showToast('Image payload too large: try a smaller photo.', 'warning', 4000);
+    else if (status === 429) Utils.showToast('Rate limit reached. Please wait a moment and try again.', 'error', 5000);
   },
 
   async analyzeText(mealDescription) {
@@ -104,8 +104,8 @@ Return ONLY a valid JSON array. No markdown, no explanation, no code fences. Eac
 Rules:
 - calories/protein/carbs/fat/fiber/sugar/sodium are the TOTAL for the stated quantity.
 - fiber (g), sugar (g), sodium (mg).
-- Parse quantity from the text (e.g. "3 eggs" → quantity: 3).
-- ALWAYS include "weight_grams" — the total weight in grams for the item.
+- Parse quantity from the text (e.g. "3 eggs" -> quantity: 3).
+- ALWAYS include "weight_grams": the total weight in grams for the item.
 - "serving" should be the weight (e.g. "200g", "150g"), NOT "1 serving".
 - Use USDA-based nutritional values.
 - Calories/sodium must be whole numbers. Macros/fiber/sugar can have 1 decimal place.`;
@@ -163,10 +163,10 @@ IMPORTANT: Factor these described ingredients into your analysis. They ARE part 
 IMPORTANT RULES:
 1. Calculate ALL nutritional values yourself using USDA-standard reference data. Always provide your best expert estimate.
 2. Even if the image is blurry, dark, or unclear, try your BEST to identify the food. Use visual cues like color, shape, texture, plate type, and context.
-3. If a USER DESCRIPTION is provided above, use it as strong guidance. The description tells you what the food IS — trust it even if the image is ambiguous. Combine visual analysis with the description.
+3. If a USER DESCRIPTION is provided above, use it as strong guidance. The description tells you what the food IS: trust it even if the image is ambiguous. Combine visual analysis with the description.
 4. ONLY return the error response if there is genuinely NO food at all in the image (e.g. a photo of a car, a blank wall, etc.).
-5. FOR PACKAGED/BRANDED PRODUCTS: Read the brand name, product name, and volume/weight from the packaging. Use standard published nutritional data for that specific product and size. Do NOT guess — use real data.
-6. CRITICAL SANITY CHECK — Use these reference calorie densities to verify your estimates:
+5. FOR PACKAGED/BRANDED PRODUCTS: Read the brand name, product name, and volume/weight from the packaging. Use standard published nutritional data for that specific product and size. Do NOT guess: use real data.
+6. CRITICAL SANITY CHECK - Use these reference calorie densities to verify your estimates:
    - Water/zero-cal drinks: 0 kcal
    - Sodas/colas/juice drinks: 40-50 kcal per 100ml (so 300ml = 120-150 kcal)
    - Fruits & vegetables: 20-60 kcal per 100g
@@ -214,12 +214,12 @@ Otherwise return a JSON array:
 ]
 
 Rules:
-- ALWAYS include "weight_grams" — estimated weight in grams for EVERY item and ingredient.
+- ALWAYS include "weight_grams": estimated weight in grams for EVERY item and ingredient.
 - Include fiber (g), sugar (g), sodium (mg).
 - "serving" MUST be the weight (e.g. "400g", "150g"), NEVER "1 serving" or "1 plate".
-- Identify the main DISH name — not individual ingredients as top-level items.
+- Identify the main DISH name: not individual ingredients as top-level items.
 - Provide ingredient breakdown for complex dishes. Simple foods (apple) can have empty [].
-- Estimate portion size visually. Typical plate ≈ 400-600g.
+- Estimate portion size visually. Typical plate is ~400-600g.
 - Calories/sodium whole number, macros/fiber/sugar 1 decimal.
 - Return ONLY the JSON array. No markdown.`;
 
@@ -266,28 +266,28 @@ Rules:
       parts: [{ text: m.text }]
     }));
 
-    const systemPrompt = `You are a friendly, knowledgeable AI fitness and nutrition coach inside a calorie tracking app called MacroLens. You have FULL ACCESS to the user's real tracking data provided below.
+    const systemPrompt = `You are a knowledgeable AI fitness and nutrition coach inside a calorie tracking app called MacroLens. You have FULL ACCESS to the user's real tracking data provided below.
 
 Rules:
 1. ONLY answer questions about fitness, nutrition, exercise, supplements, body composition, workout routines, meal planning, and health.
-2. If the user asks something unrelated to fitness/nutrition (like coding, math, history, etc.), politely decline: "I'm your fitness coach! I can only help with nutrition, exercise, and health questions. 💪"
+2. If the user asks something unrelated to fitness/nutrition (like coding, math, history, etc.), politely decline: "I'm your fitness coach and can only help with nutrition, exercise, and health questions."
 3. Keep answers concise (2-4 paragraphs max), practical, and evidence-based.
-4. Use a friendly, encouraging tone.
+4. Use a clear, direct, supportive tone without emojis or filler.
 5. When giving nutritional advice, mention specific numbers where helpful (grams, calories, etc.).
 6. Never provide medical diagnoses. Suggest consulting a doctor for medical concerns.
 7. CRITICAL DATA USAGE RULES:
    - When the user asks about their progress, intake, meals, macros, weight, or any personal question: You MUST cite their ACTUAL data. Reference specific food names they ate, exact calorie/macro numbers, percentages of targets hit, and weekly trends.
-   - Example: Instead of "You're doing well with protein", say "You've eaten 95g of 150g protein target (63%). Your chicken biryani at lunch gave you 35g — try adding a protein shake or Greek yogurt to hit your remaining 55g."
+   - Example: Instead of "You're doing well with protein", say "You've eaten 95g of 150g protein target (63%). Your chicken biryani at lunch gave you 35g; try adding a protein shake or Greek yogurt to hit your remaining 55g."
    - When they ask "what should I eat", calculate exactly how many calories/protein/carbs/fat they have remaining and suggest foods that fit those exact numbers.
    - When they ask about their weight trend, reference their actual logged weights and calculate the rate of change.
    - If they ask a general question (e.g. "how much protein in eggs"), answer directly WITHOUT mentioning their personal data.
 8. Use **bold** for emphasis and structure your responses with line breaks for readability.
-9. You know the user's personalized targets for water, fiber, sugar, and sodium — reference these when relevant.
+9. You know the user's personalized targets for water, fiber, sugar, and sodium: reference these when relevant.
 ${userContext || ''}`;
 
     const contents = [
       { role: 'user', parts: [{ text: systemPrompt }] },
-      { role: 'model', parts: [{ text: 'Got it! I\'m your MacroLens AI fitness coach with access to your tracking data. I\'ll give you personalized advice based on your meals, macros, and progress. How can I help? 💪' }] },
+      { role: 'model', parts: [{ text: "Understood. I'm your MacroLens AI fitness coach with access to your tracking data and I will give specific guidance based on your logged meals, macros, and progress." }] },
       ...contextMsgs
     ];
 
@@ -305,7 +305,7 @@ ${userContext || ''}`;
         throw new Error(`API error ${res.status}`);
       }
       const data = await res.json();
-      return data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I couldn\'t generate a response.';
+      return data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response.";
     } catch (err) {
       console.error('Coach query failed:', err);
       throw err;

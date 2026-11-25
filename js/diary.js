@@ -2,6 +2,23 @@ window.Diary = {
   currentDate: null,
   _recentItems: [],
 
+  _createTrashSvg() {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '1.5');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.classList.add('svg-icon');
+    const p = document.createElementNS(ns, 'path');
+    p.setAttribute('d', 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14');
+    svg.appendChild(p);
+    return svg;
+  },
+
   init() {
     this.currentDate = Utils.todayStr();
 
@@ -64,7 +81,7 @@ window.Diary = {
         if (item.fiber) microParts.push(`Fib:${Math.round(item.fiber * 10) / 10}g`);
         if (item.sugar) microParts.push(`Sug:${Math.round(item.sugar * 10) / 10}g`);
         if (item.sodium) microParts.push(`Sod:${Math.round(item.sodium)}mg`);
-        const microStr = microParts.length ? ` · ${microParts.join(' ')}` : '';
+        const microStr = microParts.length ? ` | ${microParts.join(' ')}` : '';
 
         const row = document.createElement('div');
         row.className = 'meal-item';
@@ -79,7 +96,7 @@ window.Diary = {
 
         const servEl = document.createElement('span');
         servEl.className = 'meal-item-serving';
-        servEl.textContent = `${item.serving || ''} · P:${Math.round(item.protein || 0)}g C:${Math.round(item.carbs || 0)}g F:${Math.round(item.fat || 0)}g${microStr}`;
+        servEl.textContent = `${item.serving || ''} | P:${Math.round(item.protein || 0)}g C:${Math.round(item.carbs || 0)}g F:${Math.round(item.fat || 0)}g${microStr}`;
 
         info.appendChild(nameEl);
         info.appendChild(servEl);
@@ -93,10 +110,7 @@ window.Diary = {
         delBtn.title = 'Remove';
         delBtn.setAttribute('aria-label', `Remove ${item.name || 'item'}`);
         delBtn.addEventListener('click', () => this.deleteItem(this.currentDate, meal, item.id));
-
-        const delIcon = document.createElement('i');
-        delIcon.setAttribute('data-lucide', 'trash-2');
-        delBtn.appendChild(delIcon);
+        delBtn.appendChild(this._createTrashSvg());
 
         row.appendChild(info);
         row.appendChild(calsEl);
@@ -106,7 +120,6 @@ window.Diary = {
     });
 
     this.renderRecentFoods();
-    if (typeof lucide !== 'undefined') lucide.createIcons();
   },
 
   deleteItem(dateStr, mealType, itemId) {
@@ -146,7 +159,7 @@ window.Diary = {
 
       const calEl = document.createElement('span');
       calEl.className = 'ff-cal';
-      calEl.textContent = `${Math.round(item.calories || 0)} kcal · ${dateLabel}`;
+      calEl.textContent = `${Math.round(item.calories || 0)} kcal | ${dateLabel}`;
 
       card.appendChild(nameEl);
       card.appendChild(calEl);
@@ -178,20 +191,20 @@ window.Diary = {
     grid.style.cssText = 'display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; text-align:center;';
 
     const boxes = [
-      { value: String(Math.round(item.calories || 0)), label: 'kcal', color: 'var(--accent-primary)' },
-      { value: `${parseFloat((item.protein || 0).toFixed(1))}g`, label: 'Protein', color: '#ef4444' },
-      { value: `${parseFloat((item.carbs || 0).toFixed(1))}g`, label: 'Carbs', color: '#f59e0b' },
-      { value: `${parseFloat((item.fat || 0).toFixed(1))}g`, label: 'Fat', color: '#3b82f6' }
+      { value: String(Math.round(item.calories || 0)), label: 'kcal', color: 'var(--accent-text)' },
+      { value: `${parseFloat((item.protein || 0).toFixed(1))}g`, label: 'Protein', color: 'var(--accent-text)' },
+      { value: `${parseFloat((item.carbs || 0).toFixed(1))}g`, label: 'Carbs', color: 'var(--text-primary)' },
+      { value: `${parseFloat((item.fat || 0).toFixed(1))}g`, label: 'Fat', color: 'var(--fats-color)' }
     ];
 
     boxes.forEach(b => {
       const card = document.createElement('div');
-      card.style.cssText = 'background:var(--bg-tertiary); padding:10px 6px; border-radius:10px;';
+      card.style.cssText = 'background:var(--bg-primary); padding:10px 6px; border-radius:4px; border:1px solid var(--border-color);';
       const valEl = document.createElement('div');
-      valEl.style.cssText = `font-size:1.1rem; font-weight:700; color:${b.color};`;
+      valEl.style.cssText = `font-size:1.05rem; font-weight:700; color:${b.color}; font-variant-numeric:tabular-nums;`;
       valEl.textContent = b.value;
       const lblEl = document.createElement('div');
-      lblEl.style.cssText = 'font-size:0.7rem; color:var(--text-secondary); margin-top:2px;';
+      lblEl.style.cssText = 'font-size:0.7rem; color:var(--text-muted); margin-top:2px;';
       lblEl.textContent = b.label;
       card.appendChild(valEl);
       card.appendChild(lblEl);
@@ -202,7 +215,7 @@ window.Diary = {
     metaEl.style.cssText = 'margin-top:8px; font-size:0.78rem; color:var(--text-secondary); text-align:center;';
     const mealName = item.mealType ? item.mealType.charAt(0).toUpperCase() + item.mealType.slice(1) : '';
     const dateName = item.date === Utils.todayStr() ? 'Today' : Utils.formatShortDate(item.date);
-    metaEl.textContent = `${item.serving || ''} · ${mealName} · ${dateName}`;
+    metaEl.textContent = `${item.serving || ''} | ${mealName} | ${dateName}`;
 
     macrosContainer.appendChild(grid);
     macrosContainer.appendChild(metaEl);
@@ -212,25 +225,25 @@ window.Diary = {
 
     if (item.ingredients && item.ingredients.length > 0) {
       const heading = document.createElement('div');
-      heading.style.cssText = 'font-weight:500; font-size:0.85rem; color:var(--text-primary); margin-bottom:8px;';
+      heading.style.cssText = 'font-weight:700; font-size:0.85rem; color:var(--text-primary); margin-bottom:8px;';
       heading.textContent = 'Ingredients';
       ingContainer.appendChild(heading);
 
       item.ingredients.forEach(ing => {
         const row = document.createElement('div');
-        row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color); font-size:0.8rem;';
+        row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-subtle); font-size:0.8rem;';
 
         const left = document.createElement('span');
         left.style.color = 'var(--text-primary)';
-        left.textContent = `• ${ing.name || 'Ingredient'}`;
+        left.textContent = ing.name || 'Ingredient';
 
         const right = document.createElement('span');
-        right.style.cssText = 'color:var(--text-secondary); font-size:0.75rem;';
+        right.style.cssText = 'color:var(--text-muted); font-size:0.75rem; font-variant-numeric:tabular-nums;';
         const w = ing.serving || (ing.weight_grams ? `${ing.weight_grams}g` : '');
         const p = Number(ing.protein || 0).toFixed(1);
         const c = Number(ing.carbs || 0).toFixed(1);
         const f = Number(ing.fat || 0).toFixed(1);
-        right.textContent = `${w} · ${ing.calories || 0} kcal · P:${p}g C:${c}g F:${f}g`;
+        right.textContent = `${w} | ${ing.calories || 0} kcal | P:${p}g C:${c}g F:${f}g`;
 
         row.appendChild(left);
         row.appendChild(right);
@@ -238,13 +251,12 @@ window.Diary = {
       });
     } else {
       const empty = document.createElement('p');
-      empty.style.cssText = 'font-size:0.8rem; color:var(--text-secondary); text-align:center;';
+      empty.style.cssText = 'font-size:0.8rem; color:var(--text-muted); text-align:center;';
       empty.textContent = 'No ingredient breakdown available.';
       ingContainer.appendChild(empty);
     }
 
     modal.classList.remove('hidden');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
 
     document.getElementById('recent-detail-close').onclick = () => modal.classList.add('hidden');
     modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };

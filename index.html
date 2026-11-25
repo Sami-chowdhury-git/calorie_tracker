@@ -3,27 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="Track your calories, macros, and fitness goals with an intelligent AI-powered food diary." />
-  <title>MacroLens — Smart Calorie & Macro Tracker</title>
+  <meta name="theme-color" content="#F3EEE3" />
+  <meta name="description" content="MacroLens is a calorie, macronutrient, and hydration tracker with AI food photo scanning, Open Food Facts barcode lookup, and structured progress analytics." />
+  <title>MacroLens - Calorie, Macro &amp; Hydration Tracker</title>
 
-  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23F3EEE3' stroke='%23111111' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='8.5' fill='none' stroke='%23111111' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23D9541E'/%3E%3Cpath d='M16 4v3M16 25v3M4 16h3M25 16h3' stroke='%23111111' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
 
-  
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-
-  
   <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
-
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-  
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/onboarding.css" />
@@ -39,207 +33,271 @@
 </head>
 <body>
 
-  
+  <!-- SCREEN 1: EDITORIAL LANDING & AUTH -->
   <section id="auth-screen" class="screen active">
-    
-    <div class="landing-bg">
-      <div class="landing-bg-orb"></div>
-      <div class="landing-bg-orb"></div>
-      <div class="landing-bg-orb"></div>
-    </div>
-
-    
-    <div class="landing-slides">
-
-      
-      <div class="landing-slide active" data-slide="0">
-        <div class="landing-hero-logo">
-          <i data-lucide="flame"></i>
-        </div>
-        <h1>Macro<span class="accent">Lens</span></h1>
-        <p class="landing-hero-tagline">Your intelligent AI-powered nutrition companion. Track calories, scan food with your camera, and crush your fitness goals.</p>
-        <div class="landing-scroll-cue">
-          <span>Scroll to explore</span>
-          <i data-lucide="chevrons-down"></i>
-        </div>
+    <header class="landing-header">
+      <div class="landing-header-inner">
+        <a href="#auth-screen" class="landing-brand" aria-label="MacroLens Home">
+          <svg class="landing-brand-mark svg-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="25" height="25" rx="3" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="14" cy="14" r="6.5" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="14" cy="14" r="2.2" fill="#D9541E" stroke="#D9541E" stroke-width="1" />
+            <path d="M14 4.5V7M14 21V23.5M4.5 14H7M21 14H23.5" stroke="currentColor" stroke-width="1.5" />
+          </svg>
+          <span>MacroLens</span>
+        </a>
+        <nav class="landing-nav" aria-label="Landing navigation">
+          <a href="#landing-features">Features</a>
+          <button type="button" class="landing-nav-link" id="nav-privacy-btn">Privacy</button>
+          <button type="button" class="landing-nav-link" id="nav-terms-btn">Terms</button>
+          <a href="#landing-auth-section" id="landing-nav-signin">Sign In</a>
+        </nav>
       </div>
+    </header>
 
-      
-      <div class="landing-slide" data-slide="1">
-        <div class="feature-icon-wrapper feature-icon-1">
-          <i data-lucide="camera"></i>
+    <main class="landing-main">
+      <section class="landing-hero">
+        <span class="landing-kicker">Nutrition &amp; Macro Ledger</span>
+        <h1>Track daily calories, macros, and hydration with clear records.</h1>
+        <p class="landing-hero-copy">
+          Log meals from a dish photo, a natural language note, a packaged food barcode, or manual macro values. Calculate personalized calorie targets, review daily food logs, and export structured nutrition reports.
+        </p>
+        <div class="landing-hero-actions">
+          <a href="#landing-auth-section" id="landing-cta-btn" class="btn btn-primary">
+            Sign In or Create Account
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </a>
+          <a href="#landing-features" class="btn btn-ghost">Inspect All 9 Features</a>
         </div>
-        <h2>AI Food Scanner</h2>
-        <p class="feature-desc">Snap a photo of your meal and our AI instantly identifies every ingredient, calculates calories, protein, carbs, and fats — no manual entry needed.</p>
-        <div class="feature-highlights">
-          <span class="feature-pill">📸 Photo Analysis</span>
-          <span class="feature-pill">🧠 Gemini AI</span>
-          <span class="feature-pill">⚡ Instant Results</span>
-        </div>
-      </div>
+      </section>
 
-      
-      <div class="landing-slide" data-slide="2">
-        <div class="feature-icon-wrapper feature-icon-2">
-          <i data-lucide="pie-chart"></i>
+      <section id="landing-features" class="landing-features-section" aria-labelledby="features-heading">
+        <div class="landing-section-head">
+          <h2 id="features-heading">What MacroLens Includes</h2>
+          <span class="landing-section-meta">01 - 09 / Core Feature Index</span>
         </div>
-        <h2>Smart Macro Tracking</h2>
-        <p class="feature-desc">Beautiful visual rings show your daily progress. Track protein, carbs, and fats with precision. Set custom goals for cutting, bulking, or maintenance.</p>
-        <div class="feature-highlights">
-          <span class="feature-pill">🎯 Custom Goals</span>
-          <span class="feature-pill">📊 Visual Rings</span>
-          <span class="feature-pill">🔄 TDEE Calculator</span>
-        </div>
-      </div>
 
-      
-      <div class="landing-slide" data-slide="3">
-        <div class="feature-icon-wrapper feature-icon-3">
-          <i data-lucide="book-open"></i>
-        </div>
-        <h2>Complete Food Diary</h2>
-        <p class="feature-desc">Log breakfast, lunch, dinner, and snacks. Browse past days, see exactly what you ate, and track your nutrition history over time.</p>
-        <div class="feature-highlights">
-          <span class="feature-pill">📅 Daily Logs</span>
-          <span class="feature-pill">🍽️ Meal Categories</span>
-          <span class="feature-pill">📜 History</span>
-        </div>
-      </div>
+        <div class="landing-features-grid">
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">01</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2" />
+                <circle cx="12" cy="12" r="3.5" />
+              </svg>
+            </div>
+            <h3>AI Food Scanner</h3>
+            <p>Upload or capture a meal photo to detect ingredients, estimate gram portions, and adjust items before logging.</p>
+            <div class="feature-spec">Vision &amp; text parsing via Gemini 2.5 Flash</div>
+          </article>
 
-      
-      <div class="landing-slide" data-slide="4">
-        <div class="feature-icon-wrapper feature-icon-4">
-          <i data-lucide="droplets"></i>
-        </div>
-        <h2>Smart Hydration Tracker</h2>
-        <p class="feature-desc">Dynamic daily water targets calculated automatically based on your body weight, activity sweat rate, and fitness goals with one-tap quick logging.</p>
-        <div class="feature-highlights">
-          <span class="feature-pill">💧 Dynamic Goal (ml)</span>
-          <span class="feature-pill">⚡ 1-Tap Quick Add</span>
-          <span class="feature-pill">🌊 Visual Progress</span>
-        </div>
-      </div>
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">02</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 4v8l5.5 3.2" />
+              </svg>
+            </div>
+            <h3>Macro Tracking</h3>
+            <p>Track daily calorie consumption against remaining budget alongside individual rings for Protein, Carbs, and Fats.</p>
+            <div class="feature-spec">Mifflin-St Jeor TDEE &amp; custom macro targets</div>
+          </article>
 
-      
-      <div class="landing-slide" data-slide="5">
-        <div class="feature-icon-wrapper feature-icon-5">
-          <i data-lucide="scan-barcode"></i>
-        </div>
-        <h2>Barcode Food Scanner</h2>
-        <p class="feature-desc">Point your camera at any packaged item to scan its barcode. Powered by Open Food Facts to automatically pull exact calories, macros, and micronutrients.</p>
-        <div class="feature-highlights">
-          <span class="feature-pill">📷 Live Camera Scanner</span>
-          <span class="feature-pill">🌐 Open Food Facts API</span>
-          <span class="feature-pill">⚡ Instant Macros</span>
-        </div>
-      </div>
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">03</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="4" y="4" width="16" height="16" rx="2" />
+                <path d="M8 9h8M8 13h8M8 17h5" />
+              </svg>
+            </div>
+            <h3>Food Diary</h3>
+            <p>Organize entries under Breakfast, Lunch, Dinner, and Snacks, move across dates, and inspect logged ingredients.</p>
+            <div class="feature-spec">Per-record sync &amp; recent meal detail view</div>
+          </article>
 
-      
-      <div class="landing-slide" data-slide="6">
-        <div class="feature-icon-wrapper feature-icon-6">
-          <i data-lucide="file-text"></i>
-        </div>
-        <h2>Micronutrients & Reports</h2>
-        <p class="feature-desc">Monitor essential Fiber, Sugar, and Sodium limits personalized to your TDEE and health goals. Export clean, printable PDF and Excel CSV reports anytime.</p>
-        <div class="feature-highlights">
-          <span class="feature-pill">🥗 Fiber & Sodium</span>
-          <span class="feature-pill">📄 PDF Export</span>
-          <span class="feature-pill">📊 CSV Spreadsheets</span>
-        </div>
-      </div>
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">04</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 3.5C12 3.5 6 10.5 6 14.5a6 6 0 0 0 12 0c0-4-6-11-6-11z" />
+              </svg>
+            </div>
+            <h3>Hydration Tracker</h3>
+            <p>Derive a weight-adjusted daily water target in milliliters and record intake with +250 ml, +500 ml, +750 ml, or custom amounts.</p>
+            <div class="feature-spec">Timestamped water entries &amp; daily reset</div>
+          </article>
 
-      
-      <div class="landing-slide" data-slide="7">
-        <div class="feature-icon-wrapper feature-icon-7">
-          <i data-lucide="bot"></i>
-        </div>
-        <h2>Personal AI Coach</h2>
-        <p class="feature-desc">Chat with your AI fitness coach anytime. Get personalized advice on nutrition, workout routines, and diet plans based on your actual data.</p>
-        <div class="feature-highlights">
-          <span class="feature-pill">💬 Chat Interface</span>
-          <span class="feature-pill">🤖 Personalized</span>
-          <span class="feature-pill">📈 Data-Aware</span>
-        </div>
-      </div>
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">05</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 6v12M8 6v12M11 6v12M15 6v12M19 6v12M21 6v12" />
+              </svg>
+            </div>
+            <h3>Barcode Scanner</h3>
+            <p>Read packaged UPC or EAN codes through your camera or search by barcode number to retrieve per-serving labels.</p>
+            <div class="feature-spec">Open Food Facts public v2 database</div>
+          </article>
 
-      
-      <div class="landing-slide" data-slide="8">
-        <div class="feature-icon-wrapper feature-icon-8">
-          <i data-lucide="trophy"></i>
-        </div>
-        <h2>Analytics & Achievements</h2>
-        <p class="feature-desc">Track your progress with beautiful charts. Earn badges for consistency. Build streaks and stay motivated on your fitness journey.</p>
-        <div class="feature-highlights">
-          <span class="feature-pill">📉 Weekly Charts</span>
-          <span class="feature-pill">🏆 Badges</span>
-          <span class="feature-pill">🔥 Streaks</span>
-        </div>
-      </div>
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">06</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" />
+                <path d="M14 3v5h5M9 13h6M9 17h4" />
+              </svg>
+            </div>
+            <h3>Micronutrients &amp; Exports</h3>
+            <p>Monitor daily Fiber targets and Sugar and Sodium ceilings, then download CSV spreadsheets or printable PDF reports.</p>
+            <div class="feature-spec">7-day, 30-day &amp; all-time export ranges</div>
+          </article>
 
-      
-      <div class="landing-slide" data-slide="9">
-        <div class="landing-auth-card">
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">07</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 5h16v11H9l-5 4V5z" />
+                <path d="M8 10h8M8 13h5" />
+              </svg>
+            </div>
+            <h3>AI Coach</h3>
+            <p>Ask practical nutrition and training questions in saved chat threads informed by your logged foods and weight records.</p>
+            <div class="feature-spec">Multi-thread history synchronized per user</div>
+          </article>
+
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">08</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 19h16M7 15v-4M12 15V7M17 15v-7" />
+              </svg>
+            </div>
+            <h3>Analytics</h3>
+            <p>Compare daily calories eaten versus target across 7 days and review 7-day or 30-day body weight trend charts.</p>
+            <div class="feature-spec">Chart.js series in kg or lbs units</div>
+          </article>
+
+          <article class="feature-cell">
+            <div class="feature-cell-top">
+              <span class="feature-index">09</span>
+              <svg class="feature-svg svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="9" r="5" />
+                <path d="M9.5 13.5L8 21l4-2 4 2-1.5-7.5" />
+              </svg>
+            </div>
+            <h3>Streaks &amp; Badges</h3>
+            <p>Maintain consecutive logging streaks computed from actual daily entries and unlock 12 verifiable milestone badges.</p>
+            <div class="feature-spec">Monotonic achievement state across sync</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="landing-auth-section" class="landing-auth-section">
+        <div class="landing-auth-intro">
+          <span class="landing-kicker">Account Access</span>
+          <h2>Sign in or start a new logbook</h2>
+          <p>Your account connects browser storage to MySQL through HttpOnly session cookies so meals, targets, and coach threads stay available across reloads.</p>
+          <ul class="landing-spec-list">
+            <li><span>Session auth</span><span>Signed HttpOnly JWT cookies</span></li>
+            <li><span>Conflict resolution</span><span>Per-record timestamp sync</span></li>
+            <li><span>Unit support</span><span>kg / lbs and cm / ft-in</span></li>
+            <li><span>Report downloads</span><span>CSV tables and A4 PDFs</span></li>
+          </ul>
+        </div>
+
+        <div class="landing-auth-card" id="landing-auth-card">
           <div class="auth-brand">
             <div class="auth-logo">
-              <i data-lucide="flame" class="logo-icon"></i>
+              <svg class="svg-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                <rect x="2" y="2" width="24" height="24" rx="3" stroke="currentColor" stroke-width="1.5" />
+                <circle cx="14" cy="14" r="6.5" stroke="currentColor" stroke-width="1.5" />
+                <circle cx="14" cy="14" r="2.2" fill="#D9541E" stroke="#D9541E" stroke-width="1" />
+              </svg>
             </div>
-            <h1 class="brand-title">Macro<span class="accent">Lens</span></h1>
-            <p class="brand-subtitle">Ready to transform your nutrition?</p>
+            <h2 class="brand-title">Macro<span class="accent">Lens</span></h2>
+            <p class="brand-subtitle">Access your nutrition logbook</p>
           </div>
 
-          
           <form id="auth-login-form" class="auth-form">
-            <h2 class="auth-heading">Welcome</h2>
+            <h3 class="auth-heading">Sign In</h3>
             <div class="input-group">
-              <i data-lucide="mail" class="input-icon"></i>
+              <svg class="input-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6 9-6" />
+              </svg>
               <input type="email" id="login-email" class="input-field" placeholder="Email address" aria-label="Email address" required autocomplete="email" />
             </div>
             <div class="input-group">
-              <i data-lucide="lock" class="input-icon"></i>
+              <svg class="input-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="9" rx="2" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
               <input type="password" id="login-password" class="input-field" placeholder="Password" aria-label="Password" required autocomplete="current-password" />
             </div>
             <button type="submit" id="login-submit-btn" class="btn btn-primary btn-full">
               <span>Sign In</span>
-              <i data-lucide="arrow-right"></i>
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
             </button>
             <p class="auth-switch">
-              Don't have an account? <a href="#" id="show-signup">Create one</a>
+              New to MacroLens? <a href="#" id="show-signup">Create an account</a>
             </p>
           </form>
 
-          
           <form id="auth-signup-form" class="auth-form hidden">
-            <h2 class="auth-heading">Create account</h2>
+            <h3 class="auth-heading">Create Account</h3>
             <div class="input-group">
-              <i data-lucide="user" class="input-icon"></i>
+              <svg class="input-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M5 20a7 7 0 0 1 14 0" />
+              </svg>
               <input type="text" id="signup-name" class="input-field" placeholder="Full name" aria-label="Full name" required autocomplete="name" />
             </div>
             <div class="input-group">
-              <i data-lucide="mail" class="input-icon"></i>
+              <svg class="input-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6 9-6" />
+              </svg>
               <input type="email" id="signup-email" class="input-field" placeholder="Email address" aria-label="Email address" required autocomplete="email" />
             </div>
             <div class="input-group">
-              <i data-lucide="lock" class="input-icon"></i>
+              <svg class="input-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="9" rx="2" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
               <input type="password" id="signup-password" class="input-field" placeholder="Password (min 6 chars)" aria-label="Password" required minlength="6" autocomplete="new-password" />
             </div>
             <button type="submit" id="signup-submit-btn" class="btn btn-primary btn-full">
               <span>Get Started</span>
-              <i data-lucide="sparkles"></i>
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
             </button>
             <p class="auth-switch">
               Already have an account? <a href="#" id="show-login">Sign in</a>
             </p>
           </form>
         </div>
-      </div>
+      </section>
 
-    </div>
+      <footer class="landing-footer">
+        <span>MacroLens Nutrition &amp; Macro Tracker</span>
+        <div class="landing-footer-links">
+          <button type="button" class="legal-inline-btn" id="landing-privacy-link">Privacy Policy</button>
+          <button type="button" class="legal-inline-btn" id="landing-terms-link">Terms and Conditions</button>
+        </div>
+      </footer>
+    </main>
   </section>
 
-  
+  <!-- SCREEN 2: ONBOARDING WIZARD -->
   <section id="onboarding-screen" class="screen">
-    <div class="onboarding-container">
-      
+    <main class="onboarding-container">
       <div id="onboarding-progress" class="ob-progress">
         <div class="ob-progress-track">
           <div class="ob-progress-fill" id="ob-progress-fill"></div>
@@ -253,12 +311,14 @@
         </div>
       </div>
 
-      
       <div class="onboarding-step active" data-step="1">
         <div class="ob-step-header">
-          <i data-lucide="user" class="ob-step-icon"></i>
-          <h2>Let's get to know you</h2>
-          <p>Tell us a bit about yourself to personalize your experience.</p>
+          <svg class="ob-step-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M5 20a7 7 0 0 1 14 0" />
+          </svg>
+          <h2>Profile Details</h2>
+          <p>Enter your name, age, and biological sex for basal metabolic rate calculation.</p>
         </div>
         <div class="ob-form-grid">
           <div class="input-group">
@@ -273,22 +333,32 @@
             <label>Gender</label>
             <div class="ob-toggle-group">
               <button type="button" class="ob-toggle active" id="ob-gender-male" data-value="male">
-                <i data-lucide="user"></i> Male
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M5 20a7 7 0 0 1 14 0" />
+                </svg>
+                Male
               </button>
               <button type="button" class="ob-toggle" id="ob-gender-female" data-value="female">
-                <i data-lucide="user"></i> Female
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M5 20a7 7 0 0 1 14 0" />
+                </svg>
+                Female
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      
       <div class="onboarding-step" data-step="2">
         <div class="ob-step-header">
-          <i data-lucide="ruler" class="ob-step-icon"></i>
+          <svg class="ob-step-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <rect x="4" y="6" width="16" height="12" rx="2" />
+            <path d="M8 6v4M12 6v2M16 6v4" />
+          </svg>
           <h2>Body Metrics</h2>
-          <p>We'll use this to calculate your daily calorie needs.</p>
+          <p>Used with the Mifflin-St Jeor equation in either metric or imperial units.</p>
         </div>
         <div class="ob-form-grid">
           <div class="input-group">
@@ -318,77 +388,119 @@
         </div>
       </div>
 
-      
       <div class="onboarding-step" data-step="3">
         <div class="ob-step-header">
-          <i data-lucide="activity" class="ob-step-icon"></i>
+          <svg class="ob-step-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M3 12h4l3-7 4 14 3-7h4" />
+          </svg>
           <h2>Activity Level</h2>
-          <p>How active are you on a typical day?</p>
+          <p>Select your typical weekly training and daily movement baseline.</p>
         </div>
         <div class="ob-card-grid">
           <button type="button" class="ob-selection-card" data-level="1.2">
-            <div class="ob-card-icon"><i data-lucide="armchair"></i></div>
+            <div class="ob-card-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="6" rx="1" />
+                <path d="M7 11V7h10v4M7 17v3M17 17v3" />
+              </svg>
+            </div>
             <h3>Sedentary</h3>
-            <p>Little to no exercise, desk job</p>
+            <p>Little to no structured exercise, desk job</p>
           </button>
           <button type="button" class="ob-selection-card" data-level="1.375">
-            <div class="ob-card-icon"><i data-lucide="walk"></i></div>
+            <div class="ob-card-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="13" cy="5" r="2" />
+                <path d="M12 8l-2 6 4 2 1 5M10 14l-3 5M8 10l4-2 4 3" />
+              </svg>
+            </div>
             <h3>Lightly Active</h3>
-            <p>Light exercise 1-3 days/week</p>
+            <p>Light exercise 1 to 3 days/week</p>
           </button>
           <button type="button" class="ob-selection-card active" data-level="1.55">
-            <div class="ob-card-icon"><i data-lucide="bike"></i></div>
+            <div class="ob-card-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="6.5" cy="17" r="3.5" />
+                <circle cx="17.5" cy="17" r="3.5" />
+                <path d="M6.5 17L10 9h4l3.5 8M10 9l-2-3h3" />
+              </svg>
+            </div>
             <h3>Moderately Active</h3>
-            <p>Moderate exercise 3-5 days/week</p>
+            <p>Moderate exercise 3 to 5 days/week</p>
           </button>
           <button type="button" class="ob-selection-card" data-level="1.725">
-            <div class="ob-card-icon"><i data-lucide="dumbbell"></i></div>
+            <div class="ob-card-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M6 9v6M18 9v6M3 10.5v3M21 10.5v3M6 12h12" />
+              </svg>
+            </div>
             <h3>Very Active</h3>
-            <p>Hard exercise 6-7 days/week</p>
+            <p>Hard exercise 6 to 7 days/week</p>
           </button>
           <button type="button" class="ob-selection-card" data-level="1.9">
-            <div class="ob-card-icon"><i data-lucide="flame"></i></div>
+            <div class="ob-card-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M13 3L5 14h6l-1 7 9-11h-6l0-7z" />
+              </svg>
+            </div>
             <h3>Extremely Active</h3>
-            <p>Intense training, physical job</p>
+            <p>Intense daily training or physical work</p>
           </button>
         </div>
       </div>
 
-      
       <div class="onboarding-step" data-step="4">
         <div class="ob-step-header">
-          <i data-lucide="target" class="ob-step-icon"></i>
-          <h2>Your Goal</h2>
-          <p>What are you working towards?</p>
+          <svg class="ob-step-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="12" cy="12" r="8" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="12" cy="12" r="1" fill="currentColor" />
+          </svg>
+          <h2>Primary Goal</h2>
+          <p>Choose whether to eat below, at, or above your maintenance calories.</p>
         </div>
         <div class="ob-card-grid goals">
           <button type="button" class="ob-selection-card goal-card" data-goal="cut">
-            <div class="ob-card-icon"><i data-lucide="trending-down"></i></div>
+            <div class="ob-card-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 7l6 6 4-4 6 6M15 15h5v-5" />
+              </svg>
+            </div>
             <h3>Fat Loss</h3>
-            <p>Calorie deficit to lose body fat while preserving muscle</p>
+            <p>Calorie deficit to reduce body fat while retaining lean mass</p>
             <span class="goal-tag">Up to -500 kcal/day</span>
           </button>
           <button type="button" class="ob-selection-card goal-card" data-goal="maintain">
-            <div class="ob-card-icon"><i data-lucide="equal"></i></div>
+            <div class="ob-card-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M5 9h14M5 15h14" />
+              </svg>
+            </div>
             <h3>Maintenance</h3>
-            <p>Maintain current weight and body composition</p>
-            <span class="goal-tag">± 0 kcal/day</span>
+            <p>Maintain current weight and energy balance</p>
+            <span class="goal-tag">0 kcal/day offset</span>
           </button>
           <button type="button" class="ob-selection-card goal-card" data-goal="bulk">
-            <div class="ob-card-icon"><i data-lucide="trending-up"></i></div>
+            <div class="ob-card-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 17l6-6 4 4 6-6M15 9h5v5" />
+              </svg>
+            </div>
             <h3>Muscle Gain</h3>
-            <p>Calorie surplus to build muscle and strength</p>
-            <span class="goal-tag">+150–300 kcal/day</span>
+            <p>Controlled surplus to support strength and lean weight gain</p>
+            <span class="goal-tag">+150 to +300 kcal/day</span>
           </button>
         </div>
       </div>
 
-      
       <div class="onboarding-step" data-step="5">
         <div class="ob-step-header">
-          <i data-lucide="sparkles" class="ob-step-icon"></i>
-          <h2>Your Personalized Plan</h2>
-          <p>Here's what we recommend based on your profile.</p>
+          <svg class="ob-step-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <rect x="4" y="4" width="16" height="16" rx="2" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+          <h2>Calculated Daily Targets</h2>
+          <p>You can revise any calorie or macro goal later from the dashboard.</p>
         </div>
         <div class="ob-results">
           <div class="ob-result-hero">
@@ -398,19 +510,25 @@
           </div>
           <div class="ob-macro-cards">
             <div class="ob-macro-card protein">
-              <i data-lucide="beef"></i>
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" />
+              </svg>
               <span class="macro-label">Protein</span>
               <span class="macro-value" id="ob-protein-value">165</span>
               <span class="macro-unit">g / day</span>
             </div>
             <div class="ob-macro-card carbs">
-              <i data-lucide="wheat"></i>
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 18h16M6 14h12M8 10h8M12 6v12" />
+              </svg>
               <span class="macro-label">Carbs</span>
               <span class="macro-value" id="ob-carbs-value">220</span>
               <span class="macro-unit">g / day</span>
             </div>
             <div class="ob-macro-card fats">
-              <i data-lucide="droplets"></i>
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 4c0 0-5 6.5-5 10a5 5 0 0 0 10 0c0-3.5-5-10-5-10z" />
+              </svg>
               <span class="macro-label">Fats</span>
               <span class="macro-value" id="ob-fat-value">73</span>
               <span class="macro-unit">g / day</span>
@@ -419,703 +537,860 @@
         </div>
       </div>
 
-      
       <div class="ob-nav">
         <button type="button" id="ob-back-btn" class="btn btn-ghost hidden">
-          <i data-lucide="arrow-left"></i> Back
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+          </svg>
+          Back
         </button>
-        <button type="button" id="ob-next-btn" class="btn btn-primary">
-          Next <i data-lucide="arrow-right"></i>
+        <button type="button" id="ob-next-btn" class="btn btn-secondary">
+          Next
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
         </button>
         <button type="button" id="ob-finish-btn" class="btn btn-primary hidden">
-          Start Tracking <i data-lucide="rocket"></i>
+          Start Tracking
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
         </button>
       </div>
-    </div>
+    </main>
   </section>
 
-  
+  <!-- SCREEN 3: MAIN APP SHELL -->
   <section id="app-shell" class="screen">
 
-    
     <header id="app-header" class="app-header">
       <div class="header-left">
-        <h1 class="header-logo">Macro<span class="accent">Lens</span></h1>
+        <h1 class="header-logo">
+          <svg class="header-logo-mark svg-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect x="2" y="2" width="24" height="24" rx="3" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="14" cy="14" r="6.5" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="14" cy="14" r="2.2" fill="#D9541E" stroke="#D9541E" stroke-width="1" />
+          </svg>
+          <span>Macro<span class="accent">Lens</span></span>
+        </h1>
       </div>
       <div class="header-right">
+        <div class="header-legal-links">
+          <button type="button" class="header-text-link" id="header-privacy-btn">Privacy</button>
+          <button type="button" class="header-text-link" id="header-terms-btn">Terms</button>
+        </div>
         <button id="theme-toggle-btn" class="theme-toggle" title="Toggle theme" aria-label="Toggle color theme">
-          <i data-lucide="moon"></i>
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" />
+          </svg>
         </button>
-
-        <button id="reset-data-btn" class="icon-btn" title="Reset all data" aria-label="Reset all data" style="color: var(--danger);">
-          <i data-lucide="trash-2"></i>
+        <button id="reset-data-btn" class="icon-btn header-reset-btn" title="Reset all data" aria-label="Reset all data">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" />
+          </svg>
         </button>
         <button id="logout-btn" class="icon-btn" title="Sign out" aria-label="Sign out">
-          <i data-lucide="log-out"></i>
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+          </svg>
         </button>
       </div>
     </header>
 
     <main id="app-main">
 
-    
-    <div id="confirm-modal" class="hidden" style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); padding:20px;">
-      <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:16px; max-width:380px; width:100%; text-align:center; padding:28px 24px; box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-        <h3 id="confirm-modal-title" style="margin-bottom:10px; font-size:1.1rem; color:var(--text-primary);"></h3>
-        <p id="confirm-modal-msg" style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:22px; white-space:pre-line;"></p>
-        <div style="display:flex; gap:10px; justify-content:center;">
-          <button id="confirm-modal-cancel" class="btn btn-ghost" style="flex:1; touch-action:manipulation; min-height:44px;">Cancel</button>
-          <button id="confirm-modal-ok" class="btn btn-primary" style="flex:1; touch-action:manipulation; min-height:44px;">Confirm</button>
+      <div id="confirm-modal" class="modal-dialog hidden">
+        <div class="confirm-box">
+          <h3 id="confirm-modal-title"></h3>
+          <p id="confirm-modal-msg"></p>
+          <div class="confirm-actions">
+            <button id="confirm-modal-cancel" class="btn btn-ghost">Cancel</button>
+            <button id="confirm-modal-ok" class="btn btn-secondary">Confirm</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    
-    <div id="dashboard-view" class="view active">
-      <div class="view-content">
-        
-        <div class="dash-greeting">
-          <h2 id="greeting-text">Good evening, User</h2>
-          <p id="current-date">Thursday, May 22</p>
+      <!-- DASHBOARD VIEW -->
+      <div id="dashboard-view" class="view active">
+        <div class="view-content">
+          <div class="dash-greeting">
+            <h2 id="greeting-text">Good evening, User</h2>
+            <p id="current-date">Thursday, May 22</p>
+          </div>
+
+          <div class="calorie-ring-container">
+            <svg class="calorie-ring" viewBox="0 0 200 200" id="calorie-ring-svg">
+              <circle class="ring-bg" cx="100" cy="100" r="85" />
+              <circle class="ring-fill" cx="100" cy="100" r="85" id="calorie-ring-fill" />
+            </svg>
+            <div class="calorie-ring-info">
+              <span class="ring-remaining" id="calories-remaining">2,200</span>
+              <span class="ring-label">remaining</span>
+              <div class="ring-detail">
+                <span><span id="calories-consumed">0</span> eaten</span>
+                <span class="ring-sep">/</span>
+                <span><span id="calories-target">2,200</span> target</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="macro-rings-row">
+            <div class="macro-ring-card">
+              <div class="macro-ring-container">
+                <svg class="macro-ring" viewBox="0 0 80 80">
+                  <circle class="ring-bg" cx="40" cy="40" r="32" />
+                  <circle class="ring-fill protein" cx="40" cy="40" r="32" id="protein-ring-fill" />
+                </svg>
+                <div class="macro-ring-info">
+                  <span class="macro-ring-value"><span id="protein-consumed">0</span>g</span>
+                  <span class="macro-ring-label">Protein</span>
+                  <span class="macro-ring-target">/ <span id="protein-target">165</span>g</span>
+                </div>
+              </div>
+            </div>
+            <div class="macro-ring-card">
+              <div class="macro-ring-container">
+                <svg class="macro-ring" viewBox="0 0 80 80">
+                  <circle class="ring-bg" cx="40" cy="40" r="32" />
+                  <circle class="ring-fill carbs" cx="40" cy="40" r="32" id="carbs-ring-fill" />
+                </svg>
+                <div class="macro-ring-info">
+                  <span class="macro-ring-value"><span id="carbs-consumed">0</span>g</span>
+                  <span class="macro-ring-label">Carbs</span>
+                  <span class="macro-ring-target">/ <span id="carbs-target">220</span>g</span>
+                </div>
+              </div>
+            </div>
+            <div class="macro-ring-card">
+              <div class="macro-ring-container">
+                <svg class="macro-ring" viewBox="0 0 80 80">
+                  <circle class="ring-bg" cx="40" cy="40" r="32" />
+                  <circle class="ring-fill fats" cx="40" cy="40" r="32" id="fat-ring-fill" />
+                </svg>
+                <div class="macro-ring-info">
+                  <span class="macro-ring-value"><span id="fat-consumed">0</span>g</span>
+                  <span class="macro-ring-label">Fats</span>
+                  <span class="macro-ring-target">/ <span id="fat-target">73</span>g</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-micros-card">
+            <div class="micros-header">
+              <div class="micros-title">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M7 20h10M12 20V9M12 9c0-3 2.5-5 6-5 0 3.5-2.5 5-6 5zM12 12c0-2.5-2-4.5-5-4.5 0 2.8 2 4.5 5 4.5z" />
+                </svg>
+                <span>Key Micronutrients</span>
+              </div>
+              <span class="micros-hint">Daily Health Targets</span>
+            </div>
+            <div class="micros-grid">
+              <div class="micro-item">
+                <div class="micro-info">
+                  <span class="micro-label">Fiber</span>
+                  <span class="micro-val"><span id="fiber-consumed">0</span>g <span class="micro-target">/ <span id="fiber-target">28g</span></span></span>
+                </div>
+                <div class="micro-bar-bg"><div class="micro-bar-fill fiber" id="fiber-bar-fill" style="width: 0%;"></div></div>
+              </div>
+              <div class="micro-item">
+                <div class="micro-info">
+                  <span class="micro-label">Sugar</span>
+                  <span class="micro-val"><span id="sugar-consumed">0</span>g <span class="micro-target">/ <span id="sugar-target">&lt;50g</span></span></span>
+                </div>
+                <div class="micro-bar-bg"><div class="micro-bar-fill sugar" id="sugar-bar-fill" style="width: 0%;"></div></div>
+              </div>
+              <div class="micro-item">
+                <div class="micro-info">
+                  <span class="micro-label">Sodium</span>
+                  <span class="micro-val"><span id="sodium-consumed">0</span>mg <span class="micro-target">/ <span id="sodium-target">&lt;2300mg</span></span></span>
+                </div>
+                <div class="micro-bar-bg"><div class="micro-bar-fill sodium" id="sodium-bar-fill" style="width: 0%;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-water-card">
+            <div class="water-card-header">
+              <div class="water-title">
+                <svg class="water-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 3.5C12 3.5 6 10.5 6 14.5a6 6 0 0 0 12 0c0-4-6-11-6-11z" />
+                </svg>
+                <div>
+                  <h3>Hydration Tracker</h3>
+                  <span class="water-subtitle"><span id="water-current">0</span> / <span id="water-goal-display">2,500</span> ml</span>
+                </div>
+              </div>
+              <div class="water-percent-badge" id="water-percent-badge">0%</div>
+            </div>
+
+            <div class="water-progress-track">
+              <div class="water-progress-bar" id="water-progress-bar" style="width: 0%;"></div>
+            </div>
+
+            <div class="water-quick-actions">
+              <button class="water-btn" data-ml="250" title="Add 1 Glass (250ml)">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M6 4h12l-1.5 16h-9L6 4z" />
+                </svg>
+                +250 ml
+              </button>
+              <button class="water-btn" data-ml="500" title="Add 1 Bottle (500ml)">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M10 3h4v3l2 2v12H8V8l2-2V3z" />
+                </svg>
+                +500 ml
+              </button>
+              <button class="water-btn" data-ml="750" title="Add 750ml">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 3.5C12 3.5 6.5 10 6.5 14a5.5 5.5 0 0 0 11 0c0-4-5.5-10.5-5.5-10.5z" />
+                </svg>
+                +750 ml
+              </button>
+              <button class="water-btn btn-icon-only" id="water-custom-btn" title="Add Custom Amount" aria-label="Add custom water amount">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </button>
+              <button class="water-btn btn-icon-only water-reset-btn" id="water-reset-btn" title="Reset Today's Water" aria-label="Reset today's water intake">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="dash-stats-row">
+            <div class="dash-stat-card">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M5 4v7a2 2 0 0 0 4 0V4M7 13v7M16 4v16M16 4c2.5 0 4 2.5 4 5.5S18 14 16 14" />
+              </svg>
+              <span class="stat-value" id="meals-logged-count">0</span>
+              <span class="stat-label">Meals Today</span>
+            </div>
+            <div class="dash-stat-card">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 3c2 3 5 5.5 5 10a5 5 0 1 1-10 0c0-2.8 1.4-4.8 2.8-6.4.4 1.6 1.5 2.4 2.2 2.4V3z" />
+              </svg>
+              <span class="stat-value" id="dash-streak-count">0</span>
+              <span class="stat-label">Day Streak</span>
+            </div>
+            <div class="dash-stat-card">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="9" r="5" />
+                <path d="M9.5 13.5L8 21l4-2 4 2-1.5-7.5" />
+              </svg>
+              <span class="stat-value" id="dash-badges-count">0</span>
+              <span class="stat-label">Badges</span>
+            </div>
+          </div>
+
+          <div class="dash-meals-preview">
+            <div class="section-header">
+              <h3>Today's Meals</h3>
+              <button class="btn btn-ghost btn-sm" id="dash-view-diary-btn">View All</button>
+            </div>
+            <div id="dash-meals-list" class="dash-meals-list">
+              <div class="empty-state-mini">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 8v8M8 12h8" />
+                </svg>
+                <p>No meals logged yet. Tap + to add your first meal.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-custom-macros-section">
+            <div class="section-header">
+              <h3>Custom Macros</h3>
+              <button class="btn btn-ghost btn-sm" id="dash-edit-macros-btn">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                Edit
+              </button>
+            </div>
+            <div id="custom-macros-form" class="custom-macros-form hidden">
+              <div class="custom-macros-grid">
+                <div class="input-group">
+                  <label for="custom-calories">Calories (kcal)</label>
+                  <input type="number" id="custom-calories" class="input-field" placeholder="2000" min="800" max="8000" />
+                </div>
+                <div class="input-group">
+                  <label for="custom-protein">Protein (g)</label>
+                  <input type="number" id="custom-protein" class="input-field" placeholder="150" min="0" max="500" />
+                </div>
+                <div class="input-group">
+                  <label for="custom-carbs">Carbs (g)</label>
+                  <input type="number" id="custom-carbs" class="input-field" placeholder="200" min="0" max="800" />
+                </div>
+                <div class="input-group">
+                  <label for="custom-fat">Fat (g)</label>
+                  <input type="number" id="custom-fat" class="input-field" placeholder="65" min="0" max="300" />
+                </div>
+              </div>
+              <button id="custom-macros-save-btn" class="btn btn-secondary btn-full">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+                Save Custom Macros
+              </button>
+            </div>
+          </div>
         </div>
 
-        
-        <div class="calorie-ring-container">
-          <svg class="calorie-ring" viewBox="0 0 200 200" id="calorie-ring-svg">
-            <circle class="ring-bg" cx="100" cy="100" r="85" />
-            <circle class="ring-fill" cx="100" cy="100" r="85" id="calorie-ring-fill" />
+        <button id="quick-add-btn" class="fab" title="Log a meal" aria-label="Quick add meal">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
           </svg>
-          <div class="calorie-ring-info">
-            <span class="ring-remaining" id="calories-remaining">2,200</span>
-            <span class="ring-label">remaining</span>
-            <div class="ring-detail">
-              <span><span id="calories-consumed">0</span> eaten</span>
-              <span class="ring-sep">•</span>
-              <span><span id="calories-target">2,200</span> target</span>
-            </div>
-          </div>
-        </div>
-
-        
-        <div class="macro-rings-row">
-          
-          <div class="macro-ring-card">
-            <div class="macro-ring-container">
-              <svg class="macro-ring" viewBox="0 0 80 80">
-                <circle class="ring-bg" cx="40" cy="40" r="32" />
-                <circle class="ring-fill protein" cx="40" cy="40" r="32" id="protein-ring-fill" />
-              </svg>
-              <div class="macro-ring-info">
-                <span class="macro-ring-value"><span id="protein-consumed">0</span>g</span>
-                <span class="macro-ring-label">Protein</span>
-                <span class="macro-ring-target">/ <span id="protein-target">165</span>g</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="macro-ring-card">
-            <div class="macro-ring-container">
-              <svg class="macro-ring" viewBox="0 0 80 80">
-                <circle class="ring-bg" cx="40" cy="40" r="32" />
-                <circle class="ring-fill carbs" cx="40" cy="40" r="32" id="carbs-ring-fill" />
-              </svg>
-              <div class="macro-ring-info">
-                <span class="macro-ring-value"><span id="carbs-consumed">0</span>g</span>
-                <span class="macro-ring-label">Carbs</span>
-                <span class="macro-ring-target">/ <span id="carbs-target">220</span>g</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="macro-ring-card">
-            <div class="macro-ring-container">
-              <svg class="macro-ring" viewBox="0 0 80 80">
-                <circle class="ring-bg" cx="40" cy="40" r="32" />
-                <circle class="ring-fill fats" cx="40" cy="40" r="32" id="fat-ring-fill" />
-              </svg>
-              <div class="macro-ring-info">
-                <span class="macro-ring-value"><span id="fat-consumed">0</span>g</span>
-                <span class="macro-ring-label">Fats</span>
-                <span class="macro-ring-target">/ <span id="fat-target">73</span>g</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        
-        <div class="dash-micros-card">
-          <div class="micros-header">
-            <div class="micros-title"><i data-lucide="salad"></i> <span>Key Micronutrients</span></div>
-            <span class="micros-hint">Daily Health Targets</span>
-          </div>
-          <div class="micros-grid">
-            <div class="micro-item">
-              <div class="micro-info">
-                <span class="micro-label">Fiber</span>
-                <span class="micro-val"><span id="fiber-consumed">0</span>g <span class="micro-target">/ <span id="fiber-target">28g</span></span></span>
-              </div>
-              <div class="micro-bar-bg"><div class="micro-bar-fill fiber" id="fiber-bar-fill" style="width: 0%;"></div></div>
-            </div>
-            <div class="micro-item">
-              <div class="micro-info">
-                <span class="micro-label">Sugar</span>
-                <span class="micro-val"><span id="sugar-consumed">0</span>g <span class="micro-target">/ <span id="sugar-target">&lt;50g</span></span></span>
-              </div>
-              <div class="micro-bar-bg"><div class="micro-bar-fill sugar" id="sugar-bar-fill" style="width: 0%;"></div></div>
-            </div>
-            <div class="micro-item">
-              <div class="micro-info">
-                <span class="micro-label">Sodium</span>
-                <span class="micro-val"><span id="sodium-consumed">0</span>mg <span class="micro-target">/ <span id="sodium-target">&lt;2300mg</span></span></span>
-              </div>
-              <div class="micro-bar-bg"><div class="micro-bar-fill sodium" id="sodium-bar-fill" style="width: 0%;"></div></div>
-            </div>
-          </div>
-        </div>
-
-        
-        <div class="dash-water-card">
-          <div class="water-card-header">
-            <div class="water-title">
-              <i data-lucide="droplets" class="water-icon"></i>
-              <div>
-                <h3>Hydration Tracker</h3>
-                <span class="water-subtitle"><span id="water-current">0</span> / <span id="water-goal-display">2,500</span> ml</span>
-              </div>
-            </div>
-            <div class="water-percent-badge" id="water-percent-badge">0%</div>
-          </div>
-          
-          <div class="water-progress-track">
-            <div class="water-progress-bar" id="water-progress-bar" style="width: 0%;"></div>
-          </div>
-
-          <div class="water-quick-actions">
-            <button class="water-btn" data-ml="250" title="Add 1 Glass (250ml)">
-              <i data-lucide="glass-water"></i> +250 ml
-            </button>
-            <button class="water-btn" data-ml="500" title="Add 1 Bottle (500ml)">
-              <i data-lucide="cup-soda"></i> +500 ml
-            </button>
-            <button class="water-btn" data-ml="750" title="Add 750ml">
-              <i data-lucide="droplet"></i> +750 ml
-            </button>
-            <button class="water-btn btn-icon-only" id="water-custom-btn" title="Add Custom Amount" aria-label="Add custom water amount">
-              <i data-lucide="plus"></i>
-            </button>
-            <button class="water-btn btn-icon-only water-reset-btn" id="water-reset-btn" title="Reset Today's Water" aria-label="Reset today's water intake">
-              <i data-lucide="rotate-ccw"></i>
-            </button>
-          </div>
-        </div>
-
-        
-        <div class="dash-stats-row">
-          <div class="dash-stat-card">
-            <i data-lucide="utensils"></i>
-            <span class="stat-value" id="meals-logged-count">0</span>
-            <span class="stat-label">Meals Today</span>
-          </div>
-          <div class="dash-stat-card">
-            <i data-lucide="flame"></i>
-            <span class="stat-value" id="dash-streak-count">0</span>
-            <span class="stat-label">Day Streak</span>
-          </div>
-          <div class="dash-stat-card">
-            <i data-lucide="trophy"></i>
-            <span class="stat-value" id="dash-badges-count">0</span>
-            <span class="stat-label">Badges</span>
-          </div>
-        </div>
-
-        
-        <div class="dash-meals-preview">
-          <div class="section-header">
-            <h3>Today's Meals</h3>
-            <button class="btn btn-ghost btn-sm" id="dash-view-diary-btn">View All</button>
-          </div>
-          <div id="dash-meals-list" class="dash-meals-list">
-            <div class="empty-state-mini">
-              <i data-lucide="plus-circle"></i>
-              <p>No meals logged yet. Tap + to add your first meal!</p>
-            </div>
-          </div>
-        </div>
-
-        
-        <div class="dash-custom-macros-section">
-          <div class="section-header">
-            <h3>Custom Macros</h3>
-            <button class="btn btn-ghost btn-sm" id="dash-edit-macros-btn"><i data-lucide="edit-3"></i> Edit</button>
-          </div>
-          <div id="custom-macros-form" class="custom-macros-form hidden">
-            <div class="custom-macros-grid">
-              <div class="input-group">
-                <label for="custom-calories">Calories (kcal)</label>
-                <input type="number" id="custom-calories" class="input-field" placeholder="2000" min="800" max="8000" />
-              </div>
-              <div class="input-group">
-                <label for="custom-protein">Protein (g)</label>
-                <input type="number" id="custom-protein" class="input-field" placeholder="150" min="0" max="500" />
-              </div>
-              <div class="input-group">
-                <label for="custom-carbs">Carbs (g)</label>
-                <input type="number" id="custom-carbs" class="input-field" placeholder="200" min="0" max="800" />
-              </div>
-              <div class="input-group">
-                <label for="custom-fat">Fat (g)</label>
-                <input type="number" id="custom-fat" class="input-field" placeholder="65" min="0" max="300" />
-              </div>
-            </div>
-            <button id="custom-macros-save-btn" class="btn btn-primary btn-full">
-              <i data-lucide="check"></i> Save Custom Macros
-            </button>
-          </div>
-        </div>
-      </div>
-
-      
-      <button id="quick-add-btn" class="fab" title="Log a meal" aria-label="Quick add meal">
-        <i data-lucide="plus"></i>
-      </button>
-    </div>
-
-    
-    <div id="diary-view" class="view">
-      <div class="view-content">
-        <div class="diary-header">
-          <button id="diary-prev-btn" class="icon-btn" aria-label="Previous day"><i data-lucide="chevron-left"></i></button>
-          <h2 id="diary-date">Today — May 22</h2>
-          <button id="diary-next-btn" class="icon-btn" aria-label="Next day"><i data-lucide="chevron-right"></i></button>
-        </div>
-
-        
-        <div class="diary-totals">
-          <div class="diary-total-item">
-            <span class="dt-value" id="diary-total-calories">0</span>
-            <span class="dt-label">kcal</span>
-          </div>
-          <div class="diary-total-sep"></div>
-          <div class="diary-total-item protein">
-            <span class="dt-value" id="diary-total-protein">0</span>
-            <span class="dt-label">Protein</span>
-          </div>
-          <div class="diary-total-item carbs">
-            <span class="dt-value" id="diary-total-carbs">0</span>
-            <span class="dt-label">Carbs</span>
-          </div>
-          <div class="diary-total-item fats">
-            <span class="dt-value" id="diary-total-fat">0</span>
-            <span class="dt-label">Fats</span>
-          </div>
-          <div class="diary-total-sep"></div>
-          <div class="diary-total-item fiber" title="Fiber">
-            <span class="dt-value" id="diary-total-fiber">0</span>
-            <span class="dt-label">Fiber</span>
-          </div>
-          <div class="diary-total-item sugar" title="Sugar">
-            <span class="dt-value" id="diary-total-sugar">0</span>
-            <span class="dt-label">Sugar</span>
-          </div>
-          <div class="diary-total-item sodium" title="Sodium">
-            <span class="dt-value" id="diary-total-sodium">0</span>
-            <span class="dt-label">Sodium</span>
-          </div>
-        </div>
-
-        
-        <div class="diary-meals">
-          <div class="meal-group" id="diary-breakfast">
-            <div class="meal-group-header">
-              <div class="meal-group-title">
-                <i data-lucide="sunrise"></i>
-                <h3>Breakfast</h3>
-              </div>
-              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="breakfast" aria-label="Add breakfast item">
-                <i data-lucide="plus"></i>
-              </button>
-            </div>
-            <div class="meal-group-items" data-meal="breakfast"></div>
-          </div>
-
-          <div class="meal-group" id="diary-lunch">
-            <div class="meal-group-header">
-              <div class="meal-group-title">
-                <i data-lucide="sun"></i>
-                <h3>Lunch</h3>
-              </div>
-              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="lunch" aria-label="Add lunch item">
-                <i data-lucide="plus"></i>
-              </button>
-            </div>
-            <div class="meal-group-items" data-meal="lunch"></div>
-          </div>
-
-          <div class="meal-group" id="diary-dinner">
-            <div class="meal-group-header">
-              <div class="meal-group-title">
-                <i data-lucide="moon"></i>
-                <h3>Dinner</h3>
-              </div>
-              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="dinner" aria-label="Add dinner item">
-                <i data-lucide="plus"></i>
-              </button>
-            </div>
-            <div class="meal-group-items" data-meal="dinner"></div>
-          </div>
-
-          <div class="meal-group" id="diary-snacks">
-            <div class="meal-group-header">
-              <div class="meal-group-title">
-                <i data-lucide="cookie"></i>
-                <h3>Snacks</h3>
-              </div>
-              <button class="btn btn-ghost btn-sm meal-add-btn" data-meal="snacks" aria-label="Add snack item">
-                <i data-lucide="plus"></i>
-              </button>
-            </div>
-            <div class="meal-group-items" data-meal="snacks"></div>
-          </div>
-        </div>
-
-        
-        <div class="frequent-section">
-          <div class="section-header">
-            <h3><i data-lucide="clock"></i> Recently Logged</h3>
-          </div>
-          <div id="recent-foods" class="frequent-foods-grid">
-            <p class="empty-hint">Your recently logged foods will appear here.</p>
-          </div>
-        </div>
-
-        
-        <div id="recent-detail-modal" class="modal hidden">
-          <div class="modal-content" style="max-width:500px; max-height:85vh; overflow-y:auto;">
-            <div class="modal-header">
-              <h3 id="recent-detail-title">Food Details</h3>
-              <button id="recent-detail-close" class="modal-close-btn" aria-label="Close food details"><i data-lucide="x"></i></button>
-            </div>
-            <div id="recent-detail-image" class="hidden" style="margin-bottom:12px; border-radius:12px; overflow:hidden;">
-              <img id="recent-detail-img" src="" alt="Food" style="width:100%; display:block; border-radius:12px;" />
-            </div>
-            <div id="recent-detail-macros" style="margin-bottom:12px;"></div>
-            <div id="recent-detail-ingredients"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    
-    <div id="analytics-view" class="view">
-      <div class="view-content">
-        <div class="analytics-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <div>
-            <h2>Analytics</h2>
-            <p>Track your progress over time</p>
-          </div>
-          <div class="analytics-actions">
-            <button id="export-report-btn" class="btn btn-secondary btn-sm" title="Export nutrition and progress reports">
-              <i data-lucide="download"></i> Export Report
-            </button>
-          </div>
-        </div>
-
-        
-        <div id="export-report-modal" class="modal hidden">
-          <div class="modal-content" style="max-width: 440px;">
-            <div class="modal-header">
-              <h3><i data-lucide="file-text" style="display:inline;vertical-align:-3px;margin-right:6px;color:var(--primary);"></i> Export Report</h3>
-              <button id="export-modal-close" class="modal-close-btn" aria-label="Close export modal"><i data-lucide="x"></i></button>
-            </div>
-            <div style="padding: 12px 0;">
-              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
-                Download your daily calories, macros, micronutrients (fiber/sugar/sodium), and water intake summary.
-              </p>
-              
-              <div class="input-group" style="margin-bottom: 16px;">
-                <label for="export-range-select" style="font-size: 0.82rem; margin-bottom: 6px; display: block;">Select Time Range</label>
-                <select id="export-range-select" class="input-field" style="background: var(--bg-tertiary);">
-                  <option value="7" selected>Past 7 Days</option>
-                  <option value="30">Past 30 Days</option>
-                  <option value="all">All-Time History</option>
-                </select>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <button id="export-csv-action-btn" class="btn btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                  <i data-lucide="table"></i> Download CSV
-                </button>
-                <button id="export-pdf-action-btn" class="btn btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                  <i data-lucide="download"></i> Download PDF
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        
-        <div class="analytics-summary-row">
-          <div class="analytics-stat-card">
-            <i data-lucide="flame"></i>
-            <span class="astat-label">AVG CALORIES</span>
-            <span class="astat-value" id="avg-calories">—</span>
-            <span class="astat-change" id="avg-cal-change"></span>
-          </div>
-          <div class="analytics-stat-card">
-            <i data-lucide="beef"></i>
-            <span class="astat-label">AVG PROTEIN</span>
-            <span class="astat-value" id="avg-protein">—</span>
-            <span class="astat-change" id="avg-prot-change"></span>
-          </div>
-          <div class="analytics-stat-card">
-            <i data-lucide="check-circle"></i>
-            <span class="astat-label">CONSISTENCY</span>
-            <span class="astat-value" id="consistency-score">—</span>
-            <span class="astat-change" id="consistency-detail"></span>
-          </div>
-        </div>
-
-        
-        <div class="chart-card">
-          <div class="chart-card-header">
-            <h3>Daily Calories</h3>
-            <span class="chart-subtitle">Consumed vs Target — Past 7 Days</span>
-          </div>
-          <div class="chart-wrapper">
-            <canvas id="calorie-chart-canvas"></canvas>
-          </div>
-        </div>
-
-        
-        <div class="chart-card">
-          <div class="chart-card-header">
-            <div>
-              <h3>Weight Trend</h3>
-              <span class="chart-subtitle" id="weight-chart-subtitle">Track your body weight</span>
-            </div>
-            <div class="chart-period-toggle">
-              <button class="period-btn active" id="weight-period-7">7D</button>
-              <button class="period-btn" id="weight-period-30">30D</button>
-            </div>
-          </div>
-          <div class="chart-wrapper">
-            <canvas id="weight-chart-canvas"></canvas>
-          </div>
-          <div class="weight-log-form">
-            <div class="input-group input-inline">
-              <input type="number" id="weight-input" class="input-field" placeholder="Enter weight (kg)" aria-label="Body weight" step="0.1" min="20" max="660" />
-              <button id="weight-log-btn" class="btn btn-primary btn-sm">Log Weight</button>
-            </div>
-          </div>
-        </div>
-
-        
-        <div class="chart-card" style="margin-top:8px;">
-          <div class="chart-card-header">
-            <div>
-              <h3><i data-lucide="settings" style="width:18px;height:18px;display:inline;vertical-align:-3px;margin-right:6px;"></i>Recalculate Goals</h3>
-              <span class="chart-subtitle">Update your targets based on current progress</span>
-            </div>
-          </div>
-          <div class="goals-form">
-            <div class="goals-form-grid">
-              <div class="input-group">
-                <label for="goal-age">Age</label>
-                <input type="number" id="goal-age" class="input-field" placeholder="25" min="13" max="100" />
-              </div>
-              <div class="input-group">
-                <label for="goal-gender">Gender</label>
-                <select id="goal-gender" class="input-field">
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-              <div class="input-group">
-                <label for="goal-weight">Weight</label>
-                <div class="input-with-unit">
-                  <input type="number" id="goal-weight" class="input-field" placeholder="70" min="20" max="660" step="0.1" />
-                  <select id="goal-weight-unit" class="unit-select" aria-label="Goal weight unit">
-                    <option value="kg">kg</option>
-                    <option value="lbs">lbs</option>
-                  </select>
-                </div>
-              </div>
-              <div class="input-group" id="goal-height-cm-group">
-                <label for="goal-height">Height</label>
-                <div class="input-with-unit">
-                  <input type="number" id="goal-height" class="input-field" placeholder="175" min="50" max="250" step="0.1" />
-                  <select id="goal-height-unit" class="unit-select" aria-label="Goal height unit">
-                    <option value="cm">cm</option>
-                    <option value="ft">ft/in</option>
-                  </select>
-                </div>
-              </div>
-              <div class="input-group hidden" id="goal-height-ft-group">
-                <label for="goal-height-ft">Height (ft / in)</label>
-                <div style="display:flex;gap:8px;">
-                  <div class="input-with-unit" style="flex:1;">
-                    <input type="number" id="goal-height-ft" class="input-field" placeholder="5" aria-label="Height feet" min="1" max="7" />
-                    <span class="unit-label">ft</span>
-                  </div>
-                  <div class="input-with-unit" style="flex:1;">
-                    <input type="number" id="goal-height-in" class="input-field" placeholder="6" aria-label="Height inches" min="0" max="11" />
-                    <span class="unit-label">in</span>
-                  </div>
-                </div>
-              </div>
-              <div class="input-group">
-                <label for="goal-activity">Activity Level</label>
-                <select id="goal-activity" class="input-field">
-                  <option value="1.2">Sedentary (desk job, no exercise)</option>
-                  <option value="1.375">Lightly Active (light exercise 1-3 days/wk)</option>
-                  <option value="1.55" selected>Moderately Active (mod exercise 3-5 days/wk)</option>
-                  <option value="1.725">Very Active (hard exercise 6-7 days/wk)</option>
-                  <option value="1.9">Extremely Active (highly active job/sports)</option>
-                </select>
-              </div>
-              <div class="input-group full-width">
-                <label for="goal-type">Goal</label>
-                <select id="goal-type" class="input-field">
-                  <option value="cut">Cut (Lose Fat)</option>
-                  <option value="maintain" selected>Maintain Weight</option>
-                  <option value="bulk">Bulk (Build Muscle)</option>
-                </select>
-              </div>
-            </div>
-            <button id="recalc-btn" class="btn btn-primary btn-full">
-              <i data-lucide="calculator"></i> Recalculate TDEE
-            </button>
-            <div id="recalc-result" class="hidden">
-              <div class="parsed-total" style="margin:8px 0;"><span>New Daily Target</span><span id="recalc-tdee">—</span></div>
-              <div class="recalc-macros-display">
-                <div class="recalc-macro-item protein"><span class="recalc-macro-val" id="recalc-protein">0</span><span class="recalc-macro-label">Protein (g)</span></div>
-                <div class="recalc-macro-item carbs"><span class="recalc-macro-val" id="recalc-carbs">0</span><span class="recalc-macro-label">Carbs (g)</span></div>
-                <div class="recalc-macro-item fats"><span class="recalc-macro-val" id="recalc-fat">0</span><span class="recalc-macro-label">Fat (g)</span></div>
-              </div>
-              <button id="apply-goals-btn" class="btn btn-primary btn-full" style="margin-top:12px;">
-                <i data-lucide="check"></i> Apply These Goals
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    
-    <div id="achievements-view" class="view">
-      <div class="view-content">
-        <div class="achievements-header">
-          <h2>Achievements</h2>
-          <p>Keep the momentum going!</p>
-        </div>
-
-        
-        <div class="streak-hero">
-          <div class="streak-flame" id="streak-fire">
-            <i data-lucide="flame"></i>
-          </div>
-          <div class="streak-info">
-            <span class="streak-count" id="streak-display">0</span>
-            <span class="streak-label">Day Streak</span>
-          </div>
-          <p class="streak-message" id="streak-message">Log a meal to start your streak!</p>
-        </div>
-
-        
-        <div class="badges-section">
-          <h3>Badges</h3>
-          <div id="badges-grid" class="badges-grid">
-            
-          </div>
-        </div>
-      </div>
-    </div>
-
-    
-    <div id="coach-view" class="view">
-      <div class="view-content" style="padding-bottom:120px;">
-        <div class="coach-header">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div>
-              <h2>AI Coach</h2>
-              <p>Your personal fitness assistant with app data access</p>
-            </div>
-            <button id="coach-new-chat-btn" class="btn btn-secondary btn-sm" title="New conversation">
-              <i data-lucide="plus"></i> New Chat
-            </button>
-          </div>
-        </div>
-        <div id="coach-tabs-bar" class="coach-tabs-bar"></div>
-        <div id="coach-chat" class="coach-chat">
-          <div class="coach-welcome">
-            <i data-lucide="bot"></i>
-            <h3>Hey! I'm your AI fitness coach 💪</h3>
-            <p>I can see your MacroLens data — ask about your meals, macros, progress, or any fitness topic.</p>
-            <div class="coach-suggestion-chips">
-              <button class="suggestion-chip" data-q="Based on my data, how am I doing with my protein intake?">My protein intake</button>
-              <button class="suggestion-chip" data-q="What should I eat to meet my remaining macros for today?">Meet my macros</button>
-              <button class="suggestion-chip" data-q="How can I lose fat without losing muscle?">Fat loss tips</button>
-              <button class="suggestion-chip" data-q="Analyze my eating patterns from my logged meals">Analyze my meals</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="coach-input-bar">
-        <input type="text" id="coach-input" class="coach-input" placeholder="Ask about your data, nutrition, fitness..." aria-label="Message AI fitness coach" />
-        <button id="coach-send-btn" class="coach-send-btn" aria-label="Send message" disabled>
-          <i data-lucide="send"></i>
         </button>
       </div>
-    </div>
+
+      <!-- DIARY VIEW -->
+      <div id="diary-view" class="view">
+        <div class="view-content">
+          <div class="diary-header">
+            <button id="diary-prev-btn" class="icon-btn" aria-label="Previous day">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <h2 id="diary-date">Today, May 22</h2>
+            <button id="diary-next-btn" class="icon-btn" aria-label="Next day">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="diary-totals">
+            <div class="diary-total-item">
+              <span class="dt-value" id="diary-total-calories">0</span>
+              <span class="dt-label">kcal</span>
+            </div>
+            <div class="diary-total-sep"></div>
+            <div class="diary-total-item protein">
+              <span class="dt-value" id="diary-total-protein">0</span>
+              <span class="dt-label">Protein</span>
+            </div>
+            <div class="diary-total-item carbs">
+              <span class="dt-value" id="diary-total-carbs">0</span>
+              <span class="dt-label">Carbs</span>
+            </div>
+            <div class="diary-total-item fats">
+              <span class="dt-value" id="diary-total-fat">0</span>
+              <span class="dt-label">Fats</span>
+            </div>
+            <div class="diary-total-sep"></div>
+            <div class="diary-total-item fiber" title="Fiber">
+              <span class="dt-value" id="diary-total-fiber">0</span>
+              <span class="dt-label">Fiber</span>
+            </div>
+            <div class="diary-total-item sugar" title="Sugar">
+              <span class="dt-value" id="diary-total-sugar">0</span>
+              <span class="dt-label">Sugar</span>
+            </div>
+            <div class="diary-total-item sodium" title="Sodium">
+              <span class="dt-value" id="diary-total-sodium">0</span>
+              <span class="dt-label">Sodium</span>
+            </div>
+          </div>
+
+          <div class="diary-meals">
+            <div class="meal-group" id="diary-breakfast">
+              <div class="meal-group-header">
+                <div class="meal-group-title">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M12 2v4M5.6 7.6l2.8 2.8M18.4 7.6l-2.8 2.8M3 16h18M7 16a5 5 0 0 1 10 0M5 20h14" />
+                  </svg>
+                  <h3>Breakfast</h3>
+                </div>
+                <button class="btn btn-sm meal-add-btn" data-meal="breakfast" aria-label="Add breakfast item">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                </button>
+              </div>
+              <div class="meal-group-items" data-meal="breakfast"></div>
+            </div>
+
+            <div class="meal-group" id="diary-lunch">
+              <div class="meal-group-header">
+                <div class="meal-group-title">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1" />
+                  </svg>
+                  <h3>Lunch</h3>
+                </div>
+                <button class="btn btn-sm meal-add-btn" data-meal="lunch" aria-label="Add lunch item">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                </button>
+              </div>
+              <div class="meal-group-items" data-meal="lunch"></div>
+            </div>
+
+            <div class="meal-group" id="diary-dinner">
+              <div class="meal-group-header">
+                <div class="meal-group-title">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" />
+                  </svg>
+                  <h3>Dinner</h3>
+                </div>
+                <button class="btn btn-sm meal-add-btn" data-meal="dinner" aria-label="Add dinner item">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                </button>
+              </div>
+              <div class="meal-group-items" data-meal="dinner"></div>
+            </div>
+
+            <div class="meal-group" id="diary-snacks">
+              <div class="meal-group-header">
+                <div class="meal-group-title">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M4 11h16v2a7 7 0 0 1-14 0v-2zM7 11V8a5 5 0 0 1 10 0v3" />
+                  </svg>
+                  <h3>Snacks</h3>
+                </div>
+                <button class="btn btn-sm meal-add-btn" data-meal="snacks" aria-label="Add snack item">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                </button>
+              </div>
+              <div class="meal-group-items" data-meal="snacks"></div>
+            </div>
+          </div>
+
+          <div class="frequent-section">
+            <div class="section-header">
+              <h3>
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+                Recently Logged
+              </h3>
+            </div>
+            <div id="recent-foods" class="frequent-foods-grid">
+              <p class="empty-hint">Your recently logged foods will appear here.</p>
+            </div>
+          </div>
+
+          <div id="recent-detail-modal" class="modal-dialog hidden">
+            <div class="modal-dialog-card">
+              <div class="modal-header">
+                <h3 id="recent-detail-title">Food Details</h3>
+                <button id="recent-detail-close" class="modal-close-btn" aria-label="Close food details">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div id="recent-detail-image" class="hidden" style="margin-bottom:12px; border-radius:4px; border:1px solid var(--border-color); overflow:hidden;">
+                <img id="recent-detail-img" src="" alt="Food" style="width:100%; display:block;" />
+              </div>
+              <div id="recent-detail-macros" style="margin-bottom:12px;"></div>
+              <div id="recent-detail-ingredients"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS VIEW -->
+      <div id="analytics-view" class="view">
+        <div class="view-content">
+          <div class="analytics-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <h2>Analytics</h2>
+              <p>Track calories, protein, and body weight over time</p>
+            </div>
+            <div class="analytics-actions">
+              <button id="export-report-btn" class="btn btn-ghost btn-sm" title="Export nutrition and progress reports">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 3v12M7 10l5 5 5-5M4 20h16" />
+                </svg>
+                Export Report
+              </button>
+            </div>
+          </div>
+
+          <div id="export-report-modal" class="modal-dialog hidden">
+            <div class="modal-dialog-card">
+              <div class="modal-header">
+                <h3>
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" />
+                    <path d="M14 3v5h5" />
+                  </svg>
+                  Export Report
+                </h3>
+                <button id="export-modal-close" class="modal-close-btn" aria-label="Close export modal">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div style="padding: 8px 0;">
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                  Download your daily calories, macros, micronutrients (fiber/sugar/sodium), and water intake summary.
+                </p>
+
+                <div class="input-group" style="margin-bottom: 16px;">
+                  <label for="export-range-select">Select Time Range</label>
+                  <select id="export-range-select" class="input-field">
+                    <option value="7" selected>Past 7 Days</option>
+                    <option value="30">Past 30 Days</option>
+                    <option value="all">All-Time History</option>
+                  </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                  <button id="export-csv-action-btn" class="btn btn-ghost">
+                    <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="16" rx="2" />
+                      <path d="M3 10h18M9 4v16" />
+                    </svg>
+                    Download CSV
+                  </button>
+                  <button id="export-pdf-action-btn" class="btn btn-secondary">
+                    <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                      <path d="M12 3v12M7 10l5 5 5-5M4 20h16" />
+                    </svg>
+                    Download PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-summary-row">
+            <div class="analytics-stat-card">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 3c2 3 5 5.5 5 10a5 5 0 1 1-10 0c0-2.8 1.4-4.8 2.8-6.4.4 1.6 1.5 2.4 2.2 2.4V3z" />
+              </svg>
+              <span class="astat-label">AVG CALORIES</span>
+              <span class="astat-value" id="avg-calories">--</span>
+              <span class="astat-change" id="avg-cal-change"></span>
+            </div>
+            <div class="analytics-stat-card">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" />
+              </svg>
+              <span class="astat-label">AVG PROTEIN</span>
+              <span class="astat-value" id="avg-protein">--</span>
+              <span class="astat-change" id="avg-prot-change"></span>
+            </div>
+            <div class="analytics-stat-card">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M8.5 12.5l2.5 2.5 4.5-5" />
+              </svg>
+              <span class="astat-label">CONSISTENCY</span>
+              <span class="astat-value" id="consistency-score">--</span>
+              <span class="astat-change" id="consistency-detail"></span>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h3>Daily Calories</h3>
+                <span class="chart-subtitle">Consumed vs Target, Past 7 Days</span>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="calorie-chart-canvas"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h3>Weight Trend</h3>
+                <span class="chart-subtitle" id="weight-chart-subtitle">Track your body weight</span>
+              </div>
+              <div class="chart-period-toggle">
+                <button class="period-btn active" id="weight-period-7">7D</button>
+                <button class="period-btn" id="weight-period-30">30D</button>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="weight-chart-canvas"></canvas>
+            </div>
+            <div class="weight-log-form">
+              <div class="input-group input-inline">
+                <input type="number" id="weight-input" class="input-field" placeholder="Enter weight (kg)" aria-label="Body weight" step="0.1" min="20" max="660" />
+                <button id="weight-log-btn" class="btn btn-secondary btn-sm">Log Weight</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card" style="margin-top:8px;">
+            <div class="chart-card-header">
+              <div>
+                <h3>Recalculate Goals</h3>
+                <span class="chart-subtitle">Update targets based on current measurements</span>
+              </div>
+            </div>
+            <div class="goals-form">
+              <div class="goals-form-grid">
+                <div class="input-group">
+                  <label for="goal-age">Age</label>
+                  <input type="number" id="goal-age" class="input-field" placeholder="25" min="13" max="100" />
+                </div>
+                <div class="input-group">
+                  <label for="goal-gender">Gender</label>
+                  <select id="goal-gender" class="input-field">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="goal-weight">Weight</label>
+                  <div class="input-with-unit">
+                    <input type="number" id="goal-weight" class="input-field" placeholder="70" min="20" max="660" step="0.1" />
+                    <select id="goal-weight-unit" class="unit-select" aria-label="Goal weight unit">
+                      <option value="kg">kg</option>
+                      <option value="lbs">lbs</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-group" id="goal-height-cm-group">
+                  <label for="goal-height">Height</label>
+                  <div class="input-with-unit">
+                    <input type="number" id="goal-height" class="input-field" placeholder="175" min="50" max="250" step="0.1" />
+                    <select id="goal-height-unit" class="unit-select" aria-label="Goal height unit">
+                      <option value="cm">cm</option>
+                      <option value="ft">ft/in</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-group hidden" id="goal-height-ft-group">
+                  <label for="goal-height-ft">Height (ft / in)</label>
+                  <div style="display:flex;gap:8px;">
+                    <div class="input-with-unit" style="flex:1;">
+                      <input type="number" id="goal-height-ft" class="input-field" placeholder="5" aria-label="Height feet" min="1" max="7" />
+                      <span class="unit-label">ft</span>
+                    </div>
+                    <div class="input-with-unit" style="flex:1;">
+                      <input type="number" id="goal-height-in" class="input-field" placeholder="6" aria-label="Height inches" min="0" max="11" />
+                      <span class="unit-label">in</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label for="goal-activity">Activity Level</label>
+                  <select id="goal-activity" class="input-field">
+                    <option value="1.2">Sedentary (desk job, no exercise)</option>
+                    <option value="1.375">Lightly Active (light exercise 1-3 days/wk)</option>
+                    <option value="1.55" selected>Moderately Active (mod exercise 3-5 days/wk)</option>
+                    <option value="1.725">Very Active (hard exercise 6-7 days/wk)</option>
+                    <option value="1.9">Extremely Active (highly active job/sports)</option>
+                  </select>
+                </div>
+                <div class="input-group full-width">
+                  <label for="goal-type">Goal</label>
+                  <select id="goal-type" class="input-field">
+                    <option value="cut">Cut (Lose Fat)</option>
+                    <option value="maintain" selected>Maintain Weight</option>
+                    <option value="bulk">Bulk (Build Muscle)</option>
+                  </select>
+                </div>
+              </div>
+              <button id="recalc-btn" class="btn btn-secondary btn-full">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <rect x="4" y="3" width="16" height="18" rx="2" />
+                  <path d="M8 7h8M8 12h2M12 12h4M8 16h2M12 16h4" />
+                </svg>
+                Recalculate TDEE
+              </button>
+              <div id="recalc-result" class="hidden">
+                <div class="parsed-total" style="margin:8px 0;"><span>New Daily Target</span><span id="recalc-tdee">--</span></div>
+                <div class="recalc-macros-display">
+                  <div class="recalc-macro-item protein"><span class="recalc-macro-val" id="recalc-protein">0</span><span class="recalc-macro-label">Protein (g)</span></div>
+                  <div class="recalc-macro-item carbs"><span class="recalc-macro-val" id="recalc-carbs">0</span><span class="recalc-macro-label">Carbs (g)</span></div>
+                  <div class="recalc-macro-item fats"><span class="recalc-macro-val" id="recalc-fat">0</span><span class="recalc-macro-label">Fat (g)</span></div>
+                </div>
+                <button id="apply-goals-btn" class="btn btn-secondary btn-full" style="margin-top:12px;">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                  Apply These Goals
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACHIEVEMENTS VIEW -->
+      <div id="achievements-view" class="view">
+        <div class="view-content">
+          <div class="achievements-header">
+            <h2>Achievements</h2>
+            <p>Logging streaks and milestone badges</p>
+          </div>
+
+          <div class="streak-hero">
+            <div class="streak-flame" id="streak-fire">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 3c2 3 5 5.5 5 10a5 5 0 1 1-10 0c0-2.8 1.4-4.8 2.8-6.4.4 1.6 1.5 2.4 2.2 2.4V3z" />
+              </svg>
+            </div>
+            <div class="streak-info">
+              <span class="streak-count" id="streak-display">0</span>
+              <span class="streak-label">Day Streak</span>
+            </div>
+            <p class="streak-message" id="streak-message">Log a meal to start your streak.</p>
+          </div>
+
+          <div class="badges-section">
+            <h3>Badges</h3>
+            <div id="badges-grid" class="badges-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI COACH VIEW -->
+      <div id="coach-view" class="view">
+        <div class="view-content" style="padding-bottom:130px;">
+          <div class="coach-header">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div>
+                <h2>AI Coach</h2>
+                <p>Nutrition and training guidance backed by your logs</p>
+              </div>
+              <button id="coach-new-chat-btn" class="btn btn-ghost btn-sm" title="New conversation">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                New Chat
+              </button>
+            </div>
+          </div>
+          <div id="coach-tabs-bar" class="coach-tabs-bar"></div>
+          <div id="coach-chat" class="coach-chat">
+            <div class="coach-welcome">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M4 5h16v11H9l-5 4V5z" />
+                <path d="M8 10h8M8 13h5" />
+              </svg>
+              <h3>MacroLens AI Coach</h3>
+              <p>I can read your logged meals, macro remaining targets, hydration, and weight entries. Ask a direct question below.</p>
+              <div class="coach-suggestion-chips">
+                <button class="suggestion-chip" data-q="Based on my data, how am I doing with my protein intake?">My protein intake</button>
+                <button class="suggestion-chip" data-q="What should I eat to meet my remaining macros for today?">Meet my macros</button>
+                <button class="suggestion-chip" data-q="How can I lose fat without losing muscle?">Fat loss tips</button>
+                <button class="suggestion-chip" data-q="Analyze my eating patterns from my logged meals">Analyze my meals</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="coach-input-bar">
+          <input type="text" id="coach-input" class="coach-input" placeholder="Ask about your data, nutrition, or training..." aria-label="Message AI fitness coach" />
+          <button id="coach-send-btn" class="coach-send-btn" aria-label="Send message" disabled>
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <footer class="app-footer">
+        <span>MacroLens Nutrition Ledger</span>
+        <div class="app-footer-links">
+          <button type="button" class="legal-inline-btn" id="app-privacy-link">Privacy Policy</button>
+          <button type="button" class="legal-inline-btn" id="app-terms-link">Terms &amp; Conditions</button>
+        </div>
+      </footer>
     </main>
 
-    
+    <!-- MEAL LOGGER MODAL -->
     <div id="meal-log-modal" class="modal-overlay hidden">
       <div class="modal">
         <div class="modal-header">
           <h2>Log a Meal</h2>
-          <button id="meal-log-close-btn" class="icon-btn" aria-label="Close meal logger"><i data-lucide="x"></i></button>
+          <button id="meal-log-close-btn" class="icon-btn" aria-label="Close meal logger">
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        
         <div class="meal-type-selector">
           <button class="meal-type-btn active" data-meal="breakfast">
-            <i data-lucide="sunrise"></i> Breakfast
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M12 2v4M5.6 7.6l2.8 2.8M18.4 7.6l-2.8 2.8M3 16h18M7 16a5 5 0 0 1 10 0" />
+            </svg>
+            Breakfast
           </button>
           <button class="meal-type-btn" data-meal="lunch">
-            <i data-lucide="sun"></i> Lunch
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+            </svg>
+            Lunch
           </button>
           <button class="meal-type-btn" data-meal="dinner">
-            <i data-lucide="moon"></i> Dinner
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" />
+            </svg>
+            Dinner
           </button>
           <button class="meal-type-btn" data-meal="snacks">
-            <i data-lucide="cookie"></i> Snacks
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M4 11h16v2a7 7 0 0 1-14 0v-2zM7 11V8a5 5 0 0 1 10 0v3" />
+            </svg>
+            Snacks
           </button>
         </div>
 
-        
         <div id="meal-log-tabs" class="tab-bar">
+          <span class="tab-indicator" id="meal-tab-indicator" aria-hidden="true"></span>
           <button class="tab-btn active" data-tab="nlp">
-            <i data-lucide="message-square"></i> Describe
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M4 5h16v11H9l-5 4V5z" />
+            </svg>
+            Describe
           </button>
           <button class="tab-btn" data-tab="image">
-            <i data-lucide="camera"></i> Photo
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2" />
+              <circle cx="12" cy="12" r="3.5" />
+            </svg>
+            Photo
           </button>
           <button class="tab-btn" data-tab="barcode">
-            <i data-lucide="scan-barcode"></i> Barcode
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M4 6v12M8 6v12M12 6v12M16 6v12M20 6v12" />
+            </svg>
+            Barcode
           </button>
           <button class="tab-btn" data-tab="manual">
-            <i data-lucide="edit-3"></i> Manual
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+            Manual
           </button>
         </div>
 
-        
         <div id="nlp-tab" class="tab-panel active">
           <div class="nlp-input-area">
             <textarea id="nlp-input" class="input-field textarea" placeholder="Describe what you ate (e.g. 2 boiled eggs and 1 slice whole wheat toast)" aria-label="Meal description" rows="3"></textarea>
-            <button id="nlp-parse-btn" class="btn btn-primary btn-full">
-              <i data-lucide="sparkles"></i> Analyze Food
+            <button id="nlp-parse-btn" class="btn btn-secondary btn-full">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-3.5-3.5" />
+              </svg>
+              Analyze Food
             </button>
           </div>
           <div id="nlp-results" class="parsed-results hidden">
@@ -1123,48 +1398,72 @@
             <div id="nlp-items-list" class="parsed-items-list"></div>
             <div class="parsed-total" id="nlp-total"></div>
             <button id="nlp-confirm-btn" class="btn btn-primary btn-full">
-              <i data-lucide="check"></i> Confirm & Log
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+              Confirm &amp; Log
             </button>
           </div>
         </div>
 
-        
         <div id="image-tab" class="tab-panel">
           <div id="image-drop-zone" class="drop-zone">
-            <i data-lucide="image-plus" class="drop-zone-icon"></i>
-            <p>Upload or take a photo of your meal</p>
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; position: relative; z-index: 2;">
-              <button type="button" id="camera-upload-btn" class="btn btn-secondary btn-sm">
-                <i data-lucide="camera"></i> Camera
+            <svg class="drop-zone-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <circle cx="9" cy="10" r="1.5" />
+              <path d="M21 16l-5-4-4 3-3-2-6 5" />
+            </svg>
+            <p>Upload or capture a photo of your meal</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 12px; position: relative; z-index: 2;">
+              <button type="button" id="camera-upload-btn" class="btn btn-ghost btn-sm">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M4 7h4l2-2h4l2 2h4v12H4V7z" />
+                  <circle cx="12" cy="13" r="3" />
+                </svg>
+                Camera
               </button>
-              <button type="button" id="gallery-upload-btn" class="btn btn-secondary btn-sm">
-                <i data-lucide="upload"></i> Gallery
+              <button type="button" id="gallery-upload-btn" class="btn btn-ghost btn-sm">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 16V4M7 9l5-5 5 5M4 20h16" />
+                </svg>
+                Gallery
               </button>
             </div>
             <input type="file" id="camera-file-input" accept="image/*" capture="environment" class="drop-zone-input" style="display: none;" />
             <input type="file" id="image-file-input" accept="image/*" class="drop-zone-input" style="display: none;" />
           </div>
-          
+
           <div id="image-preview-section" class="hidden">
             <div class="image-preview-container">
               <img id="image-preview-img" class="image-preview" alt="Food preview" />
             </div>
             <div class="image-description-area">
-              <label for="image-description">📝 Describe anything the AI can't see (optional)</label>
+              <label for="image-description">
+                <svg class="svg-icon" style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                Describe hidden ingredients or oils (optional)
+              </label>
               <textarea id="image-description" class="image-description-input" placeholder="" rows="2"></textarea>
-              <button id="image-analyze-btn" class="btn btn-primary btn-full image-analyze-btn">
-                <i data-lucide="sparkles"></i> Analyze with AI
+              <button id="image-analyze-btn" class="btn btn-secondary btn-full image-analyze-btn">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M20 20l-3.5-3.5" />
+                </svg>
+                Analyze Photo
               </button>
             </div>
           </div>
+
           <div id="image-processing" class="processing-state hidden">
             <div class="processing-spinner">
               <div class="spinner-ring"></div>
               <div class="spinner-ring"></div>
               <div class="spinner-ring"></div>
             </div>
-            <p>Analyzing your meal with AI...</p>
+            <p>Analyzing meal photo...</p>
           </div>
+
           <div id="image-results" class="parsed-results hidden">
             <div id="image-result-preview" class="image-preview-container hidden">
               <img id="image-result-img" class="image-preview" alt="Food" />
@@ -1173,12 +1472,14 @@
             <div id="image-items-list" class="parsed-items-list"></div>
             <div class="parsed-total" id="image-total"></div>
             <button id="image-confirm-btn" class="btn btn-primary btn-full">
-              <i data-lucide="check"></i> Confirm & Log
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+              Confirm &amp; Log
             </button>
           </div>
         </div>
 
-        
         <div id="barcode-tab" class="tab-panel">
           <div class="barcode-scanner-section">
             <div id="barcode-scanner-box" class="barcode-scanner-box">
@@ -1191,32 +1492,38 @@
                 <div class="barcode-corner br"></div>
               </div>
             </div>
-            
+
             <div style="display: flex; gap: 8px; margin: 12px 0;">
-              <button type="button" id="barcode-camera-toggle-btn" class="btn btn-secondary btn-sm" style="flex:1;">
-                <i data-lucide="camera"></i> Start Camera Scan
+              <button type="button" id="barcode-camera-toggle-btn" class="btn btn-ghost btn-sm" style="flex:1;">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M4 7h4l2-2h4l2 2h4v12H4V7z" />
+                  <circle cx="12" cy="13" r="3" />
+                </svg>
+                Start Camera Scan
               </button>
             </div>
 
-            
-            <div class="input-group" style="margin-top: 10px;">
-              <label for="barcode-input" style="font-size: 0.8rem; margin-bottom: 6px; display: block;">Or Enter Barcode Number</label>
+            <div class="input-group" style="margin-top: 8px;">
+              <label for="barcode-input">Or Enter Barcode Number</label>
               <div class="input-with-action" style="display: flex; gap: 6px;">
                 <input type="text" id="barcode-input" class="input-field" placeholder="e.g. 5449000000996" style="flex: 1;" />
-                <button id="barcode-search-btn" class="btn btn-primary" style="padding: 0 16px;">
-                  <i data-lucide="search"></i> Lookup
+                <button id="barcode-search-btn" class="btn btn-secondary" style="padding: 0 16px;">
+                  <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M20 20l-3.5-3.5" />
+                  </svg>
+                  Lookup
                 </button>
               </div>
             </div>
 
-            
             <div class="barcode-samples" style="margin-top: 12px;">
-              <span style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 6px;">Try popular examples (Open Food Facts):</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Sample Open Food Facts codes:</span>
               <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                <button type="button" class="barcode-chip" data-code="5449000000996">🥤 Coca-Cola</button>
-                <button type="button" class="barcode-chip" data-code="3017620422003">🍫 Nutella</button>
-                <button type="button" class="barcode-chip" data-code="0030000010204">🥣 Quaker Oats</button>
-                <button type="button" class="barcode-chip" data-code="0070470003004">🥛 Greek Yogurt</button>
+                <button type="button" class="barcode-chip" data-code="5449000000996">Coca-Cola</button>
+                <button type="button" class="barcode-chip" data-code="3017620422003">Nutella</button>
+                <button type="button" class="barcode-chip" data-code="0030000010204">Quaker Oats</button>
+                <button type="button" class="barcode-chip" data-code="0070470003004">Greek Yogurt</button>
               </div>
             </div>
 
@@ -1225,13 +1532,15 @@
               <div id="barcode-items-list" class="parsed-items-list"></div>
               <div class="parsed-total" id="barcode-total"></div>
               <button id="barcode-confirm-btn" class="btn btn-primary btn-full">
-                <i data-lucide="check"></i> Confirm & Log
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+                Confirm &amp; Log
               </button>
             </div>
           </div>
         </div>
 
-        
         <div id="manual-tab" class="tab-panel">
           <div class="manual-form">
             <div class="input-group">
@@ -1256,7 +1565,7 @@
                 <input type="number" id="manual-fat" class="input-field" placeholder="0" min="0" step="0.1" />
               </div>
             </div>
-            <div class="manual-macros-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 8px;">
+            <div class="manual-macros-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 6px;">
               <div class="input-group">
                 <label for="manual-fiber">Fiber (g)</label>
                 <input type="number" id="manual-fiber" class="input-field" placeholder="0" min="0" step="0.1" />
@@ -1270,47 +1579,151 @@
                 <input type="number" id="manual-sodium" class="input-field" placeholder="0" min="0" />
               </div>
             </div>
-            <div class="input-group" style="margin-top: 8px;">
+            <div class="input-group" style="margin-top: 6px;">
               <label for="manual-serving">Serving Size</label>
               <input type="text" id="manual-serving" class="input-field" placeholder="e.g. 1 cup, 200g" />
             </div>
             <button id="manual-add-btn" class="btn btn-primary btn-full">
-              <i data-lucide="plus-circle"></i> Add to Log
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Add to Log
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    
     <nav id="bottom-nav" class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" id="nav-dashboard" data-view="dashboard">
-        <i data-lucide="home"></i>
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z" />
+        </svg>
         <span>Home</span>
       </button>
       <button class="nav-item" id="nav-diary" data-view="diary">
-        <i data-lucide="book-open"></i>
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M4 5h7a2 2 0 0 1 2 2v13a1.5 1.5 0 0 0-1.5-1.5H4V5zM20 5h-7a2 2 0 0 0-2 2v13a1.5 1.5 0 0 1 1.5-1.5H20V5z" />
+        </svg>
         <span>Diary</span>
       </button>
       <button class="nav-item" id="nav-analytics" data-view="analytics">
-        <i data-lucide="bar-chart-3"></i>
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M4 19h16M7 15v-4M12 15V7M17 15v-7" />
+        </svg>
         <span>Analytics</span>
       </button>
       <button class="nav-item" id="nav-coach" data-view="coach">
-        <i data-lucide="bot"></i>
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M4 5h16v11H9l-5 4V5z" />
+          <path d="M8 10h8M8 13h5" />
+        </svg>
         <span>AI Coach</span>
       </button>
       <button class="nav-item" id="nav-achievements" data-view="achievements">
-        <i data-lucide="award"></i>
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <circle cx="12" cy="9" r="5" />
+          <path d="M9.5 13.5L8 21l4-2 4 2-1.5-7.5" />
+        </svg>
         <span>Badges</span>
       </button>
     </nav>
   </section>
 
-  
+  <!-- SCREEN 4: PRIVACY POLICY -->
+  <section id="privacy-screen" class="screen legal-screen" aria-labelledby="privacy-title">
+    <header class="legal-header">
+      <div class="legal-header-inner">
+        <button type="button" class="btn btn-ghost btn-sm" id="privacy-back-btn">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+          </svg>
+          Back
+        </button>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-muted);">MacroLens Legal</span>
+      </div>
+    </header>
+    <main class="legal-container">
+      <span class="legal-kicker">Document 01 / Privacy</span>
+      <h1 id="privacy-title">Privacy Policy</h1>
+      <p class="legal-updated">Applies to MacroLens Web Application and Sync API</p>
+
+      <article class="legal-card">
+        <h2>1. Data Stored in Your Browser (localStorage)</h2>
+        <p>MacroLens caches your account session metadata, profile metrics (age, biological sex, height, weight, activity level, goal), daily meal entries, hydration logs, body weight entries, achievement states, and AI Coach thread history inside your browser's localStorage under <code>caltrack_*</code> keys. This enables immediate reads and resilience during transient network interruptions.</p>
+      </article>
+
+      <article class="legal-card">
+        <h2>2. Account Sync and MySQL Storage via Vercel</h2>
+        <p>When you sign up or sign in, your credentials are verified by serverless API endpoints hosted on Vercel and passwords are hashed with bcryptjs. An expiring, signed JWT session cookie (<code>HttpOnly</code>, <code>SameSite=Lax</code>) identifies your user account on subsequent API requests.</p>
+        <p>Your profile, per-item diary entries, water intake records, body weight history, stats, and AI Coach conversation threads synchronize over HTTPS via <code>/api/data/sync</code> to a managed MySQL database so you can access your records across devices using timestamped per-record merging.</p>
+      </article>
+
+      <article class="legal-card">
+        <h2>3. Meal Photos, Text Queries, and AI Coach (Gemini API)</h2>
+        <p>When you run a natural language food parse, upload a meal photo, or send a message in the AI Coach view, the request goes from your browser to MacroLens's authenticated <code>/api/gemini</code> endpoint, which forwards the prompt (and compressed image data or summary of your logged nutrition metrics for coaching) to Google's Gemini 2.5 Flash API.</p>
+        <p>Your meal description or image payload is transmitted strictly to generate nutritional estimates or coaching replies. Unauthenticated requests to <code>/api/gemini</code> are rejected, and compressed meal thumbnails stored in your diary remain inside your personal diary record only.</p>
+      </article>
+
+      <article class="legal-card">
+        <h2>4. Packaged Food Barcode Lookups (Open Food Facts)</h2>
+        <p>When you scan a barcode with your camera or type a barcode number, your browser queries the public Open Food Facts API (<code>world.openfoodfacts.org/api/v2/product</code>) using only the barcode string to retrieve product name, serving weight, calories, macros, micronutrients, and public product image URLs.</p>
+      </article>
+
+      <article class="legal-card">
+        <h2>5. Analytics, Cookies, and Data Deletion</h2>
+        <p>MacroLens uses no third-party advertising cookies or behavioral tracking pixels. CSV and PDF report exports are generated locally inside your browser without uploading files to external servers.</p>
+        <p>You can permanently delete all synced account data (diary items, hydration records, weight logs, coach threads, and preferences) at any time using the Reset Data action in the app header, or sign out to clear the active session cookie.</p>
+      </article>
+    </main>
+  </section>
+
+  <!-- SCREEN 5: TERMS AND CONDITIONS -->
+  <section id="terms-screen" class="screen legal-screen" aria-labelledby="terms-title">
+    <header class="legal-header">
+      <div class="legal-header-inner">
+        <button type="button" class="btn btn-ghost btn-sm" id="terms-back-btn">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+          </svg>
+          Back
+        </button>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--text-muted);">MacroLens Legal</span>
+      </div>
+    </header>
+    <main class="legal-container">
+      <span class="legal-kicker">Document 02 / Terms</span>
+      <h1 id="terms-title">Terms and Conditions</h1>
+      <p class="legal-updated">Applies to usage of MacroLens Calorie &amp; Macro Tracker</p>
+
+      <article class="legal-card">
+        <h2>1. Informational Estimates, Not Medical Advice</h2>
+        <p>MacroLens provides daily energy expenditure formulas (Mifflin-St Jeor TDEE), macronutrient targets, hydration goals, micronutrient thresholds, and AI-assisted food estimates solely for personal fitness tracking and informational logging.</p>
+        <p>Outputs from the app, including AI Coach replies, do not constitute medical advice, clinical diagnosis, or dietary prescription. Always consult a qualified physician or registered dietitian regarding medical conditions, allergies, eating disorders, or specialized nutrition needs.</p>
+      </article>
+
+      <article class="legal-card">
+        <h2>2. Accuracy of AI Parsing and Third-Party Labels</h2>
+        <ul>
+          <li><strong>AI Photo &amp; Text Estimates:</strong> Dish recognition and gram estimates powered by Google Gemini 2.5 Flash are approximations and depend on image clarity, hidden fats or sauces, and portion descriptions. You are encouraged to review and adjust ingredient weights before logging.</li>
+          <li><strong>Open Food Facts Barcode Data:</strong> Packaged product facts rely on publicly contributed Open Food Facts data and manufacturer packaging updates, which may vary by region or reformulation.</li>
+        </ul>
+      </article>
+
+      <article class="legal-card">
+        <h2>3. Account Responsibility and Acceptable Use</h2>
+        <p>You are responsible for choosing a strong password and maintaining control of your signed-in browser sessions. Automated scraping, credential stuffing, bypassing authentication controls, or sending excessive automated payloads to the <code>/api/gemini</code> or sync endpoints is prohibited and subject to rate limiting.</p>
+      </article>
+
+      <article class="legal-card">
+        <h2>4. Service Availability and Limitation of Liability</h2>
+        <p>MacroLens is provided on an "as is" and "as available" basis without warranties of uninterrupted uptime or exact caloric precision. Features may be updated, rate-limited, or modified over time. To the maximum extent permitted by law, MacroLens contributors shall not be liable for indirect or consequential damages arising from reliance on estimated nutritional metrics or third-party API outages.</p>
+      </article>
+    </main>
+  </section>
+
   <div id="toast-container" class="toast-container"></div>
 
-  
   <script src="js/vendor/purify.min.js"></script>
   <script src="js/nutrition.js"></script>
   <script src="js/sync-merge.js"></script>

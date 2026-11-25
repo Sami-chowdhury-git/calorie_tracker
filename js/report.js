@@ -111,7 +111,7 @@ window.Report = {
     link.click();
     document.body.removeChild(link);
 
-    Utils.showToast(`📊 CSV report downloaded (${data.range})`, 'success');
+    Utils.showToast(`CSV report downloaded (${data.range})`, 'success');
   },
 
   async exportPDF(days = 7) {
@@ -139,38 +139,38 @@ window.Report = {
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
 
-      doc.setFillColor(79, 70, 229);
+      doc.setFillColor(217, 84, 30);
       doc.rect(0, 0, pageWidth, 6, 'F');
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(22);
-      doc.setTextColor(79, 70, 229);
+      doc.setTextColor(17, 17, 17);
       doc.text('MacroLens', 40, 40);
 
       doc.setFontSize(13);
-      doc.setTextColor(31, 41, 55);
+      doc.setTextColor(47, 45, 42);
       doc.text('Nutrition & Hydration Progress Report', 40, 58);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
-      doc.setTextColor(107, 114, 128);
+      doc.setTextColor(82, 78, 70);
       doc.text(`Period: ${data.range}`, pageWidth - 40, 36, { align: 'right' });
       doc.text(`Generated: ${data.generatedAt}`, pageWidth - 40, 50, { align: 'right' });
       doc.text(`User: ${data.user.name}`, pageWidth - 40, 64, { align: 'right' });
 
-      doc.setFillColor(243, 244, 246);
-      doc.roundedRect(40, 78, pageWidth - 80, 48, 6, 6, 'F');
-      doc.setDrawColor(229, 231, 235);
-      doc.roundedRect(40, 78, pageWidth - 80, 48, 6, 6, 'S');
+      doc.setFillColor(243, 238, 227);
+      doc.roundedRect(40, 78, pageWidth - 80, 48, 4, 4, 'F');
+      doc.setDrawColor(17, 17, 17);
+      doc.roundedRect(40, 78, pageWidth - 80, 48, 4, 4, 'S');
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8.5);
-      doc.setTextColor(79, 70, 229);
+      doc.setTextColor(168, 58, 14);
       doc.text('PERSONALIZED DAILY TARGETS', 52, 94);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
-      doc.setTextColor(55, 65, 81);
+      doc.setTextColor(17, 17, 17);
       doc.text(`Calories: ${data.targets.tdee} kcal   |   Protein: ${data.targets.protein}g   |   Carbs: ${data.targets.carbs}g   |   Fat: ${data.targets.fat}g`, 52, 108);
       doc.text(`Hydration Goal: ${data.targets.water} ml   |   Fiber: ${data.targets.fiber}g   |   Sugar Limit: <${data.targets.sugar}g   |   Sodium Limit: <${data.targets.sodium}mg`, 52, 120);
 
@@ -179,22 +179,22 @@ window.Report = {
       const cardH = 44;
 
       const metrics = [
-        { label: 'AVG CALORIES', value: `${data.averages.calories} kcal`, color: [79, 70, 229] },
-        { label: 'AVG PROTEIN', value: `${data.averages.protein}g`, color: [220, 38, 38] },
-        { label: 'AVG WATER', value: `${data.averages.water} ml`, color: [2, 132, 199] },
-        { label: 'TOTAL MEALS', value: `${data.totalMealsLogged}`, color: [5, 150, 105] }
+        { label: 'AVG CALORIES', value: `${data.averages.calories} kcal`, color: [217, 84, 30] },
+        { label: 'AVG PROTEIN', value: `${data.averages.protein}g`, color: [17, 17, 17] },
+        { label: 'AVG WATER', value: `${data.averages.water} ml`, color: [17, 17, 17] },
+        { label: 'TOTAL MEALS', value: `${data.totalMealsLogged}`, color: [31, 81, 50] }
       ];
 
       metrics.forEach((m, idx) => {
         const x = 40 + idx * (cardWidth + 12);
-        doc.setFillColor(249, 250, 251);
+        doc.setFillColor(255, 255, 255);
         doc.roundedRect(x, cardY, cardWidth, cardH, 4, 4, 'F');
-        doc.setDrawColor(229, 231, 235);
+        doc.setDrawColor(17, 17, 17);
         doc.roundedRect(x, cardY, cardWidth, cardH, 4, 4, 'S');
 
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(6.5);
-        doc.setTextColor(107, 114, 128);
+        doc.setTextColor(82, 78, 70);
         doc.text(m.label, x + cardWidth / 2, cardY + 14, { align: 'center' });
 
         doc.setFontSize(11);
@@ -224,22 +224,22 @@ window.Report = {
           head: tableHeaders,
           body: tableRows,
           theme: 'striped',
-          headStyles: { fillColor: [79, 70, 229], textColor: 255, fontStyle: 'bold', fontSize: 7.5, halign: 'center' },
-          bodyStyles: { fontSize: 7, textColor: [31, 41, 55], halign: 'center' },
-          alternateRowStyles: { fillColor: [249, 250, 251] },
+          headStyles: { fillColor: [17, 17, 17], textColor: 255, fontStyle: 'bold', fontSize: 7.5, halign: 'center' },
+          bodyStyles: { fontSize: 7, textColor: [17, 17, 17], halign: 'center' },
+          alternateRowStyles: { fillColor: [243, 238, 227] },
           columnStyles: { 0: { halign: 'left', fontStyle: 'bold' }, 1: { halign: 'left' } },
           didParseCell: function(cellData) {
             if (cellData.row.index === tableRows.length - 1) {
               cellData.cell.styles.fontStyle = 'bold';
-              cellData.cell.styles.fillColor = [238, 242, 255];
-              cellData.cell.styles.textColor = [67, 56, 202];
+              cellData.cell.styles.fillColor = [234, 227, 210];
+              cellData.cell.styles.textColor = [17, 17, 17];
             }
           },
           didDrawPage: function(pageData) {
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(7.5);
-            doc.setTextColor(156, 163, 175);
-            doc.text('Generated by MacroLens AI Nutrition Tracker • Clinical Progress Report', 40, pageHeight - 16);
+            doc.setTextColor(82, 78, 70);
+            doc.text('MacroLens Nutrition & Hydration Progress Report', 40, pageHeight - 16);
             doc.text(`Page ${pageData.pageNumber}`, pageWidth - 40, pageHeight - 16, { align: 'right' });
           }
         });
@@ -247,7 +247,7 @@ window.Report = {
 
       const fileName = `MacroLens_Report_${Utils.todayStr()}_${days}D.pdf`;
       doc.save(fileName);
-      Utils.showToast(`📄 PDF downloaded automatically (${fileName})`, 'success', 3500);
+      Utils.showToast(`PDF downloaded (${fileName})`, 'success', 3500);
     } catch (err) {
       console.error('PDF generation error:', err);
       this._exportPDFFallback(data);
@@ -270,12 +270,12 @@ window.Report = {
     printContainer.id = 'macrolens-print-report';
 
     const header = document.createElement('div');
-    header.style.cssText = 'border-bottom: 2px solid #6366f1; padding-bottom: 12px; margin-bottom: 16px;';
+    header.style.cssText = 'border-bottom: 2px solid #D9541E; padding-bottom: 12px; margin-bottom: 16px;';
     const title = document.createElement('h1');
-    title.style.cssText = 'color:#4f46e5; margin:0;';
+    title.style.cssText = 'color:#111111; margin:0;';
     title.textContent = 'MacroLens';
     const sub = document.createElement('p');
-    sub.style.cssText = 'margin:4px 0; color:#6b7280;';
+    sub.style.cssText = 'margin:4px 0; color:#524E46;';
     sub.textContent = 'Nutrition & Hydration Progress Report';
     const meta = document.createElement('p');
     meta.style.cssText = 'margin:4px 0; font-size:12px;';
@@ -291,10 +291,10 @@ window.Report = {
 
     const thead = document.createElement('thead');
     const headRow = document.createElement('tr');
-    headRow.style.cssText = 'background:#eef2ff; color:#4338ca;';
+    headRow.style.cssText = 'background:#111111; color:#FFFFFF;';
     ['Date', 'Day', 'Calories', 'Protein', 'Carbs', 'Fat', 'Fiber', 'Sugar', 'Sodium', 'Water', 'Meals'].forEach(col => {
       const th = document.createElement('th');
-      th.style.cssText = 'padding:6px; border:1px solid #e0e7ff;';
+      th.style.cssText = 'padding:6px; border:1px solid #111111;';
       th.textContent = col;
       headRow.appendChild(th);
     });
@@ -307,7 +307,7 @@ window.Report = {
       const cells = [r.date, r.day, String(r.calories), `${r.protein}g`, `${r.carbs}g`, `${r.fat}g`, `${r.fiber}g`, `${r.sugar}g`, `${r.sodium}mg`, `${r.water}ml`, String(r.meals)];
       cells.forEach((val, idx) => {
         const td = document.createElement('td');
-        td.style.cssText = idx >= 2 ? 'padding:6px; border:1px solid #e5e7eb; text-align:right;' : 'padding:6px; border:1px solid #e5e7eb;';
+        td.style.cssText = idx >= 2 ? 'padding:6px; border:1px solid #111111; text-align:right;' : 'padding:6px; border:1px solid #111111;';
         td.textContent = val;
         tr.appendChild(td);
       });

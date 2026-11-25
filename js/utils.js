@@ -20,10 +20,10 @@ window.Utils = {
   },
 
   formatDiaryDate(dateStr) {
-    if (this.isToday(dateStr)) return `Today — ${this._shortDate(dateStr)}`;
-    if (this.isYesterday(dateStr)) return `Yesterday — ${this._shortDate(dateStr)}`;
+    if (this.isToday(dateStr)) return `Today, ${this._shortDate(dateStr)}`;
+    if (this.isYesterday(dateStr)) return `Yesterday, ${this._shortDate(dateStr)}`;
     const d = new Date(dateStr + 'T12:00:00');
-    return `${d.toLocaleDateString('en-US', { weekday: 'short' })} — ${this._shortDate(dateStr)}`;
+    return `${d.toLocaleDateString('en-US', { weekday: 'short' })}, ${this._shortDate(dateStr)}`;
   },
 
   _shortDate(dateStr) {
@@ -136,7 +136,6 @@ window.Utils = {
 
   async createThumbnailDataUrl(file, maxDim = 320, quality = 0.6) {
     const res = await this.compressImage(file, maxDim, quality);
-    // Keep stored thumbnails small so localStorage quota is never exceeded
     if (res.dataUrl && res.dataUrl.length <= 65000) {
       return res.dataUrl;
     }
@@ -144,18 +143,32 @@ window.Utils = {
     return smaller.dataUrl && smaller.dataUrl.length <= 65000 ? smaller.dataUrl : null;
   },
 
-  animateNumber(el, target, duration = 800, suffix = '') {
+  animateNumber(el, target, duration = 260, suffix = '') {
     if (!el) return;
-    const start = parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+    if (el._animRafId) {
+      cancelAnimationFrame(el._animRafId);
+      el._animRafId = null;
+    }
+    const numericTarget = Number(target) || 0;
+    const start = parseInt((el.textContent || '0').replace(/[^0-9-]/g, ''), 10) || 0;
+    if (start === numericTarget || typeof requestAnimationFrame !== 'function' || duration <= 0) {
+      el.textContent = this.formatNum(numericTarget) + suffix;
+      return;
+    }
     const startTime = performance.now();
-    const diff = target - start;
+    const diff = numericTarget - start;
     const step = (ts) => {
       const p = Math.min((ts - startTime) / duration, 1);
       const ease = 1 - Math.pow(1 - p, 3);
       el.textContent = this.formatNum(Math.round(start + diff * ease)) + suffix;
-      if (p < 1) requestAnimationFrame(step);
+      if (p < 1) {
+        el._animRafId = requestAnimationFrame(step);
+      } else {
+        el._animRafId = null;
+        el.textContent = this.formatNum(numericTarget) + suffix;
+      }
     };
-    requestAnimationFrame(step);
+    el._animRafId = requestAnimationFrame(step);
   },
 
   ringOffset(radius, progress) {
@@ -167,31 +180,65 @@ window.Utils = {
     return 2 * Math.PI * radius;
   },
 
+  _createToastSvg(type) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '1.5');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.classList.add('svg-icon', 'toast-icon');
+
+    const map = {
+      success: [
+        ['circle', { cx: '12', cy: '12', r: '9' }],
+        ['path', { d: 'M8.5 12.5l2.5 2.5 4.5-5' }]
+      ],
+      warning: [
+        ['path', { d: 'M12 4L3 20h18L12 4z' }],
+        ['path', { d: 'M12 10v4M12 17h.01' }]
+      ],
+      error: [
+        ['circle', { cx: '12', cy: '12', r: '9' }],
+        ['path', { d: 'M15 9l-6 6M9 9l6 6' }]
+      ],
+      info: [
+        ['circle', { cx: '12', cy: '12', r: '9' }],
+        ['path', { d: 'M12 11v5M12 8h.01' }]
+      ]
+    };
+
+    (map[type] || map.info).forEach(([tag, attrs]) => {
+      const el = document.createElementNS(ns, tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      svg.appendChild(el);
+    });
+    return svg;
+  },
+
   showToast(message, type = 'info', duration = 3000) {
     const container = document.getElementById('toast-container');
     if (!container) return;
-    const icons = { success: 'check-circle', warning: 'alert-triangle', error: 'x-circle', info: 'info' };
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
 
     const content = document.createElement('div');
     content.className = 'toast-content';
 
-    const icon = document.createElement('i');
-    icon.setAttribute('data-lucide', icons[type] || 'info');
-
     const span = document.createElement('span');
     span.textContent = String(message ?? '');
 
-    content.appendChild(icon);
+    content.appendChild(this._createToastSvg(type));
     content.appendChild(span);
     toast.appendChild(content);
     container.appendChild(toast);
 
-    if (typeof lucide !== 'undefined') lucide.createIcons();
     setTimeout(() => {
       toast.classList.add('toast-exit');
-      setTimeout(() => toast.remove(), 350);
+      setTimeout(() => toast.remove(), 220);
     }, duration);
   },
 

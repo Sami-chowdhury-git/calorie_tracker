@@ -3,6 +3,25 @@ window.AICoach = (() => {
   let activeConvId = null;
   const MAX_HISTORY = 30;
 
+  function createSvg(paths) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '1.5');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.classList.add('svg-icon');
+    paths.forEach(([tag, attrs]) => {
+      const el = document.createElementNS(ns, tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      svg.appendChild(el);
+    });
+    return svg;
+  }
+
   function init() {
     const input = document.getElementById('coach-input');
     const sendBtn = document.getElementById('coach-send-btn');
@@ -176,31 +195,50 @@ window.AICoach = (() => {
       const welcome = document.createElement('div');
       welcome.className = 'coach-welcome';
 
-      const botIcon = document.createElement('i');
-      botIcon.setAttribute('data-lucide', 'bot');
+      const botSvg = createSvg([
+        ['path', { d: 'M4 5h16v11H9l-5 4V5z' }],
+        ['path', { d: 'M8 10h8M8 13h5' }]
+      ]);
 
       const h3 = document.createElement('h3');
-      h3.textContent = "Hey! I'm your AI fitness coach 💪";
+      h3.textContent = 'MacroLens AI Coach';
 
       const p = document.createElement('p');
-      p.textContent = 'I have full access to your MacroLens data — your meals, macros, calories, water intake, weight history, and progress. Ask me anything!';
+      p.textContent = 'Ask about your logged meals, remaining macro targets, hydration, weight trends, or training plan.';
 
       const chipsDiv = document.createElement('div');
       chipsDiv.className = 'coach-suggestion-chips';
 
       const suggestions = [
-        ['📊 Today\'s progress', 'How am I doing today? Analyze my meals and macros.'],
-        ['🍽️ What to eat next', 'What should I eat for my next meal to hit my remaining macros?'],
-        ['📈 Weekly analysis', 'Analyze my eating patterns from the past week. Am I on track?'],
-        ['💧 Hydration check', 'Am I drinking enough water today? How\'s my hydration?']
+        [
+          "Today's progress",
+          'How am I doing today? Analyze my meals and macros.',
+          [['path', { d: 'M4 19h16M7 15v-4M12 15V7M17 15v-7' }]]
+        ],
+        [
+          'What to eat next',
+          'What should I eat for my next meal to hit my remaining macros?',
+          [['path', { d: 'M5 4v7a2 2 0 0 0 4 0V4M7 13v7M16 4v16' }]]
+        ],
+        [
+          'Weekly analysis',
+          'Analyze my eating patterns from the past week. Am I on track?',
+          [['path', { d: 'M4 17l5-5 4 4 7-8M15 8h5v5' }]]
+        ],
+        [
+          'Hydration check',
+          "Am I drinking enough water today? How's my hydration?",
+          [['path', { d: 'M12 3.5C12 3.5 6 10.5 6 14.5a6 6 0 0 0 12 0c0-4-6-11-6-11z' }]]
+        ]
       ];
 
-      suggestions.forEach(([label, q]) => {
+      suggestions.forEach(([label, q, paths]) => {
         const chip = document.createElement('button');
         chip.type = 'button';
         chip.className = 'suggestion-chip';
         chip.dataset.q = q;
-        chip.textContent = label;
+        chip.appendChild(createSvg(paths));
+        chip.appendChild(document.createTextNode(label));
         chip.addEventListener('click', () => {
           document.getElementById('coach-input').value = q;
           document.getElementById('coach-send-btn').disabled = false;
@@ -209,13 +247,11 @@ window.AICoach = (() => {
         chipsDiv.appendChild(chip);
       });
 
-      welcome.appendChild(botIcon);
+      welcome.appendChild(botSvg);
       welcome.appendChild(h3);
       welcome.appendChild(p);
       welcome.appendChild(chipsDiv);
       chatEl.appendChild(welcome);
-
-      if (typeof lucide !== 'undefined') lucide.createIcons();
       return;
     }
 
@@ -288,7 +324,7 @@ window.AICoach = (() => {
     const waterLog = Store.getWaterLog(today);
     const waterGoal = targets.water || Store.getWaterGoal();
 
-    let ctx = '\n\nUSER DATA CONTEXT (from MacroLens app — use this to give personalized, data-driven advice):\n';
+    let ctx = '\n\nUSER DATA CONTEXT (from MacroLens app - use this to give personalized, data-driven advice):\n';
     ctx += '=== IMPORTANT: This is REAL logged data from the user\'s app. Reference specific numbers, food names, and trends when the user asks about their progress. ===\n';
 
     const weightUnit = profile?.weightUnit === 'lbs' ? 'lbs' : 'kg';
@@ -356,7 +392,7 @@ window.AICoach = (() => {
         let mealCount = 0;
         mealTypes.forEach(m => { mealCount += dayDiary[m].length; });
         if (mealCount > 0) {
-          ctx += `  ${d}: ${dt.calories} kcal (P:${Math.round(dt.protein)}g C:${Math.round(dt.carbs)}g F:${Math.round(dt.fat)}g | Fiber:${Math.round(dt.fiber)}g Sugar:${Math.round(dt.sugar)}g Sodium:${Math.round(dt.sodium)}mg) — ${mealCount} items\n`;
+          ctx += `  ${d}: ${dt.calories} kcal (P:${Math.round(dt.protein)}g C:${Math.round(dt.carbs)}g F:${Math.round(dt.fat)}g | Fiber:${Math.round(dt.fiber)}g Sugar:${Math.round(dt.sugar)}g Sodium:${Math.round(dt.sodium)}mg) - ${mealCount} items\n`;
           weekCals += dt.calories;
           weekP += dt.protein;
           weekC += dt.carbs;
@@ -370,9 +406,9 @@ window.AICoach = (() => {
       if (daysCount > 1) {
         ctx += `\n  Weekly Average: ${Math.round(weekCals / daysCount)} kcal/day | P:${Math.round(weekP / daysCount)}g C:${Math.round(weekC / daysCount)}g F:${Math.round(weekF / daysCount)}g | Fiber:${Math.round(weekFiber / daysCount)}g Sugar:${Math.round(weekSugar / daysCount)}g Sodium:${Math.round(weekSodium / daysCount)}mg\n`;
         const avgVsTarget = Math.round(weekCals / daysCount) - targets.tdee;
-        if (avgVsTarget > 100) ctx += `  ⚠️ Averaging ${avgVsTarget} kcal ABOVE target per day\n`;
-        else if (avgVsTarget < -100) ctx += `  ⚠️ Averaging ${Math.abs(avgVsTarget)} kcal BELOW target per day\n`;
-        else ctx += '  ✅ On track — averaging within 100 kcal of target\n';
+        if (avgVsTarget > 100) ctx += `  Averaging ${avgVsTarget} kcal ABOVE target per day\n`;
+        else if (avgVsTarget < -100) ctx += `  Averaging ${Math.abs(avgVsTarget)} kcal BELOW target per day\n`;
+        else ctx += '  On track - averaging within 100 kcal of target\n';
       }
     }
 
@@ -433,7 +469,7 @@ window.AICoach = (() => {
     conv.updated_at = Date.now();
 
     if (conv.messages.length === 1) {
-      conv.title = text.length > 30 ? text.substring(0, 30) + '…' : text;
+      conv.title = text.length > 30 ? text.substring(0, 30) + '...' : text;
       renderTabBar();
     }
 
@@ -456,7 +492,7 @@ window.AICoach = (() => {
       saveConversations([conv.id]);
     } catch (err) {
       hideTyping();
-      appendBubble('Sorry, I couldn\'t process that. Please try again.', 'ai');
+      appendBubble("Sorry, I couldn't process that. Please try again.", 'ai');
       console.error('Coach error:', err);
     }
   }
